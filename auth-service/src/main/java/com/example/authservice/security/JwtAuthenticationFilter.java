@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String username = jwtTokenProvider.getUsername(token);
+            Long id = jwtTokenProvider.getId(token);
 
             UserDetails userDetails = User.withUsername(username)
                     .password("") // Không quan trọng vì đã xác thực qua JWT
@@ -39,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.setAttribute("id", id);
+            request.setAttribute("username", username);
         }
 
         filterChain.doFilter(request, response);

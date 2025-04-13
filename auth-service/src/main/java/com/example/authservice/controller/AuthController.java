@@ -12,16 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RestController
 public class AuthController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
 
-    public AuthController(JwtTokenProvider jwtTokenProvider, AuthService authService ) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public AuthController( AuthService authService ) {
         this.authService = authService;
     }
 
@@ -31,8 +30,11 @@ public class AuthController {
     }
 
     @GetMapping("/test-token")
-    public ResponseEntity<?> testToken(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok("success");
+    public ResponseEntity<?> testToken(HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        Long id = (Long) request.getAttribute("id");
+        System.out.println("ID: " + id + ", Username: " + username); // Debug
+        return ResponseEntity.ok("ID: " + id + ", Username: " + username);
     }
 
 }

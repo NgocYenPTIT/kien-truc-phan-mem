@@ -5,6 +5,7 @@ import com.example.authservice.DTOs.LoginRequest;
 import com.example.authservice.DTOs.UserDto;
 import com.example.authservice.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,9 @@ public class AuthService {
     private final RestTemplate restTemplate;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Value("${app.global.url.user-service}")
+    private String userServiceUrl;
+
     @Autowired
     public AuthService(RestTemplate restTemplate, JwtTokenProvider jwtTokenProvider) {
         this.restTemplate = restTemplate;
@@ -23,7 +27,7 @@ public class AuthService {
 
     public ResponseEntity<?> login(LoginRequest loginRequest) {
         // Gọi đến microservice ở cổng 8889 để lấy thông tin user
-        String userServiceUrl = "http://localhost:8889/user?username=" + loginRequest.getUsername();
+        String userServiceUrl = this.userServiceUrl + "user?username=" + loginRequest.getUsername();
 
         try {
             // Gọi API và nhận kết quả
