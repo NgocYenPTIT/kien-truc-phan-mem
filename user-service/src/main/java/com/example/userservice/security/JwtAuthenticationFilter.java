@@ -1,4 +1,4 @@
-package com.example.authservice.security;
+package com.example.userservice.security;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

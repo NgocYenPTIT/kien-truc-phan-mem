@@ -1,7 +1,7 @@
-package com.example.authservice.config;
+package com.example.userservice.config;
 
-import com.example.authservice.model.User;
-import com.example.authservice.repository.UserRepository;
+import com.example.userservice.model.User;
+import com.example.userservice.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
