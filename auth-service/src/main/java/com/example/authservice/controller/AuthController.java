@@ -1,10 +1,7 @@
 package com.example.authservice.controller;
 
 import com.example.authservice.DTOs.LoginRequest;
-import com.example.authservice.DTOs.JwtResponse;
 
-import com.example.authservice.DTOs.UserDto;
-import com.example.authservice.security.JwtTokenProvider;
 import com.example.authservice.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 @RestController
 public class AuthController {

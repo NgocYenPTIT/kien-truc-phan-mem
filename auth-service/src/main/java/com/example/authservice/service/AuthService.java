@@ -1,6 +1,6 @@
 package com.example.authservice.service;
 
-import com.example.authservice.DTOs.JwtResponse;
+import com.example.authservice.DTOs.LoginResponse;
 import com.example.authservice.DTOs.LoginRequest;
 import com.example.authservice.DTOs.UserDto;
 import com.example.authservice.security.JwtTokenProvider;
@@ -41,7 +41,7 @@ public class AuthService {
             // Kiểm tra password
             if (user.getPassword().equals(loginRequest.getPassword())) {
                 String token = jwtTokenProvider.createToken(user.getId(), user.getUsername());
-                return ResponseEntity.ok(new JwtResponse(token));
+                return ResponseEntity.ok(new LoginResponse(token, user));
             } else {
                 return ResponseEntity.status(401).body("Sai username hoặc password");
             }
