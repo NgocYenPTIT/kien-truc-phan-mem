@@ -17,7 +17,7 @@ import com.example.clientKTPM.model.User;
 import javax.servlet.http.HttpSession;
 
 @Controller
-public class ExampleController {
+public class ClientController {
 
     @Autowired
     private HttpSession session;
@@ -58,7 +58,7 @@ public class ExampleController {
 
        }catch (Exception e) {
            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
-           return "login.html";
+           return "login";
        }
     }
 
@@ -88,4 +88,17 @@ public class ExampleController {
         return "redirect:/";
 
     }
+
+    // Hiển thị trang giải đấu
+    @GetMapping("/tournaments")
+    public String showTournamentPage(Model model) {
+        // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
+        if (session.getAttribute("user") != null) {
+            System.out.println(session.getAttribute("user"));
+            return "tournament-management";
+        }
+        return "redirect:/";
+    }
+
+
 }
