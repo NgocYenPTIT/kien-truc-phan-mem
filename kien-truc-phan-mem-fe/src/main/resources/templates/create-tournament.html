@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Othello Tournament - Tạo Giải Đấu Mới</title>
+  <!-- Bootstrap 4 CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- Tempus Dominus Bootstrap 4 (for DateTime picker) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap4-theme/1.0.0/select2-bootstrap4.min.css">
+
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #1abc9c;
+      --accent-color: #e74c3c;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+    }
+
+    body {
+      background-color: var(--light-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(26, 188, 156, 0.1), transparent 70%),
+      radial-gradient(circle at bottom left, rgba(44, 62, 80, 0.1), transparent 70%);
+      z-index: -1;
+    }
+
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: var(--light-color) !important;
+    }
+
+    .navbar-brand .game-icon {
+      margin-right: 10px;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+      color: white;
+      padding: 1.5rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 1rem 0 3rem;
+      position: relative;
+    }
+
+    .footer {
+      background-color: var(--primary-color);
+      color: var(--light-color);
+      padding: 1.5rem 0;
+      margin-top: auto;
+    }
+
+    /* Othello piece rotating animation */
+    @keyframes flip {
+      0% {
+        transform: rotateY(0deg);
+      }
+      50% {
+        transform: rotateY(180deg);
+      }
+      100% {
+        transform: rotateY(360deg);
+      }
+    }
+
+    .othello-piece {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(to right, black 50%, white 50%);
+      animation: flip 3s infinite linear;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* Form styles */
+    .form-container {
+      background-color: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .form-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-title {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      position: relative;
+    }
+
+    .form-title::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-group label i {
+      margin-right: 10px;
+      color: var(--secondary-color);
+    }
+
+    .form-control {
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+    }
+
+    .select2-container--bootstrap4 .select2-selection--single {
+      height: calc(1.5em + 1.5rem + 4px);
+      padding: 0.75rem 1rem;
+    }
+
+    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+      padding: 0;
+      line-height: 1;
+    }
+
+    .required-field::after {
+      content: '*';
+      color: var(--accent-color);
+      margin-left: 5px;
+    }
+
+    .btn-primary {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: width 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn-primary:hover::before {
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background-color: #16a085;
+      border-color: #16a085;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(22, 160, 133, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: #95a5a6;
+      border-color: #95a5a6;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #7f8c8d;
+      border-color: #7f8c8d;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(127, 140, 141, 0.3);
+    }
+
+    .btn-icon {
+      margin-right: 10px;
+    }
+
+    /* Floating labels effect */
+    .form-label-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label-group input,
+    .form-label-group textarea {
+      height: auto;
+      padding: 1rem 0.75rem;
+    }
+
+    .form-label-group > input,
+    .form-label-group > textarea,
+    .form-label-group > label {
+      height: 3.125rem;
+      padding: .75rem;
+    }
+
+    .form-label-group > label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      margin-bottom: 0;
+      line-height: 1.5;
+      color: #495057;
+      border: 1px solid transparent;
+      border-radius: .25rem;
+      transition: all .1s ease-in-out;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .form-label-group input::-webkit-input-placeholder,
+    .form-label-group textarea::-webkit-input-placeholder {
+      color: transparent;
+    }
+
+    .form-label-group input:-ms-input-placeholder,
+    .form-label-group textarea:-ms-input-placeholder {
+      color: transparent;
+    }
+
+    .form-label-group input::-ms-input-placeholder,
+    .form-label-group textarea::-ms-input-placeholder {
+      color: transparent;
+    }
+
+    .form-label-group input::-moz-placeholder,
+    .form-label-group textarea::-moz-placeholder {
+      color: transparent;
+    }
+
+    .form-label-group input::placeholder,
+    .form-label-group textarea::placeholder {
+      color: transparent;
+    }
+
+    .form-label-group input:not(:placeholder-shown),
+    .form-label-group textarea:not(:placeholder-shown) {
+      padding-top: 1.25rem;
+      padding-bottom: .25rem;
+    }
+
+    .form-label-group input:not(:placeholder-shown) ~ label,
+    .form-label-group textarea:not(:placeholder-shown) ~ label {
+      padding-top: .25rem;
+      padding-bottom: .25rem;
+      font-size: 12px;
+      color: #777;
+    }
+
+    /* Date time picker custom styles */
+    .bootstrap-datetimepicker-widget table td.active,
+    .bootstrap-datetimepicker-widget table td.active:hover {
+      background-color: var(--secondary-color) !important;
+    }
+
+    .bootstrap-datetimepicker-widget table td span.active {
+      background-color: var(--secondary-color) !important;
+    }
+
+    /* Animation for floating pieces */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    .floating-piece {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      z-index: -1;
+      opacity: 0.2;
+    }
+
+    .floating-piece.black {
+      background-color: #000;
+    }
+
+    .floating-piece.white {
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .floating-piece:nth-child(1) {
+      top: 10%;
+      left: 5%;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    .floating-piece:nth-child(2) {
+      top: 20%;
+      right: 5%;
+      animation: float 10s infinite ease-in-out;
+    }
+
+    .floating-piece:nth-child(3) {
+      bottom: 15%;
+      left: 10%;
+      animation: float 7s infinite ease-in-out;
+    }
+
+    .floating-piece:nth-child(4) {
+      bottom: 30%;
+      right: 8%;
+      animation: float 9s infinite ease-in-out;
+    }
+
+    /* Board preview animation */
+    .board-preview {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      border: 2px solid var(--primary-color);
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .board-preview:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .board-cell {
+      background-color: #4CAF50;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .board-cell::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .board-cell.black::after {
+      background-color: #000;
+      opacity: 1;
+    }
+
+    .board-cell.white::after {
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      opacity: 1;
+    }
+
+    /* Board animation */
+    @keyframes placeDisc {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .board-cell.animated::after {
+      animation: placeDisc 0.5s forwards;
+    }
+
+    /* Submit button animation */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(26, 188, 156, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(26, 188, 156, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(26, 188, 156, 0);
+      }
+    }
+
+    .btn-submit {
+      animation: pulse 2s infinite;
+    }
+
+    /* Form section animations */
+    .form-section, .round-container {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    .form-section.visible, .round-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Past round styles */
+    .opacity-75 {
+      opacity: 0.75;
+    }
+
+    .opacity-75 .card {
+      background-color: #f8f9fa;
+    }
+
+    /* Card styles for rounds */
+    .round-container .card {
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .round-container .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .round-container .card-header {
+      background: linear-gradient(to right, rgba(44, 62, 80, 0.1), rgba(26, 188, 156, 0.1));
+      border-bottom: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 0.6rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand animate__animated animate__fadeIn" href="/home">
+      <span class="othello-piece"></span> Othello Tournament
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown mr-3">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-circle mr-1"></i> <span th:text="${user?.username}">Username</span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/profile"><i class="fas fa-id-card mr-2"></i> Hồ sơ</a>
+            <a class="dropdown-item" href="/settings"><i class="fas fa-cog mr-2"></i> Cài đặt</a>
+            <div class="dropdown-divider"></div>
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header animate__animated animate__fadeIn">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2><i class="fas fa-plus-circle mr-2"></i> Tạo Giải Đấu Mới</h2>
+      <a href="/tournament" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Floating animation elements -->
+  <div class="floating-piece black"></div>
+  <div class="floating-piece white"></div>
+  <div class="floating-piece black"></div>
+  <div class="floating-piece white"></div>
+
+  <div class="container">
+    <div class="form-container animate__animated animate__fadeIn">
+      <h3 class="form-title text-center"><i class="fas fa-trophy mr-2"></i> Thông tin giải đấu</h3>
+
+      <form id="createTournamentForm" th:action="@{/tournament/create}" method="post" class="needs-validation" novalidate>
+
+        <!-- Basic Information Section -->
+        <div class="form-section visible" id="section-basic">
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="form-group">
+                <label for="name" class="required-field"><i class="fas fa-font"></i> Tên giải đấu</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên giải đấu" required>
+                <div class="invalid-feedback">
+                  Vui lòng nhập tên giải đấu
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description"><i class="fas fa-align-left"></i> Mô tả</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Mô tả chi tiết về giải đấu"></textarea>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="board-type-preview text-center">
+                <h5 class="mb-3"><i class="fas fa-chess-board mr-2"></i> Bàn cờ</h5>
+                <div class="board-preview mb-3">
+                  <!-- Board cells will be generated by JS -->
+                </div>
+                <div class="badge badge-primary p-2">Bàn cờ 8x8</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tournament Settings Section -->
+        <div class="form-section" id="section-settings">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="boardTypeId"><i class="fas fa-chess-board"></i> Loại bàn cờ</label>
+                <select class="form-control select2" id="boardTypeId" name="boardTypeId">
+                  <option value="1" selected>Bàn cờ 8x8 (Tiêu chuẩn)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="organizingMethodId"><i class="fas fa-sitemap"></i> Số vòng đấu</label>
+                <select class="form-control select2" id="organizingMethodId" name="organizingMethodId">
+                  <option value="1">7 vòng</option>
+                  <option value="2">9 vòng</option>
+                  <option value="3">11 vòng</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="maxPlayer" class="required-field"><i class="fas fa-users"></i> Số người tham gia tối đa</label>
+                <input type="number" class="form-control" id="maxPlayer" name="maxPlayer" min="2" step="1" value="8" required>
+                <div class="invalid-feedback">
+                  Vui lòng nhập số người tham gia tối đa
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="autoApprove" name="autoApprove">
+                  <label class="custom-control-label" for="autoApprove">Tự động chấp nhận người tham gia</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tournament Time Settings Section -->
+        <div class="form-section" id="section-time">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="startDate" class="required-field"><i class="far fa-calendar-alt"></i> Thời gian bắt đầu giải đấu</label>
+                <div class="input-group date" id="startDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" id="startDate" name="startDate" data-target="#startDatePicker" required/>
+                  <div class="input-group-append" data-target="#startDatePicker" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                  </div>
+                  <div class="invalid-feedback">
+                    Vui lòng chọn thời gian bắt đầu
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="endDate" class="required-field"><i class="far fa-calendar-check"></i> Thời gian kết thúc giải đấu</label>
+                <div class="input-group date" id="endDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" id="endDate" name="endDate" data-target="#endDatePicker" required/>
+                  <div class="input-group-append" data-target="#endDatePicker" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                  </div>
+                  <div class="invalid-feedback">
+                    Vui lòng chọn thời gian kết thúc
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rounds Time Settings Section -->
+        <div class="form-section" id="section-rounds">
+          <h4 class="mb-4 text-center"><i class="fas fa-chess-clock mr-2"></i> Lịch trình vòng đấu</h4>
+          <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle mr-2"></i> Thời gian cho từng vòng đấu phải nằm trong khoảng thời gian của giải đấu.
+          </div>
+
+          <div id="roundsContainer">
+            <!-- Round time inputs will be generated here dynamically -->
+          </div>
+        </div>
+
+        <!-- Hidden fields -->
+        <input type="hidden" name="organizerId" id="organizerId" th:value="${user?.id}">
+
+        <!-- Form Actions -->
+        <div class="form-section visible" id="section-actions">
+          <div class="d-flex justify-content-between mt-4">
+            <a href="/tournament" class="btn btn-secondary">
+              <i class="fas fa-times btn-icon"></i> Huỷ
+            </a>
+            <button type="submit" class="btn btn-primary btn-submit">
+              <i class="fas fa-plus-circle btn-icon"></i> Tạo giải đấu
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container text-center">
+    <p class="mb-0">© 2025 Othello Tournament Manager. Tất cả các quyền được bảo lưu.</p>
+  </div>
+</footer>
+
+<!-- JavaScript Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Animate form sections
+    setTimeout(function() {
+      $('#section-settings').addClass('visible');
+    }, 300);
+
+    setTimeout(function() {
+      $('#section-time').addClass('visible');
+    }, 600);
+
+    setTimeout(function() {
+      $('#section-rounds').addClass('visible');
+    }, 900);
+
+    // Initialize Select2
+    $('.select2').select2({
+      theme: 'bootstrap4',
+      width: '100%'
+    });
+
+    // Initialize DateTime pickers
+    $('#startDatePicker').datetimepicker({
+      format: 'DD/MM/YYYY HH:mm',
+      icons: {
+        time: 'fas fa-clock',
+        date: 'fas fa-calendar',
+        up: 'fas fa-arrow-up',
+        down: 'fas fa-arrow-down',
+        previous: 'fas fa-chevron-left',
+        next: 'fas fa-chevron-right',
+        today: 'fas fa-calendar-check',
+        clear: 'fas fa-trash',
+        close: 'fas fa-times'
+      },
+      minDate: moment()
+    });
+
+    $('#endDatePicker').datetimepicker({
+      format: 'DD/MM/YYYY HH:mm',
+      icons: {
+        time: 'fas fa-clock',
+        date: 'fas fa-calendar',
+        up: 'fas fa-arrow-up',
+        down: 'fas fa-arrow-down',
+        previous: 'fas fa-chevron-left',
+        next: 'fas fa-chevron-right',
+        today: 'fas fa-calendar-check',
+        clear: 'fas fa-trash',
+        close: 'fas fa-times'
+      },
+      useCurrent: false
+    });
+
+    // Ensure end date is after start date
+    $("#startDatePicker").on("change.datetimepicker", function (e) {
+      $('#endDatePicker').datetimepicker('minDate', e.date);
+    });
+
+    $("#endDatePicker").on("change.datetimepicker", function (e) {
+      $('#startDatePicker').datetimepicker('maxDate', e.date);
+    });
+
+    // Generate Othello board preview
+    generateBoardPreview();
+
+    // Form validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        const forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            } else {
+              // Add loading state to submit button
+              $('.btn-submit').html('<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...');
+              $('.btn-submit').attr('disabled', true);
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
+    // Input animation effects
+    $('.form-control').on('focus', function() {
+      $(this).parent().addClass('focused');
+    }).on('blur', function() {
+      $(this).parent().removeClass('focused');
+    });
+
+    // Handle round selection change
+    $('#organizingMethodId').on('change', function() {
+      generateRoundInputs();
+    });
+
+    // Initial generation of round inputs
+    generateRoundInputs();
+
+    // Animate board preview with discs
+    animateBoardPreview();
+  });
+
+  // Generate Othello board preview
+  function generateBoardPreview() {
+    const boardPreview = $('.board-preview');
+    boardPreview.empty();
+
+    // Create 8x8 board
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        const cell = $('<div class="board-cell"></div>');
+        boardPreview.append(cell);
+      }
+    }
+
+    // Set initial discs (standard Othello setup)
+    const cells = boardPreview.find('.board-cell');
+    cells.eq(27).addClass('white');
+    cells.eq(28).addClass('black');
+    cells.eq(35).addClass('black');
+    cells.eq(36).addClass('white');
+  }
+
+  // Animate board preview with random disc placements
+  function animateBoardPreview() {
+    const cells = $('.board-preview .board-cell');
+    const availableCells = [];
+
+    // Find empty cells
+    cells.each(function(index) {
+      if (!$(this).hasClass('white') && !$(this).hasClass('black')) {
+        availableCells.push(index);
+      }
+    });
+
+    // Shuffle available cells
+    availableCells.sort(() => Math.random() - 0.5);
+
+    // Animate disc placements
+    let counter = 0;
+    const interval = setInterval(function() {
+      if (counter >= 10 || availableCells.length === 0) {
+        clearInterval(interval);
+        setTimeout(resetBoardAnimation, 3000);
+        return;
+      }
+
+      const cellIndex = availableCells.pop();
+      const color = Math.random() > 0.5 ? 'white' : 'black';
+
+      cells.eq(cellIndex).addClass(color + ' animated');
+      counter++;
+    }, 600);
+  }
+
+  // Reset board animation
+  function resetBoardAnimation() {
+    const cells = $('.board-preview .board-cell');
+
+    // Reset to initial state
+    cells.removeClass('white black animated');
+
+    cells.eq(27).addClass('white');
+    cells.eq(28).addClass('black');
+    cells.eq(35).addClass('black');
+    cells.eq(36).addClass('white');
+
+    // Start new animation after delay
+    setTimeout(animateBoardPreview, 1000);
+  }
+
+  // Generate inputs for rounds based on selection
+  function generateRoundInputs() {
+    const roundsContainer = $('#roundsContainer');
+    roundsContainer.empty();
+
+    const numRounds = parseInt($('#organizingMethodId').val(), 10);
+    let rounds = 0;
+
+    switch(numRounds) {
+      case 1:
+        rounds = 7;
+        break;
+      case 2:
+        rounds = 9;
+        break;
+      case 3:
+        rounds = 11;
+        break;
+      default:
+        rounds = 7;
+    }
+
+    // Generate time inputs for each round
+    for (let i = 1; i <= rounds; i++) {
+      // For demo, set some rounds as completed (past) and others as editable
+      const isPastRound = i <= 2; // Just for demonstration - first 2 rounds are "past"
+      const isDisabled = isPastRound ? 'disabled' : '';
+      const statusBadge = isPastRound ?
+              '<span class="badge badge-secondary ml-2">Đã diễn ra</span>' :
+              '<span class="badge badge-primary ml-2">Có thể chỉnh sửa</span>';
+
+      const roundHtml = `
+                    <div class="round-container mb-4 ${isPastRound ? 'opacity-75' : ''}">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-flag-checkered mr-2"></i> Vòng ${i} ${statusBadge}
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="round${i}StartDate" class="required-field">
+                                                <i class="far fa-calendar-alt"></i> Thời gian bắt đầu
+                                            </label>
+                                            <div class="input-group date" id="round${i}StartDatePicker" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input"
+                                                    id="round${i}StartDate"
+                                                    name="rounds[${i-1}].startDate"
+                                                    data-target="#round${i}StartDatePicker"
+                                                    required ${isDisabled}/>
+                                                <div class="input-group-append" data-target="#round${i}StartDatePicker" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Vui lòng chọn thời gian bắt đầu cho vòng ${i}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="round${i}EndDate" class="required-field">
+                                                <i class="far fa-calendar-check"></i> Thời gian kết thúc
+                                            </label>
+                                            <div class="input-group date" id="round${i}EndDatePicker" data-target-input="nearest">
+                                                <input type="text" class="form-control datetimepicker-input"
+                                                    id="round${i}EndDate"
+                                                    name="rounds[${i-1}].endDate"
+                                                    data-target="#round${i}EndDatePicker"
+                                                    required ${isDisabled}/>
+                                                <div class="input-group-append" data-target="#round${i}EndDatePicker" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Vui lòng chọn thời gian kết thúc cho vòng ${i}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+      roundsContainer.append(roundHtml);
+
+      // Fill with sample dates for past rounds
+      if (isPastRound) {
+        $(`#round${i}StartDate`).val(`01/0${i}/2025 10:00`);
+        $(`#round${i}EndDate`).val(`05/0${i}/2025 18:00`);
+      }
+
+      // Initialize date time pickers for this round
+      $(`#round${i}StartDatePicker`).datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+        icons: {
+          time: 'fas fa-clock',
+          date: 'fas fa-calendar',
+          up: 'fas fa-arrow-up',
+          down: 'fas fa-arrow-down',
+          previous: 'fas fa-chevron-left',
+          next: 'fas fa-chevron-right',
+          today: 'fas fa-calendar-check',
+          clear: 'fas fa-trash',
+          close: 'fas fa-times'
+        }
+      });
+
+      $(`#round${i}EndDatePicker`).datetimepicker({
+        format: 'DD/MM/YYYY HH:mm',
+        icons: {
+          time: 'fas fa-clock',
+          date: 'fas fa-calendar',
+          up: 'fas fa-arrow-up',
+          down: 'fas fa-arrow-down',
+          previous: 'fas fa-chevron-left',
+          next: 'fas fa-chevron-right',
+          today: 'fas fa-calendar-check',
+          clear: 'fas fa-trash',
+          close: 'fas fa-times'
+        },
+        useCurrent: false
+      });
+
+      // Link start and end date pickers for this round
+      $(`#round${i}StartDatePicker`).on("change.datetimepicker", function (e) {
+        $(`#round${i}EndDatePicker`).datetimepicker('minDate', e.date);
+      });
+
+      $(`#round${i}EndDatePicker`).on("change.datetimepicker", function (e) {
+        $(`#round${i}StartDatePicker`).datetimepicker('maxDate', e.date);
+      });
+    }
+
+    // Add animation to newly added elements
+    $('.round-container').each(function(index) {
+      const element = $(this);
+      setTimeout(function() {
+        element.addClass('visible');
+      }, 200 * index);
+    });
+  }
+</script>
+</body>
+</html>

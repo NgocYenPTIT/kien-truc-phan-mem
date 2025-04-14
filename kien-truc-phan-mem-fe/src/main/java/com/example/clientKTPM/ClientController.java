@@ -54,7 +54,9 @@ public class ClientController {
                session.setAttribute("user", token.getUser());
 
                // Chuyển đến trang home
-               return "redirect:/home";
+//               return "redirect:/home";
+           return "create-tournament";
+
 
        }catch (Exception e) {
            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
