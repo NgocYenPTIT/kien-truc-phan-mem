@@ -592,8 +592,8 @@
 
   <div class="container">
     <div class="form-container animate__animated animate__fadeIn">
-      <!-- Error notification -->
-      <div class="alert alert-danger alert-dismissible fade show error-notification" id="errorNotification" role="alert">
+      <!-- Error notification - Đã xóa class "show" -->
+      <div class="alert alert-danger alert-dismissible fade error-notification" id="errorNotification" role="alert">
         <h5><i class="fas fa-exclamation-triangle mr-2"></i> Vui lòng kiểm tra lại thông tin</h5>
         <div class="validation-summary" id="validationSummary">
           <ul id="errorList"></ul>
@@ -773,6 +773,14 @@
 
 <script>
   $(document).ready(function() {
+    // Đảm bảo thông báo lỗi sẽ không hiển thị khi trang tải
+    $('#errorNotification').removeClass('show');
+    $('#validationSummary').removeClass('show');
+    $('.validation-error').removeClass('show');
+
+    // Biến theo dõi xem form đã được gửi hay chưa
+    let formSubmitted = false;
+
     // Animate form sections
     setTimeout(function() {
       $('#section-settings').addClass('visible');
@@ -810,32 +818,49 @@
     // Animate board preview with discs
     animateBoardPreview();
 
-    // Set up real-time validation for required fields
+    // Set up real-time validation for required fields - chỉ kiểm tra khi giá trị thay đổi
     $('#name').on('input', function() {
-      validateField($(this), $('#nameError'), function(value) {
-        return value.trim() !== '';
-      }, 'Vui lòng nhập tên giải đấu');
+      if (formSubmitted) {
+        validateField($(this), $('#nameError'), function(value) {
+          return value.trim() !== '';
+        }, 'Vui lòng nhập tên giải đấu');
+      }
     });
 
     $('#maxPlayer').on('input', function() {
-      validateField($(this), $('#maxPlayerError'), function(value) {
-        const num = parseInt(value);
-        return !isNaN(num) && num >= 2;
-      }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)');
+      if (formSubmitted) {
+        validateField($(this), $('#maxPlayerError'), function(value) {
+          const num = parseInt(value);
+          return !isNaN(num) && num >= 2;
+        }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)');
+      }
     });
 
-    // Add input validation for datetime fields
+    // Add input validation for datetime fields - chỉ kiểm tra khi giá trị thay đổi
     $('#startDateInputs input, #endDateInputs input').on('input', function() {
-      validateDateTimeInput($(this));
+      if (formSubmitted) {
+        validateDateTimeInput($(this));
+      }
+
+      // Đảm bảo định dạng nhập luôn có 2 chữ số
+      const value = $(this).val();
+      if (value.length === 1 && !isNaN(parseInt(value))) {
+        $(this).val(padZero(parseInt(value)));
+      }
     });
 
-    // Validate date range whenever either date changes
+    // Validate date range whenever either date changes - chỉ kiểm tra khi giá trị thay đổi
     $('#startDateInputs input, #endDateInputs input').on('change', function() {
-      validateDateRange();
+      if (formSubmitted) {
+        validateDateRange();
+      }
     });
 
     // Form validation
     $('#createTournamentForm').on('submit', function(event) {
+      // Đánh dấu là form đã được gửi để kích hoạt xác thực real-time
+      formSubmitted = true;
+
       // Update all hidden inputs with formatted date values
       updateAllDateInputs();
 
@@ -1296,14 +1321,24 @@
         setupDateTimeInputs(`#round${i}StartDateInputs`, `#round${i}StartDate`);
         setupDateTimeInputs(`#round${i}EndDateInputs`, `#round${i}EndDate`);
 
-        // Add validation for editable rounds
+        // Add validation for editable rounds - chỉ kiểm tra khi form đã submit
         $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('input', function() {
-          validateDateTimeInput($(this));
+          if (formSubmitted) {
+            validateDateTimeInput($(this));
+          }
+
+          // Đảm bảo định dạng nhập luôn có 2 chữ số
+          const value = $(this).val();
+          if (value.length === 1 && !isNaN(parseInt(value))) {
+            $(this).val(padZero(parseInt(value)));
+          }
         });
 
-        // Validate date range whenever either date changes
+        // Validate date range whenever either date changes - chỉ kiểm tra khi form đã submit
         $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('change', function() {
-          validateRoundDateRange(i);
+          if (formSubmitted) {
+            validateRoundDateRange(i);
+          }
         });
       }
     }
@@ -1321,7 +1356,7 @@
   function isValidDateTimeFormat(dateTimeStr) {
     if (!dateTimeStr) return false;
 
-    // Format: DD/MM/YYYY HH:MM
+    // Format: DD/MM/YYYY HH:MM - bắt buộc phải có 2 chữ số cho ngày, tháng, giờ, phút
     const regex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/;
     return regex.test(dateTimeStr);
   }
