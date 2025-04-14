@@ -10,8 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <!-- Animate.css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-  <!-- Tempus Dominus Bootstrap 4 (for DateTime picker) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
   <!-- Select2 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap4-theme/1.0.0/select2-bootstrap4.min.css">
@@ -249,90 +247,6 @@
       margin-right: 10px;
     }
 
-    /* Floating labels effect */
-    .form-label-group {
-      position: relative;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label-group input,
-    .form-label-group textarea {
-      height: auto;
-      padding: 1rem 0.75rem;
-    }
-
-    .form-label-group > input,
-    .form-label-group > textarea,
-    .form-label-group > label {
-      height: 3.125rem;
-      padding: .75rem;
-    }
-
-    .form-label-group > label {
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: block;
-      width: 100%;
-      margin-bottom: 0;
-      line-height: 1.5;
-      color: #495057;
-      border: 1px solid transparent;
-      border-radius: .25rem;
-      transition: all .1s ease-in-out;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .form-label-group input::-webkit-input-placeholder,
-    .form-label-group textarea::-webkit-input-placeholder {
-      color: transparent;
-    }
-
-    .form-label-group input:-ms-input-placeholder,
-    .form-label-group textarea:-ms-input-placeholder {
-      color: transparent;
-    }
-
-    .form-label-group input::-ms-input-placeholder,
-    .form-label-group textarea::-ms-input-placeholder {
-      color: transparent;
-    }
-
-    .form-label-group input::-moz-placeholder,
-    .form-label-group textarea::-moz-placeholder {
-      color: transparent;
-    }
-
-    .form-label-group input::placeholder,
-    .form-label-group textarea::placeholder {
-      color: transparent;
-    }
-
-    .form-label-group input:not(:placeholder-shown),
-    .form-label-group textarea:not(:placeholder-shown) {
-      padding-top: 1.25rem;
-      padding-bottom: .25rem;
-    }
-
-    .form-label-group input:not(:placeholder-shown) ~ label,
-    .form-label-group textarea:not(:placeholder-shown) ~ label {
-      padding-top: .25rem;
-      padding-bottom: .25rem;
-      font-size: 12px;
-      color: #777;
-    }
-
-    /* Date time picker custom styles */
-    .bootstrap-datetimepicker-widget table td.active,
-    .bootstrap-datetimepicker-widget table td.active:hover {
-      background-color: var(--secondary-color) !important;
-    }
-
-    .bootstrap-datetimepicker-widget table td span.active {
-      background-color: var(--secondary-color) !important;
-    }
-
     /* Animation for floating pieces */
     @keyframes float {
       0%, 100% {
@@ -492,6 +406,10 @@
     }
 
     /* Card styles for rounds */
+    .round-container {
+      margin-bottom: 40px;
+    }
+
     .round-container .card {
       transition: all 0.3s ease;
       border-radius: 10px;
@@ -508,6 +426,106 @@
     .round-container .card-header {
       background: linear-gradient(to right, rgba(44, 62, 80, 0.1), rgba(26, 188, 156, 0.1));
       border-bottom: none;
+    }
+
+    /* Fixed: Custom datetime input styles */
+    .date-input-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      margin-bottom: 10px;
+    }
+
+    .time-input-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .date-input-group input,
+    .time-input-group input {
+      width: auto;
+      text-align: center;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin: 0 2px;
+    }
+
+    .date-input-group .day-input,
+    .date-input-group .month-input {
+      flex: 0 0 60px;
+      max-width: 60px;
+    }
+
+    .date-input-group .year-input {
+      flex: 0 0 80px;
+      max-width: 80px;
+    }
+
+    .time-input-group .hour-input,
+    .time-input-group .minute-input {
+      flex: 0 0 60px;
+      max-width: 60px;
+    }
+
+    .separator {
+      margin: 0 4px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .datetime-format-hint {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-top: 5px;
+    }
+
+    /* Validation styles */
+    .is-invalid {
+      border-color: #dc3545 !important;
+    }
+
+    .validation-error {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .validation-error.show {
+      display: block;
+    }
+
+    /* Error notification at the top of form */
+    .error-notification {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .error-notification.show {
+      display: block;
+    }
+
+    /* Summary of validation errors */
+    .validation-summary {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .validation-summary.show {
+      display: block;
+    }
+
+    .validation-summary ul {
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+
+    .validation-summary li {
+      margin-bottom: 5px;
     }
 
     /* Responsive adjustments */
@@ -574,6 +592,17 @@
 
   <div class="container">
     <div class="form-container animate__animated animate__fadeIn">
+      <!-- Error notification -->
+      <div class="alert alert-danger alert-dismissible fade show error-notification" id="errorNotification" role="alert">
+        <h5><i class="fas fa-exclamation-triangle mr-2"></i> Vui lòng kiểm tra lại thông tin</h5>
+        <div class="validation-summary" id="validationSummary">
+          <ul id="errorList"></ul>
+        </div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
       <h3 class="form-title text-center"><i class="fas fa-trophy mr-2"></i> Thông tin giải đấu</h3>
 
       <form id="createTournamentForm" th:action="@{/tournament/create}" method="post" class="needs-validation" novalidate>
@@ -585,9 +614,7 @@
               <div class="form-group">
                 <label for="name" class="required-field"><i class="fas fa-font"></i> Tên giải đấu</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên giải đấu" required>
-                <div class="invalid-feedback">
-                  Vui lòng nhập tên giải đấu
-                </div>
+                <div class="validation-error" id="nameError">Vui lòng nhập tên giải đấu</div>
               </div>
 
               <div class="form-group">
@@ -631,9 +658,7 @@
               <div class="form-group">
                 <label for="maxPlayer" class="required-field"><i class="fas fa-users"></i> Số người tham gia tối đa</label>
                 <input type="number" class="form-control" id="maxPlayer" name="maxPlayer" min="2" step="1" value="8" required>
-                <div class="invalid-feedback">
-                  Vui lòng nhập số người tham gia tối đa
-                </div>
+                <div class="validation-error" id="maxPlayerError">Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)</div>
               </div>
 
               <div class="form-group">
@@ -652,32 +677,53 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="startDate" class="required-field"><i class="far fa-calendar-alt"></i> Thời gian bắt đầu giải đấu</label>
-                <div class="input-group date" id="startDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" id="startDate" name="startDate" data-target="#startDatePicker" required/>
-                  <div class="input-group-append" data-target="#startDatePicker" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                <!-- Hidden input for actual datetime value -->
+                <input type="hidden" id="startDate" name="startDate" required>
+
+                <div class="date-time-inputs" id="startDateInputs">
+                  <div class="date-input-group">
+                    <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" required>
+                    <div class="separator">/</div>
+                    <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" required>
+                    <div class="separator">/</div>
+                    <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" required>
                   </div>
-                  <div class="invalid-feedback">
-                    Vui lòng chọn thời gian bắt đầu
+                  <div class="time-input-group">
+                    <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" required>
+                    <div class="separator">:</div>
+                    <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" required>
                   </div>
                 </div>
+                <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
+                <div class="validation-error" id="startDateError">Vui lòng nhập thời gian bắt đầu hợp lệ</div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="endDate" class="required-field"><i class="far fa-calendar-check"></i> Thời gian kết thúc giải đấu</label>
-                <div class="input-group date" id="endDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" id="endDate" name="endDate" data-target="#endDatePicker" required/>
-                  <div class="input-group-append" data-target="#endDatePicker" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                <!-- Hidden input for actual datetime value -->
+                <input type="hidden" id="endDate" name="endDate" required>
+
+                <div class="date-time-inputs" id="endDateInputs">
+                  <div class="date-input-group">
+                    <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" required>
+                    <div class="separator">/</div>
+                    <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" required>
+                    <div class="separator">/</div>
+                    <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" required>
                   </div>
-                  <div class="invalid-feedback">
-                    Vui lòng chọn thời gian kết thúc
+                  <div class="time-input-group">
+                    <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" required>
+                    <div class="separator">:</div>
+                    <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" required>
                   </div>
                 </div>
+                <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
+                <div class="validation-error" id="endDateError">Vui lòng nhập thời gian kết thúc hợp lệ</div>
               </div>
             </div>
           </div>
+          <div class="validation-error" id="dateRangeError">Thời gian kết thúc phải sau thời gian bắt đầu</div>
         </div>
 
         <!-- Rounds Time Settings Section -->
@@ -723,7 +769,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
 
 <script>
@@ -747,78 +792,9 @@
       width: '100%'
     });
 
-    // Initialize DateTime pickers
-    $('#startDatePicker').datetimepicker({
-      format: 'DD/MM/YYYY HH:mm',
-      icons: {
-        time: 'fas fa-clock',
-        date: 'fas fa-calendar',
-        up: 'fas fa-arrow-up',
-        down: 'fas fa-arrow-down',
-        previous: 'fas fa-chevron-left',
-        next: 'fas fa-chevron-right',
-        today: 'fas fa-calendar-check',
-        clear: 'fas fa-trash',
-        close: 'fas fa-times'
-      },
-      minDate: moment()
-    });
-
-    $('#endDatePicker').datetimepicker({
-      format: 'DD/MM/YYYY HH:mm',
-      icons: {
-        time: 'fas fa-clock',
-        date: 'fas fa-calendar',
-        up: 'fas fa-arrow-up',
-        down: 'fas fa-arrow-down',
-        previous: 'fas fa-chevron-left',
-        next: 'fas fa-chevron-right',
-        today: 'fas fa-calendar-check',
-        clear: 'fas fa-trash',
-        close: 'fas fa-times'
-      },
-      useCurrent: false
-    });
-
-    // Ensure end date is after start date
-    $("#startDatePicker").on("change.datetimepicker", function (e) {
-      $('#endDatePicker').datetimepicker('minDate', e.date);
-    });
-
-    $("#endDatePicker").on("change.datetimepicker", function (e) {
-      $('#startDatePicker').datetimepicker('maxDate', e.date);
-    });
-
-    // Generate Othello board preview
-    generateBoardPreview();
-
-    // Form validation
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        const forms = document.getElementsByClassName('needs-validation');
-        Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-            if (form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            } else {
-              // Add loading state to submit button
-              $('.btn-submit').html('<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...');
-              $('.btn-submit').attr('disabled', true);
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
-
-    // Input animation effects
-    $('.form-control').on('focus', function() {
-      $(this).parent().addClass('focused');
-    }).on('blur', function() {
-      $(this).parent().removeClass('focused');
-    });
+    // Setup datetime inputs
+    setupDateTimeInputs('#startDateInputs', '#startDate');
+    setupDateTimeInputs('#endDateInputs', '#endDate');
 
     // Handle round selection change
     $('#organizingMethodId').on('change', function() {
@@ -828,9 +804,287 @@
     // Initial generation of round inputs
     generateRoundInputs();
 
+    // Generate Othello board preview
+    generateBoardPreview();
+
     // Animate board preview with discs
     animateBoardPreview();
+
+    // Set up real-time validation for required fields
+    $('#name').on('input', function() {
+      validateField($(this), $('#nameError'), function(value) {
+        return value.trim() !== '';
+      }, 'Vui lòng nhập tên giải đấu');
+    });
+
+    $('#maxPlayer').on('input', function() {
+      validateField($(this), $('#maxPlayerError'), function(value) {
+        const num = parseInt(value);
+        return !isNaN(num) && num >= 2;
+      }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)');
+    });
+
+    // Add input validation for datetime fields
+    $('#startDateInputs input, #endDateInputs input').on('input', function() {
+      validateDateTimeInput($(this));
+    });
+
+    // Validate date range whenever either date changes
+    $('#startDateInputs input, #endDateInputs input').on('change', function() {
+      validateDateRange();
+    });
+
+    // Form validation
+    $('#createTournamentForm').on('submit', function(event) {
+      // Update all hidden inputs with formatted date values
+      updateAllDateInputs();
+
+      // Clear previous errors
+      resetValidationErrors();
+
+      if (!validateForm()) {
+        event.preventDefault();
+        return false;
+      }
+
+      // If validation passes, show loading state
+      $('.btn-submit').html('<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...');
+      $('.btn-submit').attr('disabled', true);
+      return true;
+    });
   });
+
+  // Clear all validation errors
+  function resetValidationErrors() {
+    $('.validation-error').removeClass('show');
+    $('.form-control').removeClass('is-invalid');
+    $('#errorList').empty();
+    $('#errorNotification').removeClass('show');
+    $('#validationSummary').removeClass('show');
+  }
+
+  // Show validation error
+  function showValidationError(inputElement, errorElement, message) {
+    inputElement.addClass('is-invalid');
+    errorElement.text(message).addClass('show');
+
+    // Add to error summary if not already there
+    let errorExists = false;
+    $('#errorList li').each(function() {
+      if ($(this).text() === message) {
+        errorExists = true;
+        return false;
+      }
+    });
+
+    if (!errorExists) {
+      $('#errorList').append(`<li>${message}</li>`);
+      $('#errorNotification').addClass('show');
+      $('#validationSummary').addClass('show');
+    }
+  }
+
+  // Clear validation error
+  function clearValidationError(inputElement, errorElement) {
+    inputElement.removeClass('is-invalid');
+    errorElement.removeClass('show');
+
+    // Remove from error summary if exists
+    const message = errorElement.text();
+    $('#errorList li').each(function() {
+      if ($(this).text() === message) {
+        $(this).remove();
+        return false;
+      }
+    });
+
+    if ($('#errorList li').length === 0) {
+      $('#errorNotification').removeClass('show');
+      $('#validationSummary').removeClass('show');
+    }
+  }
+
+  // Setup DateTime Inputs
+  function setupDateTimeInputs(containerSelector, hiddenInputSelector) {
+    const container = $(containerSelector);
+    const today = new Date();
+
+    // Set default values (today + 1 hour)
+    if (containerSelector === '#startDateInputs') {
+      container.find('.day-input').val(today.getDate());
+      container.find('.month-input').val(today.getMonth() + 1);
+      container.find('.year-input').val(today.getFullYear());
+      container.find('.hour-input').val(today.getHours());
+      container.find('.minute-input').val(0);
+    }
+    // For end date, set default to today + 7 days
+    else if (containerSelector === '#endDateInputs') {
+      const endDate = new Date();
+      endDate.setDate(today.getDate() + 7);
+
+      container.find('.day-input').val(endDate.getDate());
+      container.find('.month-input').val(endDate.getMonth() + 1);
+      container.find('.year-input').val(endDate.getFullYear());
+      container.find('.hour-input').val(18); // Default to 6 PM
+      container.find('.minute-input').val(0);
+    }
+
+    // Update hidden input when any date/time value changes
+    container.find('input').on('change', function() {
+      updateDateInput(containerSelector, hiddenInputSelector);
+    });
+
+    // Initial update
+    updateDateInput(containerSelector, hiddenInputSelector);
+  }
+
+  // Update date hidden input based on individual inputs
+  function updateDateInput(containerSelector, hiddenInputSelector) {
+    const container = $(containerSelector);
+    const day = container.find('.day-input').val();
+    const month = container.find('.month-input').val();
+    const year = container.find('.year-input').val();
+    const hour = container.find('.hour-input').val();
+    const minute = container.find('.minute-input').val();
+
+    // Only update if all values are present
+    if (day && month && year && hour && minute) {
+      const formattedDate = `${padZero(day)}/${padZero(month)}/${year} ${padZero(hour)}:${padZero(minute)}`;
+      $(hiddenInputSelector).val(formattedDate);
+    }
+  }
+
+  // Update all date inputs before form submission
+  function updateAllDateInputs() {
+    updateDateInput('#startDateInputs', '#startDate');
+    updateDateInput('#endDateInputs', '#endDate');
+
+    // Update all round date inputs
+    $('.round-datetime-container').each(function() {
+      const containerId = $(this).attr('id');
+      const hiddenInputId = containerId.replace('Inputs', '');
+      updateDateInput(`#${containerId}`, `#${hiddenInputId}`);
+    });
+  }
+
+  // Add leading zero to numbers less than 10
+  function padZero(num) {
+    return num < 10 ? '0' + num : num;
+  }
+
+  // Validate a single field
+  function validateField(inputElement, errorElement, validationFunc, errorMessage) {
+    const value = inputElement.val();
+    if (!validationFunc(value)) {
+      showValidationError(inputElement, errorElement, errorMessage);
+      return false;
+    } else {
+      clearValidationError(inputElement, errorElement);
+      return true;
+    }
+  }
+
+  // Validate datetime input fields
+  function validateDateTimeInput(inputElement) {
+    const value = inputElement.val();
+    const min = parseInt(inputElement.attr('min'));
+    const max = parseInt(inputElement.attr('max'));
+
+    if (value === '' || isNaN(parseInt(value))) {
+      inputElement.addClass('is-invalid');
+      return false;
+    }
+
+    const numValue = parseInt(value);
+    if (numValue < min || numValue > max) {
+      inputElement.addClass('is-invalid');
+      return false;
+    }
+
+    inputElement.removeClass('is-invalid');
+    return true;
+  }
+
+  // Validate the date range
+  function validateDateRange() {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+
+    if (!startDate || !endDate) return;
+
+    const startMoment = moment(startDate, 'DD/MM/YYYY HH:mm');
+    const endMoment = moment(endDate, 'DD/MM/YYYY HH:mm');
+
+    if (!startMoment.isValid() || !endMoment.isValid()) return;
+
+    if (endMoment.isSameOrBefore(startMoment)) {
+      showValidationError($('#endDateInputs'), $('#dateRangeError'), 'Thời gian kết thúc phải sau thời gian bắt đầu');
+      return false;
+    } else {
+      clearValidationError($('#endDateInputs'), $('#dateRangeError'));
+      return true;
+    }
+  }
+
+  // Validate round dates against tournament timeframe
+  function validateRoundDates(tournamentStartMoment, tournamentEndMoment) {
+    let isValid = true;
+    const errors = [];
+
+    $('.round-container').each(function() {
+      // Skip past rounds that are disabled
+      if ($(this).hasClass('opacity-75')) {
+        return;
+      }
+
+      const roundId = $(this).find('input[type="hidden"]').first().attr('id');
+      const roundName = roundId.replace('StartDate', '');
+      const roundNum = roundName.replace('round', '');
+
+      const roundStartDate = $(`#${roundId}`).val();
+      const roundEndDate = $(`#${roundName}EndDate`).val();
+
+      if (!isValidDateTimeFormat(roundStartDate) || !isValidDateTimeFormat(roundEndDate)) {
+        showValidationError($(`#${roundName}StartDateInputs`),
+                $(`#${roundName}StartDateInputs`).siblings('.validation-error'),
+                `Vui lòng nhập đúng định dạng ngày giờ cho Vòng ${roundNum}`);
+        errors.push(`Vui lòng nhập đúng định dạng ngày giờ cho Vòng ${roundNum}`);
+        isValid = false;
+        return;
+      }
+
+      const roundStartMoment = moment(roundStartDate, 'DD/MM/YYYY HH:mm');
+      const roundEndMoment = moment(roundEndDate, 'DD/MM/YYYY HH:mm');
+
+      if (roundEndMoment.isSameOrBefore(roundStartMoment)) {
+        showValidationError($(`#${roundName}EndDateInputs`),
+                $(`#${roundName}EndDateInputs`).siblings('.validation-error'),
+                `Thời gian kết thúc phải sau thời gian bắt đầu cho Vòng ${roundNum}`);
+        errors.push(`Thời gian kết thúc phải sau thời gian bắt đầu cho Vòng ${roundNum}`);
+        isValid = false;
+        return;
+      }
+
+      // Check if round dates are within tournament timeframe
+      if (roundStartMoment.isBefore(tournamentStartMoment)) {
+        showValidationError($(`#${roundName}StartDateInputs`),
+                $(`#${roundName}StartDateInputs`).siblings('.validation-error'),
+                `Thời gian bắt đầu Vòng ${roundNum} phải sau thời gian bắt đầu giải đấu`);
+        errors.push(`Thời gian bắt đầu Vòng ${roundNum} phải sau thời gian bắt đầu giải đấu`);
+        isValid = false;
+      }
+
+      if (roundEndMoment.isAfter(tournamentEndMoment)) {
+        showValidationError($(`#${roundName}EndDateInputs`),
+                $(`#${roundName}EndDateInputs`).siblings('.validation-error'),
+                `Thời gian kết thúc Vòng ${roundNum} phải trước thời gian kết thúc giải đấu`);
+        errors.push(`Thời gian kết thúc Vòng ${roundNum} phải trước thời gian kết thúc giải đấu`);
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
 
   // Generate Othello board preview
   function generateBoardPreview() {
@@ -923,6 +1177,10 @@
         rounds = 7;
     }
 
+    // Get tournament start and end dates as reference
+    const tournamentStartDate = $('#startDate').val();
+    const tournamentEndDate = $('#endDate').val();
+
     // Generate time inputs for each round
     for (let i = 1; i <= rounds; i++) {
       // For demo, set some rounds as completed (past) and others as editable
@@ -932,110 +1190,122 @@
               '<span class="badge badge-secondary ml-2">Đã diễn ra</span>' :
               '<span class="badge badge-primary ml-2">Có thể chỉnh sửa</span>';
 
+      // Calculate suggested dates for this round
+      const startDateStr = isPastRound ? `01/0${i}/2025 10:00` : '';
+      const endDateStr = isPastRound ? `05/0${i}/2025 18:00` : '';
+
       const roundHtml = `
-                    <div class="round-container mb-4 ${isPastRound ? 'opacity-75' : ''}">
-                        <div class="card">
-                            <div class="card-header bg-light">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-flag-checkered mr-2"></i> Vòng ${i} ${statusBadge}
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="round${i}StartDate" class="required-field">
-                                                <i class="far fa-calendar-alt"></i> Thời gian bắt đầu
-                                            </label>
-                                            <div class="input-group date" id="round${i}StartDatePicker" data-target-input="nearest">
-                                                <input type="text" class="form-control datetimepicker-input"
-                                                    id="round${i}StartDate"
-                                                    name="rounds[${i-1}].startDate"
-                                                    data-target="#round${i}StartDatePicker"
-                                                    required ${isDisabled}/>
-                                                <div class="input-group-append" data-target="#round${i}StartDatePicker" data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
-                                                </div>
-                                                <div class="invalid-feedback">
-                                                    Vui lòng chọn thời gian bắt đầu cho vòng ${i}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="round${i}EndDate" class="required-field">
-                                                <i class="far fa-calendar-check"></i> Thời gian kết thúc
-                                            </label>
-                                            <div class="input-group date" id="round${i}EndDatePicker" data-target-input="nearest">
-                                                <input type="text" class="form-control datetimepicker-input"
-                                                    id="round${i}EndDate"
-                                                    name="rounds[${i-1}].endDate"
-                                                    data-target="#round${i}EndDatePicker"
-                                                    required ${isDisabled}/>
-                                                <div class="input-group-append" data-target="#round${i}EndDatePicker" data-toggle="datetimepicker">
-                                                    <div class="input-group-text"><i class="fas fa-calendar"></i></div>
-                                                </div>
-                                                <div class="invalid-feedback">
-                                                    Vui lòng chọn thời gian kết thúc cho vòng ${i}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div class="round-container mb-4 ${isPastRound ? 'opacity-75' : ''}">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">
+                <i class="fas fa-flag-checkered mr-2"></i> Vòng ${i} ${statusBadge}
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="round${i}StartDate" class="required-field">
+                      <i class="far fa-calendar-alt"></i> Thời gian bắt đầu
+                    </label>
+                    <!-- Hidden input for actual datetime value -->
+                    <input type="hidden" id="round${i}StartDate" name="rounds[${i-1}].startDate" value="${startDateStr}" ${isDisabled} required>
+
+                    <div class="date-time-inputs round-datetime-container" id="round${i}StartDateInputs">
+                      <div class="date-input-group">
+                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" ${isDisabled} required>
+                        <div class="separator">/</div>
+                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" ${isDisabled} required>
+                        <div class="separator">/</div>
+                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" ${isDisabled} required>
+                      </div>
+                      <div class="time-input-group">
+                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" ${isDisabled} required>
+                        <div class="separator">:</div>
+                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" ${isDisabled} required>
+                      </div>
                     </div>
-                `;
+                    <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
+                    <div class="validation-error" id="round${i}StartDateError">Vui lòng nhập thời gian bắt đầu hợp lệ</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="round${i}EndDate" class="required-field">
+                      <i class="far fa-calendar-check"></i> Thời gian kết thúc
+                    </label>
+                    <!-- Hidden input for actual datetime value -->
+                    <input type="hidden" id="round${i}EndDate" name="rounds[${i-1}].endDate" value="${endDateStr}" ${isDisabled} required>
+
+                    <div class="date-time-inputs round-datetime-container" id="round${i}EndDateInputs">
+                      <div class="date-input-group">
+                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" ${isDisabled} required>
+                        <div class="separator">/</div>
+                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" ${isDisabled} required>
+                        <div class="separator">/</div>
+                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" ${isDisabled} required>
+                      </div>
+                      <div class="time-input-group">
+                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" ${isDisabled} required>
+                        <div class="separator">:</div>
+                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" ${isDisabled} required>
+                      </div>
+                    </div>
+                    <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
+                    <div class="validation-error" id="round${i}EndDateError">Vui lòng nhập thời gian kết thúc hợp lệ</div>
+                  </div>
+                </div>
+              </div>
+              <div class="validation-error" id="round${i}DateRangeError">Thời gian kết thúc vòng đấu phải sau thời gian bắt đầu vòng đấu</div>
+            </div>
+          </div>
+        </div>
+      `;
 
       roundsContainer.append(roundHtml);
 
-      // Fill with sample dates for past rounds
+      // Initialize past round values
       if (isPastRound) {
-        $(`#round${i}StartDate`).val(`01/0${i}/2025 10:00`);
-        $(`#round${i}EndDate`).val(`05/0${i}/2025 18:00`);
-      }
+        // Parse the sample date
+        if (startDateStr) {
+          const [startDate, startTime] = startDateStr.split(' ');
+          const [startDay, startMonth, startYear] = startDate.split('/');
+          const [startHour, startMinute] = startTime.split(':');
 
-      // Initialize date time pickers for this round
-      $(`#round${i}StartDatePicker`).datetimepicker({
-        format: 'DD/MM/YYYY HH:mm',
-        icons: {
-          time: 'fas fa-clock',
-          date: 'fas fa-calendar',
-          up: 'fas fa-arrow-up',
-          down: 'fas fa-arrow-down',
-          previous: 'fas fa-chevron-left',
-          next: 'fas fa-chevron-right',
-          today: 'fas fa-calendar-check',
-          clear: 'fas fa-trash',
-          close: 'fas fa-times'
+          $(`#round${i}StartDateInputs .day-input`).val(parseInt(startDay));
+          $(`#round${i}StartDateInputs .month-input`).val(parseInt(startMonth));
+          $(`#round${i}StartDateInputs .year-input`).val(parseInt(startYear));
+          $(`#round${i}StartDateInputs .hour-input`).val(parseInt(startHour));
+          $(`#round${i}StartDateInputs .minute-input`).val(parseInt(startMinute));
         }
-      });
 
-      $(`#round${i}EndDatePicker`).datetimepicker({
-        format: 'DD/MM/YYYY HH:mm',
-        icons: {
-          time: 'fas fa-clock',
-          date: 'fas fa-calendar',
-          up: 'fas fa-arrow-up',
-          down: 'fas fa-arrow-down',
-          previous: 'fas fa-chevron-left',
-          next: 'fas fa-chevron-right',
-          today: 'fas fa-calendar-check',
-          clear: 'fas fa-trash',
-          close: 'fas fa-times'
-        },
-        useCurrent: false
-      });
+        if (endDateStr) {
+          const [endDate, endTime] = endDateStr.split(' ');
+          const [endDay, endMonth, endYear] = endDate.split('/');
+          const [endHour, endMinute] = endTime.split(':');
 
-      // Link start and end date pickers for this round
-      $(`#round${i}StartDatePicker`).on("change.datetimepicker", function (e) {
-        $(`#round${i}EndDatePicker`).datetimepicker('minDate', e.date);
-      });
+          $(`#round${i}EndDateInputs .day-input`).val(parseInt(endDay));
+          $(`#round${i}EndDateInputs .month-input`).val(parseInt(endMonth));
+          $(`#round${i}EndDateInputs .year-input`).val(parseInt(endYear));
+          $(`#round${i}EndDateInputs .hour-input`).val(parseInt(endHour));
+          $(`#round${i}EndDateInputs .minute-input`).val(parseInt(endMinute));
+        }
+      } else {
+        // Setup event handlers for editable rounds
+        setupDateTimeInputs(`#round${i}StartDateInputs`, `#round${i}StartDate`);
+        setupDateTimeInputs(`#round${i}EndDateInputs`, `#round${i}EndDate`);
 
-      $(`#round${i}EndDatePicker`).on("change.datetimepicker", function (e) {
-        $(`#round${i}StartDatePicker`).datetimepicker('maxDate', e.date);
-      });
+        // Add validation for editable rounds
+        $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('input', function() {
+          validateDateTimeInput($(this));
+        });
+
+        // Validate date range whenever either date changes
+        $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('change', function() {
+          validateRoundDateRange(i);
+        });
+      }
     }
 
     // Add animation to newly added elements
@@ -1045,6 +1315,139 @@
         element.addClass('visible');
       }, 200 * index);
     });
+  }
+
+  // Validate datetime format
+  function isValidDateTimeFormat(dateTimeStr) {
+    if (!dateTimeStr) return false;
+
+    // Format: DD/MM/YYYY HH:MM
+    const regex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/;
+    return regex.test(dateTimeStr);
+  }
+
+  // Validate round date range
+  function validateRoundDateRange(roundNumber) {
+    const startDate = $(`#round${roundNumber}StartDate`).val();
+    const endDate = $(`#round${roundNumber}EndDate`).val();
+
+    if (!startDate || !endDate) return;
+
+    const startMoment = moment(startDate, 'DD/MM/YYYY HH:mm');
+    const endMoment = moment(endDate, 'DD/MM/YYYY HH:mm');
+
+    if (!startMoment.isValid() || !endMoment.isValid()) return;
+
+    if (endMoment.isSameOrBefore(startMoment)) {
+      showValidationError($(`#round${roundNumber}EndDateInputs`),
+              $(`#round${roundNumber}DateRangeError`),
+              `Thời gian kết thúc Vòng ${roundNumber} phải sau thời gian bắt đầu`);
+      return false;
+    } else {
+      clearValidationError($(`#round${roundNumber}EndDateInputs`),
+              $(`#round${roundNumber}DateRangeError`));
+
+      // Check if round dates are within tournament timeframe
+      const tournamentStartDate = $('#startDate').val();
+      const tournamentEndDate = $('#endDate').val();
+
+      if (!tournamentStartDate || !tournamentEndDate) return true;
+
+      const tournamentStartMoment = moment(tournamentStartDate, 'DD/MM/YYYY HH:mm');
+      const tournamentEndMoment = moment(tournamentEndDate, 'DD/MM/YYYY HH:mm');
+
+      if (!tournamentStartMoment.isValid() || !tournamentEndMoment.isValid()) return true;
+
+      if (startMoment.isBefore(tournamentStartMoment)) {
+        showValidationError($(`#round${roundNumber}StartDateInputs`),
+                $(`#round${roundNumber}StartDateError`),
+                `Thời gian bắt đầu Vòng ${roundNumber} phải sau thời gian bắt đầu giải đấu`);
+        return false;
+      } else {
+        clearValidationError($(`#round${roundNumber}StartDateInputs`),
+                $(`#round${roundNumber}StartDateError`));
+      }
+
+      if (endMoment.isAfter(tournamentEndMoment)) {
+        showValidationError($(`#round${roundNumber}EndDateInputs`),
+                $(`#round${roundNumber}EndDateError`),
+                `Thời gian kết thúc Vòng ${roundNumber} phải trước thời gian kết thúc giải đấu`);
+        return false;
+      } else {
+        clearValidationError($(`#round${roundNumber}EndDateInputs`),
+                $(`#round${roundNumber}EndDateError`));
+      }
+
+      return true;
+    }
+  }
+
+  // Custom validation function
+  function validateForm() {
+    let isValid = true;
+
+    // Validate tournament name
+    if (!validateField($('#name'), $('#nameError'), function(value) {
+      return value.trim() !== '';
+    }, 'Vui lòng nhập tên giải đấu')) {
+      isValid = false;
+    }
+
+    // Validate max players
+    if (!validateField($('#maxPlayer'), $('#maxPlayerError'), function(value) {
+      const num = parseInt(value);
+      return !isNaN(num) && num >= 2;
+    }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)')) {
+      isValid = false;
+    }
+
+    // Validate tournament dates
+    updateDateInput('#startDateInputs', '#startDate');
+    updateDateInput('#endDateInputs', '#endDate');
+
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+
+    if (!isValidDateTimeFormat(startDate)) {
+      showValidationError($('#startDateInputs'), $('#startDateError'), 'Vui lòng nhập đúng định dạng ngày giờ');
+      isValid = false;
+    } else {
+      clearValidationError($('#startDateInputs'), $('#startDateError'));
+    }
+
+    if (!isValidDateTimeFormat(endDate)) {
+      showValidationError($('#endDateInputs'), $('#endDateError'), 'Vui lòng nhập đúng định dạng ngày giờ');
+      isValid = false;
+    } else {
+      clearValidationError($('#endDateInputs'), $('#endDateError'));
+    }
+
+    // Validate date range
+    if (isValidDateTimeFormat(startDate) && isValidDateTimeFormat(endDate)) {
+      const startMoment = moment(startDate, 'DD/MM/YYYY HH:mm');
+      const endMoment = moment(endDate, 'DD/MM/YYYY HH:mm');
+
+      if (endMoment.isSameOrBefore(startMoment)) {
+        showValidationError($('#endDateInputs'), $('#dateRangeError'), 'Thời gian kết thúc phải sau thời gian bắt đầu');
+        isValid = false;
+      } else {
+        clearValidationError($('#endDateInputs'), $('#dateRangeError'));
+
+        // Validate round dates against tournament timeframe
+        if (!validateRoundDates(startMoment, endMoment)) {
+          isValid = false;
+        }
+      }
+    }
+
+    if (!isValid) {
+      // Scroll to first error
+      $('html, body').animate({
+        scrollTop: $('.validation-error.show').first().offset().top - 100
+      }, 500);
+    }
+
+    return isValid;
   }
 </script>
 </body>
