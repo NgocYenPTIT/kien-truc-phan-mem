@@ -605,8 +605,7 @@
 
       <h3 class="form-title text-center"><i class="fas fa-trophy mr-2"></i> Thông tin giải đấu</h3>
 
-      <form id="createTournamentForm" th:action="@{/tournament/create}" method="post" class="needs-validation" novalidate>
-
+      <form id="createTournamentForm" class="needs-validation" novalidate>
         <!-- Basic Information Section -->
         <div class="form-section visible" id="section-basic">
           <div class="row mb-4">
@@ -657,8 +656,8 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="maxPlayer" class="required-field"><i class="fas fa-users"></i> Số người tham gia tối đa</label>
-                <input type="number" class="form-control" id="maxPlayer" name="maxPlayer" min="2" step="1" value="8" required>
-                <div class="validation-error" id="maxPlayerError">Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)</div>
+                <input type="number" class="form-control" id="maxPlayer" name="maxPlayer" min="2" step="2" value="8" required>
+                <div class="validation-error" id="maxPlayerError">Vui lòng nhập số người tham gia tối đa (phải > 0 và là số chẵn)</div>
               </div>
 
               <div class="form-group">
@@ -818,7 +817,7 @@
     // Animate board preview with discs
     animateBoardPreview();
 
-    // Set up real-time validation for required fields - chỉ kiểm tra khi giá trị thay đổi
+    // Set up real-time validation for required fields
     $('#name').on('input', function() {
       if (formSubmitted) {
         validateField($(this), $('#nameError'), function(value) {
@@ -827,55 +826,171 @@
       }
     });
 
+    // Validate maxPlayer (phải là số > 0 và là số chẵn)
     $('#maxPlayer').on('input', function() {
       if (formSubmitted) {
         validateField($(this), $('#maxPlayerError'), function(value) {
           const num = parseInt(value);
-          return !isNaN(num) && num >= 2;
-        }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)');
+          if (isNaN(num) || num <= 0) {
+            $('#maxPlayerError').text('Số lượng người chơi phải lớn hơn 0');
+            return false;
+          } else if (num % 2 !== 0) {
+            $('#maxPlayerError').text('Số lượng người chơi phải là số chẵn');
+            return false;
+          }
+          return true;
+        }, 'Vui lòng nhập số người tham gia tối đa (phải > 0 và là số chẵn)');
       }
     });
 
-    // Add input validation for datetime fields - chỉ kiểm tra khi giá trị thay đổi
+    // Sửa đổi phần xử lý khi người dùng nhập ngày tháng
     $('#startDateInputs input, #endDateInputs input').on('input', function() {
-      if (formSubmitted) {
-        validateDateTimeInput($(this));
-      }
-
-      // Đảm bảo định dạng nhập luôn có 2 chữ số
       const value = $(this).val();
-      if (value.length === 1 && !isNaN(parseInt(value))) {
-        $(this).val(padZero(parseInt(value)));
-      }
-    });
 
-    // Validate date range whenever either date changes - chỉ kiểm tra khi giá trị thay đổi
-    $('#startDateInputs input, #endDateInputs input').on('change', function() {
-      if (formSubmitted) {
-        validateDateRange();
+      // Đơn giản hóa: chỉ xử lý khi có giá trị và là số hợp lệ
+      if (value && !isNaN(parseInt(value))) {
+        const numValue = parseInt(value);
+        const min = parseInt($(this).attr('min'));
+        const max = parseInt($(this).attr('max'));
+
+        // Nếu giá trị hợp lệ, bỏ class is-invalid
+        if (numValue >= min && numValue <= max) {
+          $(this).removeClass('is-invalid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
       }
     });
 
     // Form validation
     $('#createTournamentForm').on('submit', function(event) {
+      // Ngăn form submit mặc định
+      event.preventDefault();
+
       // Đánh dấu là form đã được gửi để kích hoạt xác thực real-time
       formSubmitted = true;
-
-      // Update all hidden inputs with formatted date values
-      updateAllDateInputs();
 
       // Clear previous errors
       resetValidationErrors();
 
+      // Xác thực form (bao gồm cả format lại ngày tháng)
       if (!validateForm()) {
-        event.preventDefault();
         return false;
       }
 
       // If validation passes, show loading state
       $('.btn-submit').html('<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...');
       $('.btn-submit').attr('disabled', true);
-      return true;
+
+      // Lấy dữ liệu từ form
+      const formData = {
+        name: $('#name').val(),
+        description: $('#description').val() || "",
+        freeToJoin: $('#autoApprove').is(':checked'),
+        boardTypeId: parseInt($('#boardTypeId').val()),
+        organizingMethodId: parseInt($('#organizingMethodId').val()),
+        maxPlayer: parseInt($('#maxPlayer').val()),
+        startDate: $('#startDate').val(), // Đã được format đúng
+        endDate: $('#endDate').val(), // Đã được format đúng
+        organizerId: $('#organizerId').val(),
+        rounds: []
+      };
+
+      // Thu thập dữ liệu các vòng đấu - tất cả vòng đều có status là "CHƯA BẮT ĐẦU"
+      const roundsData = [];
+      $('.round-container').each(function(index) {
+        // Tất cả vòng đấu khi tạo mới đều có trạng thái "CHƯA BẮT ĐẦU"
+        const roundNumber = index + 1;
+        const startDate = $(`#round${roundNumber}StartDate`).val();
+        const endDate = $(`#round${roundNumber}EndDate`).val();
+
+        if (startDate && endDate) {
+          formData.rounds.push({
+            roundNumber: roundNumber,
+            startDate: startDate, // Đã được format đúng
+            endDate: endDate, // Đã được format đúng
+            status: "CHƯA BẮT ĐẦU"
+          });
+        }
+      });
+
+      // Gửi dữ liệu bằng fetch API
+      fetch('/tournament/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+              .then(response => {
+                if (response.redirected) {
+                  window.location.href = response.url;
+                  return;
+                }
+
+                return response.json().then(data => {
+                  if (!response.ok) {
+                    throw new Error(JSON.stringify(data));
+                  }
+                  return data;
+                });
+              })
+              .then(data => {
+                window.location.href = '/tournaments';
+              })
+              .catch(error => {
+                $('.btn-submit').html('<i class="fas fa-plus-circle btn-icon"></i> Tạo giải đấu');
+                $('.btn-submit').attr('disabled', false);
+
+                try {
+                  let errorData;
+                  if (typeof error.message === 'string') {
+                    try {
+                      errorData = JSON.parse(error.message);
+                    } catch (e) {
+                      errorData = { message: error.message };
+                    }
+                  } else {
+                    errorData = error;
+                  }
+
+                  $('#errorNotification').addClass('show');
+                  $('#validationSummary').addClass('show');
+                  $('#errorList').empty();
+
+                  if (errorData.errors && Array.isArray(errorData.errors)) {
+                    errorData.errors.forEach(function(err) {
+                      // Xử lý các loại lỗi khác nhau dựa vào errorCode
+                      if (err.errorCode === "T001" || err.errorCode === "NAME_ALREADY_EXISTS") {
+                        showValidationError($('#name'), $('#nameError'), err.message);
+                      } else if (err.errorCode === "MAX_PLAYER_LESS_THAN_ONE" || err.errorCode === "MAX_PLAYER_NOT_EVEN") {
+                        showValidationError($('#maxPlayer'), $('#maxPlayerError'), err.message);
+                      } else if (err.errorCode === "START_DATE_EMPTY" || err.errorCode === "START_DATE_INVALID_FORMAT" ||
+                              err.errorCode === "START_DATE_PARSE_ERROR" || err.errorCode === "START_DATE_IN_PAST") {
+                        showValidationError($('#startDateInputs'), $('#startDateError'), err.message);
+                      } else if (err.errorCode === "END_DATE_EMPTY" || err.errorCode === "END_DATE_INVALID_FORMAT" ||
+                              err.errorCode === "END_DATE_PARSE_ERROR") {
+                        showValidationError($('#endDateInputs'), $('#endDateError'), err.message);
+                      } else if (err.errorCode === "START_DATE_AFTER_END_DATE" || err.errorCode === "TOURNAMENT_DURATION_TOO_SHORT") {
+                        showValidationError($('#endDateInputs'), $('#dateRangeError'), err.message);
+                      } else {
+                        // Các lỗi khác
+                        $('#errorList').append(`<li>${err.message} (${err.field})</li>`);
+                      }
+                    });
+                  } else {
+                    $('#errorList').append(`<li>Đã xảy ra lỗi: ${error.message}</li>`);
+                  }
+                } catch (e) {
+                  $('#errorList').append(`<li>Đã xảy ra lỗi không xác định: ${error.message || 'Lỗi không xác định'}</li>`);
+                  $('#errorNotification').addClass('show');
+                  $('#validationSummary').addClass('show');
+                }
+
+                $('html, body').animate({
+                  scrollTop: $('#errorNotification').offset().top - 100
+                }, 500);
+              });
     });
   });
 
@@ -929,17 +1044,26 @@
     }
   }
 
+  // Sửa lại hàm formatDate để đảm bảo đúng định dạng
+  function formatDate(day, month, year, hour, minute) {
+    return `${padZero(parseInt(day))}/${padZero(parseInt(month))}/${year} ${padZero(parseInt(hour))}:${padZero(parseInt(minute))}`;
+  }
+
   // Setup DateTime Inputs
   function setupDateTimeInputs(containerSelector, hiddenInputSelector) {
     const container = $(containerSelector);
     const today = new Date();
 
-    // Set default values (today + 1 hour)
+    // Set default values (today + 1 hour for startDate)
     if (containerSelector === '#startDateInputs') {
-      container.find('.day-input').val(today.getDate());
-      container.find('.month-input').val(today.getMonth() + 1);
-      container.find('.year-input').val(today.getFullYear());
-      container.find('.hour-input').val(today.getHours());
+      // Đặt mặc định là ngày hiện tại + 1 giờ (để đảm bảo luôn trong tương lai)
+      const startDate = new Date();
+      startDate.setHours(startDate.getHours() + 1);
+
+      container.find('.day-input').val(startDate.getDate());
+      container.find('.month-input').val(startDate.getMonth() + 1);
+      container.find('.year-input').val(startDate.getFullYear());
+      container.find('.hour-input').val(startDate.getHours());
       container.find('.minute-input').val(0);
     }
     // For end date, set default to today + 7 days
@@ -963,7 +1087,7 @@
     updateDateInput(containerSelector, hiddenInputSelector);
   }
 
-  // Update date hidden input based on individual inputs
+  // Sửa lại hàm updateDateInput để xác thực và format ngày tháng
   function updateDateInput(containerSelector, hiddenInputSelector) {
     const container = $(containerSelector);
     const day = container.find('.day-input').val();
@@ -972,24 +1096,43 @@
     const hour = container.find('.hour-input').val();
     const minute = container.find('.minute-input').val();
 
-    // Only update if all values are present
+    // Kiểm tra nếu tất cả giá trị đều có
     if (day && month && year && hour && minute) {
-      const formattedDate = `${padZero(day)}/${padZero(month)}/${year} ${padZero(hour)}:${padZero(minute)}`;
-      $(hiddenInputSelector).val(formattedDate);
+      const dayVal = parseInt(day);
+      const monthVal = parseInt(month);
+      const yearVal = parseInt(year);
+      const hourVal = parseInt(hour);
+      const minuteVal = parseInt(minute);
+
+      if (
+              !isNaN(dayVal) && dayVal >= 1 && dayVal <= 31 &&
+              !isNaN(monthVal) && monthVal >= 1 && monthVal <= 12 &&
+              !isNaN(yearVal) && yearVal >= 2025 && yearVal <= 2030 &&
+              !isNaN(hourVal) && hourVal >= 0 && hourVal <= 23 &&
+              !isNaN(minuteVal) && minuteVal >= 0 && minuteVal <= 59
+      ) {
+        const formattedDate = formatDate(day, month, year, hour, minute);
+        $(hiddenInputSelector).val(formattedDate);
+        return true;
+      }
     }
+    return false;
   }
 
-  // Update all date inputs before form submission
+  // Đảm bảo tất cả ngày tháng đều được format khi submit form
   function updateAllDateInputs() {
-    updateDateInput('#startDateInputs', '#startDate');
-    updateDateInput('#endDateInputs', '#endDate');
+    let isValid = true;
+    isValid = updateDateInput('#startDateInputs', '#startDate') && isValid;
+    isValid = updateDateInput('#endDateInputs', '#endDate') && isValid;
 
-    // Update all round date inputs
+    // Cập nhật tất cả các input ngày tháng của các vòng đấu
     $('.round-datetime-container').each(function() {
       const containerId = $(this).attr('id');
       const hiddenInputId = containerId.replace('Inputs', '');
-      updateDateInput(`#${containerId}`, `#${hiddenInputId}`);
+      isValid = updateDateInput(`#${containerId}`, `#${hiddenInputId}`) && isValid;
     });
+
+    return isValid;
   }
 
   // Add leading zero to numbers less than 10
@@ -1009,25 +1152,30 @@
     }
   }
 
-  // Validate datetime input fields
-  function validateDateTimeInput(inputElement) {
-    const value = inputElement.val();
-    const min = parseInt(inputElement.attr('min'));
-    const max = parseInt(inputElement.attr('max'));
+  // Sửa lại hàm này để chấp nhận cả 1 và 2 chữ số
+  function isValidDateTimeFormat(dateTimeStr) {
+    if (!dateTimeStr) return false;
 
-    if (value === '' || isNaN(parseInt(value))) {
-      inputElement.addClass('is-invalid');
-      return false;
-    }
+    // Cải tiến regex để chấp nhận cả 1 hoặc 2 chữ số
+    const regex = /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})$/;
+    if (!regex.test(dateTimeStr)) return false;
 
-    const numValue = parseInt(value);
-    if (numValue < min || numValue > max) {
-      inputElement.addClass('is-invalid');
-      return false;
-    }
+    // Tiếp tục xác thực giá trị ngày tháng
+    const matches = dateTimeStr.match(regex);
+    const day = parseInt(matches[1], 10);
+    const month = parseInt(matches[2], 10);
+    const year = parseInt(matches[3], 10);
+    const hour = parseInt(matches[4], 10);
+    const minute = parseInt(matches[5], 10);
 
-    inputElement.removeClass('is-invalid');
-    return true;
+    // Xác thực các giá trị
+    return (
+            day >= 1 && day <= 31 &&
+            month >= 1 && month <= 12 &&
+            year >= 2025 && year <= 2030 &&
+            hour >= 0 && hour <= 23 &&
+            minute >= 0 && minute <= 59
+    );
   }
 
   // Validate the date range
@@ -1042,13 +1190,32 @@
 
     if (!startMoment.isValid() || !endMoment.isValid()) return;
 
+    // Kiểm tra startDate phải trước endDate
     if (endMoment.isSameOrBefore(startMoment)) {
       showValidationError($('#endDateInputs'), $('#dateRangeError'), 'Thời gian kết thúc phải sau thời gian bắt đầu');
       return false;
-    } else {
-      clearValidationError($('#endDateInputs'), $('#dateRangeError'));
-      return true;
     }
+
+    // Kiểm tra startDate phải sau thời điểm hiện tại
+    const now = moment();
+    if (startMoment.isSameOrBefore(now)) {
+      showValidationError($('#startDateInputs'), $('#startDateError'), 'Ngày bắt đầu phải sau ngày hiện tại');
+      return false;
+    }
+
+    // Kiểm tra khoảng thời gian giữa startDate và endDate
+    const diffInDays = endMoment.diff(startMoment, 'days');
+    const roundCount = parseInt($('#organizingMethodId').val());
+
+    // Nếu số vòng đấu > 7, cần ít nhất 2 ngày
+    if (roundCount > 1 && diffInDays < 2) {
+      showValidationError($('#endDateInputs'), $('#dateRangeError'), 'Giải đấu với nhiều vòng cần ít nhất 2 ngày');
+      return false;
+    }
+
+    clearValidationError($('#endDateInputs'), $('#dateRangeError'));
+    clearValidationError($('#startDateInputs'), $('#startDateError'));
+    return true;
   }
 
   // Validate round dates against tournament timeframe
@@ -1056,9 +1223,9 @@
     let isValid = true;
     const errors = [];
 
-    $('.round-container').each(function() {
-      // Skip past rounds that are disabled
-      if ($(this).hasClass('opacity-75')) {
+    $('.round-container').each(function(index) {
+      // Bỏ qua vòng nào có disabled inputs
+      if ($(this).find('input[type="hidden"]').first().prop('disabled')) {
         return;
       }
 
@@ -1206,25 +1373,17 @@
     const tournamentStartDate = $('#startDate').val();
     const tournamentEndDate = $('#endDate').val();
 
-    // Generate time inputs for each round
+    // Generate time inputs for each round - tất cả đều có thể chỉnh sửa vì đây là tạo mới
     for (let i = 1; i <= rounds; i++) {
-      // For demo, set some rounds as completed (past) and others as editable
-      const isPastRound = i <= 2; // Just for demonstration - first 2 rounds are "past"
-      const isDisabled = isPastRound ? 'disabled' : '';
-      const statusBadge = isPastRound ?
-              '<span class="badge badge-secondary ml-2">Đã diễn ra</span>' :
-              '<span class="badge badge-primary ml-2">Có thể chỉnh sửa</span>';
-
-      // Calculate suggested dates for this round
-      const startDateStr = isPastRound ? `01/0${i}/2025 10:00` : '';
-      const endDateStr = isPastRound ? `05/0${i}/2025 18:00` : '';
+      // Tất cả vòng đấu đều có thể chỉnh sửa khi tạo mới
+      // const statusBadge = '<span class="badge badge-primary ml-2">Có thể chỉnh sửa</span>';
 
       const roundHtml = `
-        <div class="round-container mb-4 ${isPastRound ? 'opacity-75' : ''}">
+        <div class="round-container mb-4">
           <div class="card">
             <div class="card-header bg-light">
               <h5 class="mb-0">
-                <i class="fas fa-flag-checkered mr-2"></i> Vòng ${i} ${statusBadge}
+                <i class="fas fa-flag-checkered mr-2"></i> Vòng ${i}
               </h5>
             </div>
             <div class="card-body">
@@ -1235,20 +1394,20 @@
                       <i class="far fa-calendar-alt"></i> Thời gian bắt đầu
                     </label>
                     <!-- Hidden input for actual datetime value -->
-                    <input type="hidden" id="round${i}StartDate" name="rounds[${i-1}].startDate" value="${startDateStr}" ${isDisabled} required>
+                    <input type="hidden" id="round${i}StartDate" name="rounds[${i-1}].startDate" required>
 
                     <div class="date-time-inputs round-datetime-container" id="round${i}StartDateInputs">
                       <div class="date-input-group">
-                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" ${isDisabled} required>
+                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" required>
                         <div class="separator">/</div>
-                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" ${isDisabled} required>
+                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" required>
                         <div class="separator">/</div>
-                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" ${isDisabled} required>
+                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" required>
                       </div>
                       <div class="time-input-group">
-                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" ${isDisabled} required>
+                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" required>
                         <div class="separator">:</div>
-                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" ${isDisabled} required>
+                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" required>
                       </div>
                     </div>
                     <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
@@ -1261,20 +1420,20 @@
                       <i class="far fa-calendar-check"></i> Thời gian kết thúc
                     </label>
                     <!-- Hidden input for actual datetime value -->
-                    <input type="hidden" id="round${i}EndDate" name="rounds[${i-1}].endDate" value="${endDateStr}" ${isDisabled} required>
+                    <input type="hidden" id="round${i}EndDate" name="rounds[${i-1}].endDate" required>
 
                     <div class="date-time-inputs round-datetime-container" id="round${i}EndDateInputs">
                       <div class="date-input-group">
-                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" ${isDisabled} required>
+                        <input type="number" class="form-control day-input" placeholder="DD" min="1" max="31" required>
                         <div class="separator">/</div>
-                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" ${isDisabled} required>
+                        <input type="number" class="form-control month-input" placeholder="MM" min="1" max="12" required>
                         <div class="separator">/</div>
-                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" ${isDisabled} required>
+                        <input type="number" class="form-control year-input" placeholder="YYYY" min="2025" max="2030" required>
                       </div>
                       <div class="time-input-group">
-                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" ${isDisabled} required>
+                        <input type="number" class="form-control hour-input" placeholder="HH" min="0" max="23" required>
                         <div class="separator">:</div>
-                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" ${isDisabled} required>
+                        <input type="number" class="form-control minute-input" placeholder="MM" min="0" max="59" required>
                       </div>
                     </div>
                     <div class="datetime-format-hint">Định dạng: DD/MM/YYYY HH:MM</div>
@@ -1290,57 +1449,34 @@
 
       roundsContainer.append(roundHtml);
 
-      // Initialize past round values
-      if (isPastRound) {
-        // Parse the sample date
-        if (startDateStr) {
-          const [startDate, startTime] = startDateStr.split(' ');
-          const [startDay, startMonth, startYear] = startDate.split('/');
-          const [startHour, startMinute] = startTime.split(':');
+      // Thiết lập mặc định cho vòng đấu
+      setupRoundDateInputs(i, tournamentStartDate, tournamentEndDate);
 
-          $(`#round${i}StartDateInputs .day-input`).val(parseInt(startDay));
-          $(`#round${i}StartDateInputs .month-input`).val(parseInt(startMonth));
-          $(`#round${i}StartDateInputs .year-input`).val(parseInt(startYear));
-          $(`#round${i}StartDateInputs .hour-input`).val(parseInt(startHour));
-          $(`#round${i}StartDateInputs .minute-input`).val(parseInt(startMinute));
+      // Thêm validation
+      $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('input', function() {
+        const value = $(this).val();
+
+        // Đơn giản hóa: chỉ xử lý khi có giá trị và là số hợp lệ
+        if (value && !isNaN(parseInt(value))) {
+          const numValue = parseInt(value);
+          const min = parseInt($(this).attr('min'));
+          const max = parseInt($(this).attr('max'));
+
+          // Nếu giá trị hợp lệ, bỏ class is-invalid
+          if (numValue >= min && numValue <= max) {
+            $(this).removeClass('is-invalid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
         }
+      });
 
-        if (endDateStr) {
-          const [endDate, endTime] = endDateStr.split(' ');
-          const [endDay, endMonth, endYear] = endDate.split('/');
-          const [endHour, endMinute] = endTime.split(':');
-
-          $(`#round${i}EndDateInputs .day-input`).val(parseInt(endDay));
-          $(`#round${i}EndDateInputs .month-input`).val(parseInt(endMonth));
-          $(`#round${i}EndDateInputs .year-input`).val(parseInt(endYear));
-          $(`#round${i}EndDateInputs .hour-input`).val(parseInt(endHour));
-          $(`#round${i}EndDateInputs .minute-input`).val(parseInt(endMinute));
+      // Validate date range whenever either date changes - chỉ kiểm tra khi form đã submit
+      $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('change', function() {
+        if (formSubmitted) {
+          validateRoundDateRange(i);
         }
-      } else {
-        // Setup event handlers for editable rounds
-        setupDateTimeInputs(`#round${i}StartDateInputs`, `#round${i}StartDate`);
-        setupDateTimeInputs(`#round${i}EndDateInputs`, `#round${i}EndDate`);
-
-        // Add validation for editable rounds - chỉ kiểm tra khi form đã submit
-        $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('input', function() {
-          if (formSubmitted) {
-            validateDateTimeInput($(this));
-          }
-
-          // Đảm bảo định dạng nhập luôn có 2 chữ số
-          const value = $(this).val();
-          if (value.length === 1 && !isNaN(parseInt(value))) {
-            $(this).val(padZero(parseInt(value)));
-          }
-        });
-
-        // Validate date range whenever either date changes - chỉ kiểm tra khi form đã submit
-        $(`#round${i}StartDateInputs input, #round${i}EndDateInputs input`).on('change', function() {
-          if (formSubmitted) {
-            validateRoundDateRange(i);
-          }
-        });
-      }
+      });
     }
 
     // Add animation to newly added elements
@@ -1352,13 +1488,53 @@
     });
   }
 
-  // Validate datetime format
-  function isValidDateTimeFormat(dateTimeStr) {
-    if (!dateTimeStr) return false;
+  // Set up round dates with reasonable defaults
+  function setupRoundDateInputs(roundNum, tournamentStartStr, tournamentEndStr) {
+    // Lấy đối tượng date từ startDate và endDate của giải đấu
+    let startMoment, endMoment;
 
-    // Format: DD/MM/YYYY HH:MM - bắt buộc phải có 2 chữ số cho ngày, tháng, giờ, phút
-    const regex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/;
-    return regex.test(dateTimeStr);
+    if (tournamentStartStr && tournamentEndStr) {
+      startMoment = moment(tournamentStartStr, 'DD/MM/YYYY HH:mm');
+      endMoment = moment(tournamentEndStr, 'DD/MM/YYYY HH:mm');
+
+      if (!startMoment.isValid() || !endMoment.isValid()) {
+        // Nếu ngày của giải đấu không hợp lệ, sử dụng ngày mặc định
+        startMoment = moment().add(1, 'days');
+        endMoment = moment().add(7, 'days');
+      }
+    } else {
+      // Nếu chưa có ngày giải đấu, sử dụng ngày mặc định
+      startMoment = moment().add(1, 'days');
+      endMoment = moment().add(7, 'days');
+    }
+
+    // Chia đều các vòng đấu trong khoảng thời gian giải đấu
+    const totalRounds = parseInt($('#organizingMethodId').val()) === 1 ? 7 :
+            (parseInt($('#organizingMethodId').val()) === 2 ? 9 : 11);
+
+    const durationInHours = endMoment.diff(startMoment, 'hours');
+    const hoursPerRound = Math.floor(durationInHours / totalRounds);
+
+    // Tính thời gian bắt đầu và kết thúc cho vòng đấu
+    const roundStartMoment = moment(startMoment).add((roundNum - 1) * hoursPerRound, 'hours');
+    const roundEndMoment = moment(roundStartMoment).add(hoursPerRound - 1, 'hours');
+
+    // Điền các giá trị vào input
+    $(`#round${roundNum}StartDateInputs .day-input`).val(roundStartMoment.date());
+    $(`#round${roundNum}StartDateInputs .month-input`).val(roundStartMoment.month() + 1);
+    $(`#round${roundNum}StartDateInputs .year-input`).val(roundStartMoment.year());
+    $(`#round${roundNum}StartDateInputs .hour-input`).val(roundStartMoment.hour());
+    $(`#round${roundNum}StartDateInputs .minute-input`).val(0);
+
+    $(`#round${roundNum}EndDateInputs .day-input`).val(roundEndMoment.date());
+    $(`#round${roundNum}EndDateInputs .month-input`).val(roundEndMoment.month() + 1);
+    $(`#round${roundNum}EndDateInputs .year-input`).val(roundEndMoment.year());
+    $(`#round${roundNum}EndDateInputs .hour-input`).val(roundEndMoment.hour());
+    $(`#round${roundNum}EndDateInputs .minute-input`).val(0);
+
+    // Cập nhật hidden inputs
+    updateDateInput(`#round${roundNum}StartDateInputs`, `#round${roundNum}StartDate`);
+    updateDateInput(`#round${roundNum}EndDateInputs`, `#round${roundNum}EndDate`);
   }
 
   // Validate round date range
@@ -1417,7 +1593,7 @@
     }
   }
 
-  // Custom validation function
+  // Sửa lại hàm validateForm
   function validateForm() {
     let isValid = true;
 
@@ -1428,47 +1604,49 @@
       isValid = false;
     }
 
-    // Validate max players
+    // Validate max players - phải là số > 0 và là số chẵn
     if (!validateField($('#maxPlayer'), $('#maxPlayerError'), function(value) {
       const num = parseInt(value);
-      return !isNaN(num) && num >= 2;
-    }, 'Vui lòng nhập số người tham gia tối đa (ít nhất 2 người)')) {
+      if (isNaN(num) || num <= 0) {
+        $('#maxPlayerError').text('Số lượng người chơi phải lớn hơn 0');
+        return false;
+      } else if (num % 2 !== 0) {
+        $('#maxPlayerError').text('Số lượng người chơi phải là số chẵn');
+        return false;
+      }
+      return true;
+    }, 'Vui lòng nhập số người tham gia tối đa (phải > 0 và là số chẵn)')) {
       isValid = false;
     }
 
-    // Validate tournament dates
-    updateDateInput('#startDateInputs', '#startDate');
-    updateDateInput('#endDateInputs', '#endDate');
-
-    const startDate = $('#startDate').val();
-    const endDate = $('#endDate').val();
-
-    if (!isValidDateTimeFormat(startDate)) {
-      showValidationError($('#startDateInputs'), $('#startDateError'), 'Vui lòng nhập đúng định dạng ngày giờ');
+    // Đảm bảo rằng tất cả ngày tháng đều được format hợp lệ
+    if (!updateAllDateInputs()) {
       isValid = false;
-    } else {
-      clearValidationError($('#startDateInputs'), $('#startDateError'));
-    }
-
-    if (!isValidDateTimeFormat(endDate)) {
-      showValidationError($('#endDateInputs'), $('#endDateError'), 'Vui lòng nhập đúng định dạng ngày giờ');
-      isValid = false;
-    } else {
-      clearValidationError($('#endDateInputs'), $('#endDateError'));
     }
 
     // Validate date range
-    if (isValidDateTimeFormat(startDate) && isValidDateTimeFormat(endDate)) {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+
+    if (!startDate) {
+      showValidationError($('#startDateInputs'), $('#startDateError'), 'Vui lòng nhập thời gian bắt đầu');
+      isValid = false;
+    }
+
+    if (!endDate) {
+      showValidationError($('#endDateInputs'), $('#endDateError'), 'Vui lòng nhập thời gian kết thúc');
+      isValid = false;
+    }
+
+    if (startDate && endDate) {
       const startMoment = moment(startDate, 'DD/MM/YYYY HH:mm');
       const endMoment = moment(endDate, 'DD/MM/YYYY HH:mm');
 
-      if (endMoment.isSameOrBefore(startMoment)) {
-        showValidationError($('#endDateInputs'), $('#dateRangeError'), 'Thời gian kết thúc phải sau thời gian bắt đầu');
+      // Kiểm tra định dạng và logic ngày tháng
+      if (!validateDateRange()) {
         isValid = false;
       } else {
-        clearValidationError($('#endDateInputs'), $('#dateRangeError'));
-
-        // Validate round dates against tournament timeframe
+        // Nếu ngày tháng giải đấu hợp lệ, kiểm tra ngày tháng các vòng đấu
         if (!validateRoundDates(startMoment, endMoment)) {
           isValid = false;
         }

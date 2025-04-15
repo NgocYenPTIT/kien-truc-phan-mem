@@ -2,6 +2,7 @@ package com.example.clientKTPM;
 
 import com.example.clientKTPM.model.Account;
 import com.example.clientKTPM.model.Token;
+import com.example.clientKTPM.model.TournamentDto;
 import com.example.clientKTPM.util.ServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.clientKTPM.model.User;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @Controller
 public class ClientController {
@@ -30,6 +33,9 @@ public class ClientController {
 
     @Value("${app.global.url.auth-service}")
     private String authServiceUrl;
+
+    @Value("${app.global.url.tournament-service}")
+    private String urlTournamentService;
 
     // Hiển thị trang đăng nhập
     @GetMapping("/")
@@ -94,6 +100,7 @@ public class ClientController {
     // Hiển thị trang giải đấu
     @GetMapping("/tournaments")
     public String showTournamentPage(Model model) {
+
         // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
         if (session.getAttribute("user") != null) {
             System.out.println(session.getAttribute("user"));
@@ -107,9 +114,44 @@ public class ClientController {
         // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
         if (session.getAttribute("user") != null) {
             System.out.println(session.getAttribute("user"));
+            model.addAttribute("urlTournamentService", this.urlTournamentService);
             return "create-tournament";
         }
         return "redirect:/";
+    }
+
+    @PostMapping("/tournament/create")
+    public String createTournamentForm(@RequestBody TournamentDto tournamentData, Model model) {
+        // Kiểm tra nếu đã đăng nhập
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
+        }
+
+        try {
+            // Lấy token từ session
+            String token = (String) session.getAttribute("token");
+
+            // Gọi API tạo giải đấu
+            TournamentDto response = this.serviceAPI.call(
+                    urlTournamentService + "tournament",
+                    HttpMethod.POST,
+                    tournamentData,
+                    TournamentDto.class,
+                    token
+            );
+            System.out.println("okkkk");
+            System.out.println(response);
+
+            // Nếu thành công, redirect về trang danh sách giải đấu
+            return "redirect:/tournaments";
+        } catch (Exception e) {
+            // Nếu có lỗi, trả về trang tạo giải đấu với thông báo lỗi
+            model.addAttribute("urlTournamentService", this.urlTournamentService);
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("user", user);
+            return "create-tournament";
+        }
     }
 
 
