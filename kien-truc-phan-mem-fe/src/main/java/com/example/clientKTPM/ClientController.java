@@ -102,5 +102,15 @@ public class ClientController {
         return "redirect:/";
     }
 
+    @GetMapping("/tournament/create")
+    public String showCreateTournamentForm(Model model) {
+        // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
+        if (session.getAttribute("user") != null) {
+            System.out.println(session.getAttribute("user"));
+            return "create-tournament";
+        }
+        return "redirect:/";
+    }
+
 
 }
