@@ -18,6 +18,7 @@ public class Tournament {
     @Column(unique = true, nullable = false)
     private String name;
 
+    private boolean freeToJoin;
     private String description;
     private Long organizerId;
 

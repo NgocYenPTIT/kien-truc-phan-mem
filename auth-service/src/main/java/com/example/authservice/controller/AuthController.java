@@ -4,10 +4,7 @@ import com.example.authservice.DTOs.LoginRequest;
 
 import com.example.authservice.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +20,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         return  this.authService.login(loginRequest);
+    }
+
+    @PostMapping("/validate-active-user/{id}")
+    public ResponseEntity<?> validateActiveUser(@PathVariable("id") Long id, HttpServletRequest request) {
+        System.out.println("xin chao ");
+        return  this.authService.validateActiveUser(id, (String)request.getAttribute("token"));
     }
 
     @GetMapping("/test-token")

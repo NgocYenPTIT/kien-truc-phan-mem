@@ -2,6 +2,7 @@ package com.example.tournamentservice.service;
 
 import com.example.tournamentservice.DTOs.CreateTournamentRequestDto;
 import com.example.tournamentservice.DTOs.ErrorResponseDto;
+import com.example.tournamentservice.DTOs.UserDto;
 import com.example.tournamentservice.constants.CreateTournamentErrorCodes;
 import com.example.tournamentservice.constants.TournamentStatus;
 import com.example.tournamentservice.model.BoardType;
@@ -10,12 +11,15 @@ import com.example.tournamentservice.model.Tournament;
 import com.example.tournamentservice.repository.BoardTypeRepository;
 import com.example.tournamentservice.repository.OrganizingMethodRepository;
 import com.example.tournamentservice.repository.TournamentRepository;
+import com.example.tournamentservice.util.ServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +35,11 @@ public class TournamentService {
     private final BoardTypeRepository boardTypeRepository;
     private final OrganizingMethodRepository organizingMethodRepository;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    private  final ServiceAPI serviceAPI;
+
+    @Value("${app.global.url.user-service}")
+    private String urlUserService;
+
 
     // Pattern cho định dạng "dd/MM/yyyy HH:mm" hoặc "d/M/yyyy H:m"
     private final Pattern datePattern = Pattern.compile(
@@ -39,14 +48,17 @@ public class TournamentService {
     @Autowired
     public TournamentService(TournamentRepository tournamentRepository,
                              BoardTypeRepository boardTypeRepository,
-                             OrganizingMethodRepository organizingMethodRepository) {
+                             OrganizingMethodRepository organizingMethodRepository,
+                             ServiceAPI serviceAPI
+    ) {
         this.tournamentRepository = tournamentRepository;
         this.boardTypeRepository = boardTypeRepository;
         this.organizingMethodRepository = organizingMethodRepository;
+        this.serviceAPI = serviceAPI;
     }
 
     @Transactional
-    public ResponseEntity<?> create(CreateTournamentRequestDto createTournamentDto) {
+    public ResponseEntity<?> create(CreateTournamentRequestDto createTournamentDto, HttpServletRequest request) {
         List<ErrorResponseDto> errors = new ArrayList<>();
 
         // Kiểm tra tên giải đấu có trùng trong DB không
@@ -253,12 +265,14 @@ public class TournamentService {
         Tournament tournament = new Tournament();
         tournament.setName(createTournamentDto.getName());
         tournament.setDescription(createTournamentDto.getDescription());
-        tournament.setOrganizerId(createTournamentDto.getOrganizerId());
+        tournament.setOrganizerId((Long)request.getAttribute("id"));
         tournament.setBoardTypeId(createTournamentDto.getBoardTypeId());
         tournament.setOrganizingMethodId(createTournamentDto.getOrganizingMethodId());
         tournament.setMaxPlayer(createTournamentDto.getMaxPlayer());
         tournament.setStartDate(startDateStr);  // Đã được chuẩn hóa
         tournament.setEndDate(endDateStr);      // Đã được chuẩn hóa
+        tournament.setFreeToJoin(createTournamentDto.isFreeToJoin());      // Đã được chuẩn hóa
+
         tournament.setStatus(TournamentStatus.NOT_STARTED);  // Trạng thái mặc định là chưa bắt đầu
 
         Tournament savedTournament = tournamentRepository.save(tournament);

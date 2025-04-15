@@ -48,7 +48,7 @@ public class ClientController {
                         Model model) {
         // Kiểm tra đăng nhập đơn giản (username: admin, password: password)
        try{
-           Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username,password), Token.class) ;
+           Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username,password), Token.class,"") ;
 
                session.setAttribute("token", token.getToken());
                session.setAttribute("user", token.getUser());

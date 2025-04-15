@@ -6,6 +6,8 @@ import com.example.tournamentservice.service.TournamentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class TournamentController {
 
@@ -17,8 +19,8 @@ public class TournamentController {
 
 
     @PostMapping("/tournament")
-    public ResponseEntity<?> create( @RequestBody CreateTournamentRequestDto createTournamentDto ) {
-        return this.tournamentService.create(createTournamentDto);
+    public ResponseEntity<?> create(@RequestBody CreateTournamentRequestDto createTournamentDto , HttpServletRequest request) {
+        return this.tournamentService.create(createTournamentDto, request);
     }
 
 

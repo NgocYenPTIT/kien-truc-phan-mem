@@ -1,4 +1,4 @@
-package com.example.tournamentservice.util;
+package com.example.authservice.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
