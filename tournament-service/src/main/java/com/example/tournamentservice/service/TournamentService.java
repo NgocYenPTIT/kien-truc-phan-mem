@@ -1,8 +1,8 @@
 package com.example.tournamentservice.service;
 
-import com.example.tournamentservice.DTOs.CreateTournamentRequestDto;
+import com.example.tournamentservice.DTOs.TournamentDto;
+import com.example.tournamentservice.DTOs.TournamentRoundDto;
 import com.example.tournamentservice.DTOs.ErrorResponseDto;
-import com.example.tournamentservice.DTOs.UserDto;
 import com.example.tournamentservice.constants.CreateTournamentErrorCodes;
 import com.example.tournamentservice.constants.TournamentStatus;
 import com.example.tournamentservice.model.BoardType;
@@ -12,8 +12,10 @@ import com.example.tournamentservice.repository.BoardTypeRepository;
 import com.example.tournamentservice.repository.OrganizingMethodRepository;
 import com.example.tournamentservice.repository.TournamentRepository;
 import com.example.tournamentservice.util.ServiceAPI;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -35,10 +34,13 @@ public class TournamentService {
     private final BoardTypeRepository boardTypeRepository;
     private final OrganizingMethodRepository organizingMethodRepository;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    private  final ServiceAPI serviceAPI;
+    private final ServiceAPI serviceAPI;
 
     @Value("${app.global.url.user-service}")
     private String urlUserService;
+
+    @Value("${app.global.url.tournament-round-service}")
+    private String urlTournamentRoundService;
 
 
     // Pattern cho định dạng "dd/MM/yyyy HH:mm" hoặc "d/M/yyyy H:m"
@@ -58,7 +60,7 @@ public class TournamentService {
     }
 
     @Transactional
-    public ResponseEntity<?> create(CreateTournamentRequestDto createTournamentDto, HttpServletRequest request) {
+    public ResponseEntity<?> create(TournamentDto createTournamentDto, HttpServletRequest request) {
         List<ErrorResponseDto> errors = new ArrayList<>();
 
         // Kiểm tra tên giải đấu có trùng trong DB không
@@ -265,7 +267,7 @@ public class TournamentService {
         Tournament tournament = new Tournament();
         tournament.setName(createTournamentDto.getName());
         tournament.setDescription(createTournamentDto.getDescription());
-        tournament.setOrganizerId((Long)request.getAttribute("id"));
+        tournament.setOrganizerId((Long) request.getAttribute("id"));
         tournament.setBoardTypeId(createTournamentDto.getBoardTypeId());
         tournament.setOrganizingMethodId(createTournamentDto.getOrganizingMethodId());
         tournament.setMaxPlayer(createTournamentDto.getMaxPlayer());
@@ -277,6 +279,23 @@ public class TournamentService {
 
         Tournament savedTournament = tournamentRepository.save(tournament);
 
+
+        for (int i = 0; i < createTournamentDto.getRounds().size(); i++) {
+            TournamentRoundDto round = createTournamentDto.getRounds().get(i);
+            round.setTournamentId(savedTournament.getId());
+            this.serviceAPI.call(urlTournamentRoundService + "tournament-round", HttpMethod.POST, round, TournamentRoundDto.class, (String) request.getAttribute("token"));
+        }
+
         return ResponseEntity.ok(savedTournament);
+    }
+
+    public ResponseEntity<?> getDetail(Long id, HttpServletRequest request) {
+        Tournament tournament = this.tournamentRepository.findById(id).get();
+        Map<String,Object> map = new ObjectMapper().convertValue(tournament, Map.class);
+        // TODO call round;
+        List<TournamentRoundDto> round = this.serviceAPI.callForList(this.urlTournamentRoundService + "tournament/" + id, HttpMethod.GET, null, TournamentRoundDto.class, (String) request.getAttribute("token"));
+
+        map.put("round" , round) ;
+        return ResponseEntity.ok(map);
     }
 }

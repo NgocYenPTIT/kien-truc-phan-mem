@@ -54,8 +54,8 @@ public class ClientController {
                session.setAttribute("user", token.getUser());
 
                // Chuyển đến trang home
-//               return "redirect:/home";
-           return "create-tournament";
+               return "redirect:/home";
+//           return "create-tournament";
 
 
        }catch (Exception e) {

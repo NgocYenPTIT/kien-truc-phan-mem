@@ -24,7 +24,4 @@ public class OrganizingMethod {
 
     private String description;
 
-    // Quan hệ OneToMany với Tournament
-    @OneToMany(mappedBy = "organizingMethod", cascade = CascadeType.ALL)
-    private List<Tournament> tournaments;
 }

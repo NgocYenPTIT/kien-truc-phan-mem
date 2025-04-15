@@ -1,14 +1,15 @@
 package com.example.tournamentservice.model;
 
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
+
 import java.util.List;
 
 @Entity
 @Table(name = "board_types")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardType {
@@ -25,7 +26,5 @@ public class BoardType {
 
     private Boolean isActive;
 
-    // Quan hệ OneToMany với Tournament
-    @OneToMany(mappedBy = "boardType", cascade = CascadeType.ALL)
-    private List<Tournament> tournaments;
+
 }
