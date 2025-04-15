@@ -3,26 +3,17 @@ package com.example.tournamentservice.DTOs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Date;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateTournamentRequestDto {
     private String name;
-
     private String description;
-
     private Long organizerId;
-
-    private Long boardTypeId;
-
-    private Long organizingMethodId;
-
+    private Long boardTypeId;       // ID tham chiếu đến BoardType
+    private Long organizingMethodId; // ID tham chiếu đến OrganizingMethod
     private Integer maxPlayer;
-
-    private Date startDate;
-
-    private Date endDate;
-
+    private String startDate;  // Kiểu String thay vì Date
+    private String endDate;    // Kiểu String thay vì Date
 }
