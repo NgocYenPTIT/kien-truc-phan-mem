@@ -7,16 +7,22 @@ import com.example.clientKTPM.util.ServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.clientKTPM.model.User;
 
 import javax.servlet.http.HttpSession;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Map;
 
 @Controller
@@ -53,21 +59,18 @@ public class ClientController {
                         @RequestParam String password,
                         Model model) {
         // Kiểm tra đăng nhập đơn giản (username: admin, password: password)
-       try{
-           Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username,password), Token.class,"") ;
+        try{
+            Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username,password), Token.class,"") ;
 
-               session.setAttribute("token", token.getToken());
-               session.setAttribute("user", token.getUser());
+            session.setAttribute("token", token.getToken());
+            session.setAttribute("user", token.getUser());
 
-               // Chuyển đến trang home
-               return "redirect:/home";
-//           return "create-tournament";
-
-
-       }catch (Exception e) {
-           model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
-           return "login";
-       }
+            // Chuyển đến trang home
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
+            return "login";
+        }
     }
 
     // Hiển thị trang hello
@@ -94,13 +97,11 @@ public class ClientController {
 
         // Quay lại trang đăng nhập
         return "redirect:/";
-
     }
 
     // Hiển thị trang giải đấu
     @GetMapping("/tournaments")
     public String showTournamentPage(Model model) {
-
         // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
         if (session.getAttribute("user") != null) {
             System.out.println(session.getAttribute("user"));
@@ -120,12 +121,15 @@ public class ClientController {
         return "redirect:/";
     }
 
+    // Phương thức này đã được sửa để trả về ResponseEntity thay vì String
     @PostMapping("/tournament/create")
-    public String createTournamentForm(@RequestBody TournamentDto tournamentData, Model model) {
+    @ResponseBody
+    public ResponseEntity<?> createTournamentForm(@RequestBody TournamentDto tournamentData) {
         // Kiểm tra nếu đã đăng nhập
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Người dùng chưa đăng nhập");
         }
 
         try {
@@ -140,19 +144,47 @@ public class ClientController {
                     TournamentDto.class,
                     token
             );
-            System.out.println("okkkk");
+
+            System.out.println("Tournament created successfully");
             System.out.println(response);
 
-            // Nếu thành công, redirect về trang danh sách giải đấu
-            return "redirect:/tournaments";
+            // Trả về thành công với đối tượng tournament mới
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Nếu có lỗi, trả về trang tạo giải đấu với thông báo lỗi
-            model.addAttribute("urlTournamentService", this.urlTournamentService);
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("user", user);
-            return "create-tournament";
+            // Nếu có lỗi, trả về lỗi dưới dạng JSON với HTTP status 400 Bad Request
+            System.out.println("Error creating tournament: " + e.getMessage());
+
+            String errorMessage = e.getMessage();
+
+            try {
+                // Pattern để tìm các đối tượng JSON trong chuỗi lỗi
+                Pattern pattern = Pattern.compile("\\[\\{.*?\\}\\]");
+                Matcher matcher = pattern.matcher(errorMessage);
+
+                if (matcher.find()) {
+                    // Trích xuất phần JSON từ thông báo lỗi
+                    String jsonError = matcher.group(0);
+                    System.out.println("Extracted error JSON: " + jsonError);
+
+                    // Trả về JSON lỗi với Content-Type là application/json
+                    return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(jsonError);
+                }
+            } catch (Exception ex) {
+                System.out.println("Error processing exception message: " + ex.getMessage());
+            }
+
+            // Nếu không tìm thấy JSON trong thông báo lỗi, trả về định dạng JSON thủ công
+            String formattedError = "[{\"field\":\"general\",\"message\":\""
+                    + errorMessage.replace("\"", "'")
+                    + "\",\"errorCode\":\"T901\"}]";
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(formattedError);
         }
     }
-
-
 }

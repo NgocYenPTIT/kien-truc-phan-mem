@@ -590,6 +590,14 @@
   <div class="floating-piece black"></div>
   <div class="floating-piece white"></div>
 
+  <!-- Add Success Message Container -->
+  <div class="alert alert-success alert-dismissible fade" id="successNotification" role="alert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <span id="successMessage"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
   <div class="container">
     <div class="form-container animate__animated animate__fadeIn">
       <!-- Error notification - Đã xóa class "show" -->
@@ -897,7 +905,6 @@
       };
 
       // Thu thập dữ liệu các vòng đấu - tất cả vòng đều có status là "CHƯA BẮT ĐẦU"
-      const roundsData = [];
       $('.round-container').each(function(index) {
         // Tất cả vòng đấu khi tạo mới đều có trạng thái "CHƯA BẮT ĐẦU"
         const roundNumber = index + 1;
@@ -915,84 +922,262 @@
       });
 
       // Gửi dữ liệu bằng fetch API
+      // Gửi dữ liệu bằng fetch API
       fetch('/tournament/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(formData)
       })
               .then(response => {
+                console.log("Response status:", response.status);
+                console.log("Response headers:", response.headers);
+                console.log("Content-Type:", response.headers.get('content-type'));
+
+                // Store original response for checking redirect status
+                const originalResponse = response.clone();
+
+                // Check if the response is a redirect
                 if (response.redirected) {
-                  window.location.href = response.url;
-                  return;
+                  console.log("Redirected to:", response.url);
+                  showSuccessMessage("Tạo giải đấu thành công!");
+                  setTimeout(() => {
+                    window.location.href = response.url;
+                  }, 1500);
+                  return null;
                 }
 
-                return response.json().then(data => {
-                  if (!response.ok) {
-                    throw new Error(JSON.stringify(data));
-                  }
-                  return data;
-                });
+                // Parse response based on content type
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                  return response.json().then(data => {
+                    console.log("Parsed JSON data:", data);
+                    if (!response.ok) {
+                      throw { data: data, status: response.status };
+                    }
+                    return { data, originalResponse };
+                  });
+                } else {
+                  return response.text().then(text => {
+                    console.log("Response as text:", text.substring(0, 100));
+                    if (!response.ok) {
+                      // Try to parse text as JSON if it looks like JSON
+                      if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
+                        try {
+                          const jsonData = JSON.parse(text);
+                          throw { data: jsonData, status: response.status };
+                        } catch (e) {
+                          console.error("Failed to parse response as JSON:", e);
+                        }
+                      }
+                      throw { htmlContent: text, status: response.status };
+                    }
+                    return { data: { message: "Success" }, originalResponse };
+                  });
+                }
               })
-              .then(data => {
-                window.location.href = '/tournaments';
+              .then(result => {
+                // Handle success
+                if (result) {
+                  showSuccessMessage("Tạo giải đấu thành công!");
+                  setTimeout(() => {
+                    window.location.href = '/tournaments';
+                  }, 1500);
+                }
               })
               .catch(error => {
+                // Reset the submit button
                 $('.btn-submit').html('<i class="fas fa-plus-circle btn-icon"></i> Tạo giải đấu');
                 $('.btn-submit').attr('disabled', false);
 
+                // Clear previous errors
+                $('#errorList').empty();
+                $('#errorNotification').addClass('show');
+                $('#validationSummary').addClass('show');
+
+                console.error('Error during form submission:', error);
+
+                // Process and display error messages
                 try {
-                  let errorData;
-                  if (typeof error.message === 'string') {
-                    try {
-                      errorData = JSON.parse(error.message);
-                    } catch (e) {
-                      errorData = { message: error.message };
+                  if (error.data) {
+                    console.log("Error data:", error.data);
+                    console.log("Error data type:", typeof error.data);
+
+                    let errorData = error.data;
+
+                    // Handle error data based on type
+                    if (Array.isArray(errorData)) {
+                      // Direct array of errors
+                      processValidationErrors(errorData);
                     }
-                  } else {
-                    errorData = error;
-                  }
-
-                  $('#errorNotification').addClass('show');
-                  $('#validationSummary').addClass('show');
-                  $('#errorList').empty();
-
-                  if (errorData.errors && Array.isArray(errorData.errors)) {
-                    errorData.errors.forEach(function(err) {
-                      // Xử lý các loại lỗi khác nhau dựa vào errorCode
-                      if (err.errorCode === "T001" || err.errorCode === "NAME_ALREADY_EXISTS") {
-                        showValidationError($('#name'), $('#nameError'), err.message);
-                      } else if (err.errorCode === "MAX_PLAYER_LESS_THAN_ONE" || err.errorCode === "MAX_PLAYER_NOT_EVEN") {
-                        showValidationError($('#maxPlayer'), $('#maxPlayerError'), err.message);
-                      } else if (err.errorCode === "START_DATE_EMPTY" || err.errorCode === "START_DATE_INVALID_FORMAT" ||
-                              err.errorCode === "START_DATE_PARSE_ERROR" || err.errorCode === "START_DATE_IN_PAST") {
-                        showValidationError($('#startDateInputs'), $('#startDateError'), err.message);
-                      } else if (err.errorCode === "END_DATE_EMPTY" || err.errorCode === "END_DATE_INVALID_FORMAT" ||
-                              err.errorCode === "END_DATE_PARSE_ERROR") {
-                        showValidationError($('#endDateInputs'), $('#endDateError'), err.message);
-                      } else if (err.errorCode === "START_DATE_AFTER_END_DATE" || err.errorCode === "TOURNAMENT_DURATION_TOO_SHORT") {
-                        showValidationError($('#endDateInputs'), $('#dateRangeError'), err.message);
-                      } else {
-                        // Các lỗi khác
-                        $('#errorList').append(`<li>${err.message} (${err.field})</li>`);
+                    else if (typeof errorData === 'string') {
+                      // Try to parse string as JSON
+                      try {
+                        const parsedData = JSON.parse(errorData);
+                        console.log("Successfully parsed error string to JSON:", parsedData);
+                        if (Array.isArray(parsedData)) {
+                          processValidationErrors(parsedData);
+                        } else if (parsedData.errors && Array.isArray(parsedData.errors)) {
+                          processValidationErrors(parsedData.errors);
+                        } else {
+                          $('#errorList').append(`<li>${parsedData.message || 'Lỗi không xác định'}</li>`);
+                        }
+                      } catch (e) {
+                        // Not valid JSON, display as string
+                        console.error("Error parsing error data:", e);
+                        $('#errorList').append(`<li>Lỗi: ${errorData}</li>`);
                       }
-                    });
-                  } else {
-                    $('#errorList').append(`<li>Đã xảy ra lỗi: ${error.message}</li>`);
+                    }
+                    else if (errorData.errors && Array.isArray(errorData.errors)) {
+                      // Array inside an object
+                      processValidationErrors(errorData.errors);
+                    }
+                    else if (errorData.errorCode || errorData.field || errorData.message) {
+                      // Single error object
+                      processValidationErrors([errorData]);
+                    }
+                    else {
+                      // Generic error message
+                      $('#errorList').append(`<li>Lỗi: ${errorData.message || 'Đã xảy ra lỗi khi tạo giải đấu'}</li>`);
+                    }
+                  }
+                  else if (error.htmlContent) {
+                    // Try to extract error information from HTML
+                    const htmlContent = error.htmlContent;
+                    if (htmlContent.includes('400 Bad Request') && htmlContent.includes('Tên giải đấu đã tồn tại')) {
+                      showValidationError($('#name'), $('#nameError'), 'Tên giải đấu đã tồn tại');
+                    } else {
+                      $('#errorList').append(`<li>Lỗi máy chủ: Vui lòng thử lại sau hoặc liên hệ quản trị viên</li>`);
+                      console.error('Server returned HTML instead of JSON:', htmlContent.substring(0, 200) + '...');
+                    }
+                  }
+                  else {
+                    // Generic error
+                    $('#errorList').append(`<li>Đã xảy ra lỗi: ${error.message || 'Không thể kết nối đến máy chủ'}</li>`);
                   }
                 } catch (e) {
-                  $('#errorList').append(`<li>Đã xảy ra lỗi không xác định: ${error.message || 'Lỗi không xác định'}</li>`);
-                  $('#errorNotification').addClass('show');
-                  $('#validationSummary').addClass('show');
+                  console.error("Error in error handling:", e);
+                  $('#errorList').append(`<li>Đã xảy ra lỗi không xác định</li>`);
                 }
 
+                // Scroll to the error notification
                 $('html, body').animate({
                   scrollTop: $('#errorNotification').offset().top - 100
                 }, 500);
               });
     });
+
+    // Process validation errors from the server
+    function processValidationErrors(errors) {
+      if (!errors || errors.length === 0) {
+        $('#errorList').append(`<li>Đã xảy ra lỗi không xác định</li>`);
+        return;
+      }
+
+      // Process each error and update the form UI
+      errors.forEach(function(err) {
+        let fieldName = err.field || '';
+        let errorMessage = err.message || 'Lỗi không xác định';
+        let errorCode = err.errorCode || '';
+
+        console.log("Processing error:", { fieldName, errorMessage, errorCode });
+
+        // T001-T004: Lỗi liên quan đến tên giải đấu
+        if (errorCode === "T001" || errorCode === "T002" || errorCode === "T003" ||
+                errorCode === "T004" || errorCode === "NAME_ALREADY_EXISTS" ||
+                fieldName === "name") {
+          showValidationError($('#name'), $('#nameError'), errorMessage);
+        }
+        // T401-T405: Lỗi liên quan đến số lượng người chơi
+        else if (errorCode === "T401" || errorCode === "T402" || errorCode === "T403" ||
+                errorCode === "T404" || errorCode === "T405" ||
+                errorCode === "MAX_PLAYER_LESS_THAN_ONE" || errorCode === "MAX_PLAYER_NOT_EVEN" ||
+                errorCode === "MAX_PLAYER_TOO_LARGE" || errorCode === "MAX_PLAYER_TOO_SMALL" ||
+                fieldName === "maxPlayer") {
+          showValidationError($('#maxPlayer'), $('#maxPlayerError'), errorMessage);
+        }
+        // T101-T105: Lỗi liên quan đến ngày bắt đầu
+        else if (errorCode === "T101" || errorCode === "T102" || errorCode === "T103" ||
+                errorCode === "T104" || errorCode === "T105" ||
+                errorCode === "START_DATE_EMPTY" || errorCode === "START_DATE_INVALID_FORMAT" ||
+                errorCode === "START_DATE_PARSE_ERROR" || errorCode === "START_DATE_IN_PAST" ||
+                fieldName === "startDate") {
+          showValidationError($('#startDateInputs'), $('#startDateError'), errorMessage);
+        }
+        // T201-T204: Lỗi liên quan đến ngày kết thúc
+        else if (errorCode === "T201" || errorCode === "T202" || errorCode === "T203" ||
+                errorCode === "T204" ||
+                errorCode === "END_DATE_EMPTY" || errorCode === "END_DATE_INVALID_FORMAT" ||
+                errorCode === "END_DATE_PARSE_ERROR" || fieldName === "endDate") {
+          showValidationError($('#endDateInputs'), $('#endDateError'), errorMessage);
+        }
+        // T301-T303: Lỗi liên quan đến thời gian
+        else if (errorCode === "T301" || errorCode === "T302" || errorCode === "T303" ||
+                errorCode === "START_DATE_AFTER_END_DATE" || errorCode === "TOURNAMENT_DURATION_TOO_SHORT" ||
+                errorCode === "TOURNAMENT_DURATION_TOO_LONG" || fieldName === "dateRange") {
+          showValidationError($('#endDateInputs'), $('#dateRangeError'), errorMessage);
+        }
+        // T501, T503: Lỗi liên quan đến loại bàn cờ
+        else if (errorCode === "T501" || errorCode === "T503" ||
+                errorCode === "BOARD_TYPE_NOT_FOUND" || errorCode === "BOARD_TYPE_INACTIVE" ||
+                fieldName === "boardTypeId") {
+          // Check if error element already exists
+          if ($('#boardTypeError').length === 0) {
+            // Add validation error for board type
+            const errorElement = $('<div class="validation-error show" id="boardTypeError"></div>');
+            $('#boardTypeId').after(errorElement);
+          }
+          showValidationError($('#boardTypeId'), $('#boardTypeError'), errorMessage);
+        }
+        // T502: Lỗi liên quan đến phương thức tổ chức
+        else if (errorCode === "T502" ||
+                errorCode === "ORGANIZING_METHOD_NOT_FOUND" || fieldName === "organizingMethodId") {
+          // Check if error element already exists
+          if ($('#organizingMethodError').length === 0) {
+            // Add validation error for organizing method
+            const errorElement = $('<div class="validation-error show" id="organizingMethodError"></div>');
+            $('#organizingMethodId').after(errorElement);
+          }
+          showValidationError($('#organizingMethodId'), $('#organizingMethodError'), errorMessage);
+        }
+        // T601-T602: Lỗi liên quan đến mô tả
+        else if (errorCode === "T601" || errorCode === "T602" || fieldName === "description") {
+          // Check if error element already exists
+          if ($('#descriptionError').length === 0) {
+            // Add validation error for description
+            const errorElement = $('<div class="validation-error show" id="descriptionError"></div>');
+            $('#description').after(errorElement);
+          }
+          showValidationError($('#description'), $('#descriptionError'), errorMessage);
+        }
+        // T901-T902: Lỗi hệ thống
+        else if (errorCode === "T901" || errorCode === "T902" ||
+                errorCode === "SYSTEM_ERROR" || errorCode === "DATABASE_ERROR") {
+          $('#errorList').append(`<li>Lỗi hệ thống: ${errorMessage}</li>`);
+        }
+        else {
+          // For any other errors, add to the error list
+          $('#errorList').append(`<li>${errorMessage} ${fieldName ? `(${fieldName})` : ''}</li>`);
+        }
+      });
+    }
   });
+
+  // Show success message
+  function showSuccessMessage(message) {
+    $('#successMessage').text(message);
+    $('#successNotification').css('display', 'block').addClass('show');
+
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      $('#successNotification').removeClass('show');
+      setTimeout(() => {
+        $('#successNotification').css('display', 'none');
+      }, 300);
+    }, 3000);
+  }
 
   // Clear all validation errors
   function resetValidationErrors() {
