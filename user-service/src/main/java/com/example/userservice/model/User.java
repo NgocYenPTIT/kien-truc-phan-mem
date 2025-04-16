@@ -50,8 +50,6 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastAccess;
 
-    private int elo;
-
     // Thêm các trường audit
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

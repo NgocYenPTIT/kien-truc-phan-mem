@@ -26,7 +26,7 @@ public class TournamentPlayerController {
 //    }
 
     @GetMapping("/tournament/{id}")
-    public ResponseEntity<?> getListRound(@PathVariable Long id) {
+    public ResponseEntity<?> getListPlayers(@PathVariable Long id) {
         return this.tournamentPlayerService.getListPlayers(id);
     }
 }

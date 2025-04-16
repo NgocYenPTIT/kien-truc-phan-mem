@@ -27,5 +27,10 @@ public class TournamentController {
         return this.tournamentService.getDetail(id, request);
     }
 
+    @GetMapping("/tournament")
+    public ResponseEntity<?> getList(@RequestParam("username") String name,  HttpServletRequest request) {
+        return this.tournamentService.getList(name, request);
+    }
+
 
 }

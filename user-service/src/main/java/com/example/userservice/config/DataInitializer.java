@@ -29,7 +29,7 @@ public class DataInitializer {
                 admin.setEmail("admin@example.com");
                 admin.setPhoneNumber("0987654321");
                 admin.setLastAccess(now);
-                admin.setElo(2000);
+//                admin.setElo(2000);
 
 
                 // User 2 - Người chơi cờ tích cực
@@ -41,7 +41,7 @@ public class DataInitializer {
                 activePlayer.setEmail("player1@example.com");
                 activePlayer.setPhoneNumber("0901234567");
                 activePlayer.setLastAccess(now);
-                activePlayer.setElo(1750);
+//                activePlayer.setElo(1750);
 
 
                 // User 3 - Người chơi nữ
@@ -53,7 +53,7 @@ public class DataInitializer {
                 femalePlayer.setEmail("player2@example.com");
                 femalePlayer.setPhoneNumber("0912345678");
                 femalePlayer.setLastAccess(now);
-                femalePlayer.setElo(1620);
+//                femalePlayer.setElo(1620);
 
 
                 // Lưu cả 3 bản ghi vào database

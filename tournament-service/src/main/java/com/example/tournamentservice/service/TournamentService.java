@@ -1,8 +1,6 @@
 package com.example.tournamentservice.service;
 
-import com.example.tournamentservice.DTOs.TournamentDto;
-import com.example.tournamentservice.DTOs.TournamentRoundDto;
-import com.example.tournamentservice.DTOs.ErrorResponseDto;
+import com.example.tournamentservice.DTOs.*;
 import com.example.tournamentservice.constants.CreateTournamentErrorCodes;
 import com.example.tournamentservice.constants.TournamentStatus;
 import com.example.tournamentservice.model.BoardType;
@@ -41,6 +39,9 @@ public class TournamentService {
 
     @Value("${app.global.url.tournament-round-service}")
     private String urlTournamentRoundService;
+
+    @Value("${app.global.url.tournament-player-service}")
+    private String urlTournamentPlayerService;
 
 
     // Pattern cho định dạng "dd/MM/yyyy HH:mm" hoặc "d/M/yyyy H:m"
@@ -298,4 +299,53 @@ public class TournamentService {
         map.put("round" , round) ;
         return ResponseEntity.ok(map);
     }
+    public ResponseEntity<?> getList(String name, HttpServletRequest request) {
+        List<Tournament> tournaments = new ArrayList<>();
+        if (name != null && !name.trim().isEmpty()) {
+            // Find tournaments containing the name string in their name
+            tournaments = this.tournamentRepository.findByNameContaining(name);
+        } else {
+            // Get all non-deleted tournaments
+            tournaments = this.tournamentRepository.findByDeletedAtIsNull();
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for(Tournament tournament : tournaments) {
+            Map<String, Object> tournamentInfo = new HashMap<>() ;
+            tournamentInfo.put("id", tournament.getId());
+            tournamentInfo.put("name", tournament.getName());
+            tournamentInfo.put("status", tournament.getStatus());
+            tournamentInfo.put("startDate", tournament.getStartDate());
+            tournamentInfo.put("endDate", tournament.getEndDate());
+
+            // Get organizer info
+            UserDto organizer = this.serviceAPI.call(
+                    this.urlUserService + "user/" + tournament.getOrganizerId(),
+                    HttpMethod.GET,
+                    null,
+                    UserDto.class,
+                    (String) request.getAttribute("token")
+            );
+
+            // Get participant count
+            List<TournamentPlayerDto> participants = this.serviceAPI.callForList(
+                    this.urlTournamentPlayerService + "tournament/" + tournament.getId(),
+                    HttpMethod.GET,
+                    null,
+                    TournamentPlayerDto.class,
+                    (String) request.getAttribute("token")
+            );
+
+            // Add organizer and participant count to tournament info
+            tournamentInfo.put("organizer", organizer.getUsername());
+            tournamentInfo.put("participantNum", participants.size() + "/" + tournament.getMaxPlayer());
+
+            // Add this combined info to result list
+            result.add(tournamentInfo);
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
 }
