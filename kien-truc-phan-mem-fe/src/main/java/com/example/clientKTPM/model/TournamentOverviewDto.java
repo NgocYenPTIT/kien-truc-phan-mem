@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class A {
+public class TournamentOverviewDto {
     private Long id;
     private String name;
     private String participantNum;
