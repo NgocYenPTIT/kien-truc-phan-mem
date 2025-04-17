@@ -24,6 +24,9 @@ public class TournamentPlayer {
 
     private Long playerId;
 
+    private String playerName;
+
+
     private String status;     // Trạng thái của giải đấu
 
     // Thêm các trường audit

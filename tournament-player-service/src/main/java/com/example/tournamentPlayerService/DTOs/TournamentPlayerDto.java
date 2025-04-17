@@ -12,6 +12,7 @@ public class TournamentPlayerDto {
     private Long id;
     private Long tournamentId;
     private Long playerId;
+    private String playerName;
     private String status;
     private Date createdAt;
     private Date updatedAt;

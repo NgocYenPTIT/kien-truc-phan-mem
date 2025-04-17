@@ -25,8 +25,9 @@ public class TournamentController {
 
 
     @GetMapping("/tournament")
-    public ResponseEntity<?> getList(@RequestParam("username") String name,  HttpServletRequest request) {
-        return this.tournamentService.getList(name, request);
+    public ResponseEntity<?> getList(@RequestParam("name") String name,@RequestParam("flag") String flag,@RequestParam("currentPage") Long currentPage , @RequestParam("pageSize") Long pageSize,  HttpServletRequest request) {
+        System.out.println("'gooooooooooooooo'");
+        return this.tournamentService.getList(name,flag, currentPage,pageSize,request);
     }
 
     @GetMapping("/tournament/{id}")

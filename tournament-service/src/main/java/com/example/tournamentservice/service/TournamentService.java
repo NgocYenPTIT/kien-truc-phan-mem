@@ -13,6 +13,10 @@ import com.example.tournamentservice.util.ServiceAPI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +47,6 @@ public class TournamentService {
     @Value("${app.global.url.tournament-player-service}")
     private String urlTournamentPlayerService;
 
-
-    // Pattern cho định dạng "dd/MM/yyyy HH:mm" hoặc "d/M/yyyy H:m"
     private final Pattern datePattern = Pattern.compile(
             "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})\\s([0-9]{1,2}):([0-9]{1,2})$");
 
@@ -52,8 +54,7 @@ public class TournamentService {
     public TournamentService(TournamentRepository tournamentRepository,
                              BoardTypeRepository boardTypeRepository,
                              OrganizingMethodRepository organizingMethodRepository,
-                             ServiceAPI serviceAPI
-    ) {
+                             ServiceAPI serviceAPI) {
         this.tournamentRepository = tournamentRepository;
         this.boardTypeRepository = boardTypeRepository;
         this.organizingMethodRepository = organizingMethodRepository;
@@ -292,27 +293,82 @@ public class TournamentService {
 
     public ResponseEntity<?> getDetail(Long id, HttpServletRequest request) {
         Tournament tournament = this.tournamentRepository.findById(id).get();
-        Map<String,Object> map = new ObjectMapper().convertValue(tournament, Map.class);
+        Map<String, Object> map = new ObjectMapper().convertValue(tournament, Map.class);
         // TODO call round;
         List<TournamentRoundDto> round = this.serviceAPI.callForList(this.urlTournamentRoundService + "tournament/" + id, HttpMethod.GET, null, TournamentRoundDto.class, (String) request.getAttribute("token"));
 
-        map.put("round" , round) ;
+        map.put("round", round);
         return ResponseEntity.ok(map);
     }
-    public ResponseEntity<?> getList(String name, HttpServletRequest request) {
-        List<Tournament> tournaments = new ArrayList<>();
-        if (name != null && !name.trim().isEmpty()) {
-            // Find tournaments containing the name string in their name
-            tournaments = this.tournamentRepository.findByNameContaining(name);
-        } else {
-            // Get all non-deleted tournaments
-            tournaments = this.tournamentRepository.findByDeletedAtIsNull();
+
+    public ResponseEntity<?> getList(String name, String flag, Long currentPage, Long pageSize, HttpServletRequest request) {
+        // Lấy playerId từ request
+        Long playerId = (Long) request.getAttribute("id");
+        if (playerId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Player ID is required");
+        }
+
+        // Kiểm tra tham số phân trang
+        if (currentPage < 1 || pageSize < 1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid page or page size");
+        }
+
+        // Thiết lập phân trang và sắp xếp theo name
+        Pageable pageable = PageRequest.of(
+                currentPage.intValue() - 1, // currentPage bắt đầu từ 1, PageRequest dùng index từ 0
+                pageSize.intValue(),
+                Sort.by("name").ascending() // Sắp xếp theo name
+        );
+
+        Page<Tournament> tournamentPage;
+        boolean hasName = name != null && !name.trim().isEmpty();
+
+        // Chọn truy vấn dựa trên flag
+        switch (flag) {
+            case "all":
+                if (hasName) {
+                    tournamentPage = tournamentRepository.findByNameContainingIgnoreCaseAndDeletedAtIsNull(name, pageable);
+                } else {
+                    tournamentPage = tournamentRepository.findByDeletedAtIsNull(pageable);
+                }
+                break;
+
+            case "is_create_and_join":
+                if (hasName) {
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+                            playerId, name, pageable);
+                } else {
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinTrueAndDeletedAtIsNull(playerId, pageable);
+                }
+                break;
+
+            case "is_only_create":
+                if (hasName) {
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+                            playerId, name, pageable);
+                } else {
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinFalseAndDeletedAtIsNull(playerId, pageable);
+                }
+                break;
+
+            case "is_only_join":
+                if (hasName) {
+                    tournamentPage = tournamentRepository.findByOrganizerIdNotAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+                            playerId, name, pageable);
+                } else {
+                    tournamentPage = tournamentRepository.findByOrganizerIdNotAndDeletedAtIsNull(playerId, pageable);
+                }
+                break;
+
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid flag value");
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
 
-        for(Tournament tournament : tournaments) {
-            Map<String, Object> tournamentInfo = new HashMap<>() ;
+        // Xử lý từng tournament trong trang
+        for (Tournament tournament : tournamentPage.getContent()) {
+            Map<String, Object> tournamentInfo = new HashMap<>();
             tournamentInfo.put("id", tournament.getId());
             tournamentInfo.put("name", tournament.getName());
             tournamentInfo.put("status", tournament.getStatus());
@@ -329,23 +385,30 @@ public class TournamentService {
             );
 
             // Get participant count
-            List<TournamentPlayerDto> participants = this.serviceAPI.callForList(
-                    this.urlTournamentPlayerService + "tournament/" + tournament.getId(),
+            TournamentPlayerPageableDto participants = this.serviceAPI.call(
+                    this.urlTournamentPlayerService + "tournament/" + tournament.getId() + "?username=&currentPage=1&pageSize=10",
                     HttpMethod.GET,
                     null,
-                    TournamentPlayerDto.class,
+                    TournamentPlayerPageableDto.class,
                     (String) request.getAttribute("token")
             );
 
             // Add organizer and participant count to tournament info
-            tournamentInfo.put("organizer", organizer.getUsername());
-            tournamentInfo.put("participantNum", participants.size() + "/" + tournament.getMaxPlayer());
+            tournamentInfo.put("organizer", organizer != null ? organizer.getUsername() : "Unknown");
+            tournamentInfo.put("participantNum", participants != null ? participants.getTotalItems() + "/" + tournament.getMaxPlayer() : "0/" + tournament.getMaxPlayer());
 
             // Add this combined info to result list
             result.add(tournamentInfo);
         }
 
-        return ResponseEntity.ok(result);
-    }
+        // Tạo response với thông tin phân trang
+        Map<String, Object> response = new HashMap<>();
+        response.put("tournaments", result);
+        response.put("currentPage", tournamentPage.getNumber() + 1);
+        response.put("totalPages", tournamentPage.getTotalPages());
+        response.put("totalItems", tournamentPage.getTotalElements());
+        response.put("pageSize", pageSize);
 
+        return ResponseEntity.ok(response);
+    }
 }
