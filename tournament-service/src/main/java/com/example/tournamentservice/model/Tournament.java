@@ -23,6 +23,7 @@ public class Tournament {
     private String name;
 
     private boolean freeToJoin;
+    private boolean isJoin;
     private String description;
     private Long organizerId;
 

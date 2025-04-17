@@ -156,198 +156,6 @@
             }
         }
 
-        .tournament-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .tournament-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .tournament-card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
-            color: white;
-            padding: 1rem;
-            position: relative;
-        }
-
-        .tournament-card-body {
-            padding: 1.5rem;
-        }
-
-        .tournament-name {
-            margin: 0;
-            font-weight: bold;
-            font-size: 1.25rem;
-        }
-
-        .tournament-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 0.8rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .status-active {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .status-upcoming {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .status-completed {
-            background-color: #95a5a6;
-            color: white;
-        }
-
-        .tournament-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            color: #7f8c8d;
-        }
-
-        .tournament-info i {
-            width: 25px;
-            color: var(--primary-color);
-            margin-right: 10px;
-        }
-
-        .tournament-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-        }
-
-        .btn-action {
-            margin-left: 0.5rem;
-            font-size: 0.9rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-        }
-
-        .nav-tabs {
-            border-bottom: 2px solid var(--secondary-color);
-            margin-bottom: 2rem;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            color: var(--primary-color);
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-tabs .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--secondary-color);
-            transition: width 0.3s ease;
-        }
-
-        .nav-tabs .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: transparent;
-            color: var(--secondary-color);
-            font-weight: bold;
-        }
-
-        .nav-tabs .nav-link.active::after {
-            width: 100%;
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .search-input {
-            border: none;
-            border-radius: 50px;
-            padding: 0.75rem 1.5rem;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            outline: none;
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .search-btn:hover {
-            background-color: #16a085;
-            transform: scale(1.05);
-        }
-
-        /* Card animations */
-        .tournament-card {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.5s forwards;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .tournament-card:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .tournament-card:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .tournament-card:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        .tournament-card:nth-child(5) {
-            animation-delay: 0.4s;
-        }
-
         /* Othello piece rotating animation */
         @keyframes flip {
             0% {
@@ -370,18 +178,6 @@
             animation: flip 3s infinite linear;
             margin-right: 10px;
             vertical-align: middle;
-        }
-
-        .tournament-actions .btn-sm {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-        }
-
-        .tournament-actions .btn-sm:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* Tournament tab content animation */
@@ -421,6 +217,82 @@
         .btn-create-tournament:hover:after {
             -webkit-transform: translateX(-9%) translateY(-25%) rotate(45deg);
             transform: translateX(-9%) translateY(-25%) rotate(45deg);
+        }
+
+        .filter-card {
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            height: 100%;
+        }
+
+        .filter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+        }
+
+        .filter-card-body {
+            padding: 1.5rem;
+            background-color: white;
+        }
+
+        .filter-description {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .filter-count {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tabs .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: transparent;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .nav-tabs .nav-link.active::after {
+            width: 100%;
         }
     </style>
 </head>
@@ -500,183 +372,79 @@
         <div class="tab-content" id="tournamentTabsContent">
             <!-- Tournaments Tab -->
             <div class="tab-pane fade show active" id="tournaments" role="tabpanel" aria-labelledby="tournaments-tab">
-                <!-- Search Bar -->
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Tìm kiếm giải đấu..." id="searchTournament">
-                    <button class="search-btn" id="searchBtn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-
-                <!-- Tournament Filters -->
-                <div class="tournament-filters d-flex justify-content-between align-items-center mb-4">
-                    <div class="filter-option active" data-filter="all">
-                        <i class="fas fa-th-list mr-2"></i> Tất cả
-                    </div>
-                    <div class="filter-option" data-filter="organizer-participant">
-                        <i class="fas fa-user-plus mr-2"></i> Tổ chức & Tham gia
-                    </div>
-                    <div class="filter-option" data-filter="organizer-only">
-                        <i class="fas fa-user-tie mr-2"></i> Chỉ tổ chức
-                    </div>
-                    <div class="filter-option" data-filter="participant-only">
-                        <i class="fas fa-user-friends mr-2"></i> Chỉ tham gia
-                    </div>
-                </div>
-
-                <!-- Tournament List -->
-                <div class="tournament-list">
-                    <!-- Tournament Item 1 -->
-                    <div class="tournament-card" data-type="organizer-participant">
-                        <a href="/tournament/1" class="text-decoration-none">
-                            <div class="tournament-card-header">
-                                <h5 class="tournament-name">Giải đấu Othello Mùa Xuân 2025</h5>
-                                <span class="tournament-status status-active">Đang diễn ra</span>
+                <div class="row">
+                    <!-- All Tournaments Card -->
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card filter-card shadow">
+                            <div class="filter-card-header">
+                                <i class="fas fa-th-list mr-2"></i> Tất cả giải đấu
                             </div>
-                            <div class="tournament-card-body">
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Bắt đầu: 10/04/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-check"></i>
-                                    <span>Kết thúc: 20/04/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Người tổ chức: Admin</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-users"></i>
-                                    <span>Số người tham gia: 16/32</span>
-                                </div>
-                                <div class="tournament-actions">
-                                    <a href="/tournament/1/details" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                            <div class="filter-card-body">
+                                <p class="filter-description">Xem tất cả các giải đấu bạn đã tham gia hoặc tổ chức</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="filter-count">24 giải đấu</div>
+                                    <a href="/tournaments/all" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
 
-                    <!-- Tournament Item 2 -->
-                    <div class="tournament-card" data-type="organizer-only">
-                        <a href="/tournament/2" class="text-decoration-none">
-                            <div class="tournament-card-header">
-                                <h5 class="tournament-name">Giải đấu Othello Cấp Cao 2025</h5>
-                                <span class="tournament-status status-upcoming">Sắp diễn ra</span>
+                    <!-- Organize & Participate Card -->
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card filter-card shadow">
+                            <div class="filter-card-header">
+                                <i class="fas fa-user-plus mr-2"></i> Tổ chức & Tham gia
                             </div>
-                            <div class="tournament-card-body">
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Bắt đầu: 01/05/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-check"></i>
-                                    <span>Kết thúc: 15/05/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Người tổ chức: Admin</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-users"></i>
-                                    <span>Số người tham gia: 8/16</span>
-                                </div>
-                                <div class="tournament-actions">
-                                    <a href="/tournament/2/details" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                            <div class="filter-card-body">
+                                <p class="filter-description">Các giải đấu do bạn tổ chức và tham gia</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="filter-count">6 giải đấu</div>
+                                    <a href="/tournaments/organize-participate" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
 
-                    <!-- Tournament Item 3 -->
-                    <div class="tournament-card" data-type="participant-only">
-                        <a href="/tournament/3" class="text-decoration-none">
-                            <div class="tournament-card-header">
-                                <h5 class="tournament-name">Giải đấu Othello Cộng đồng</h5>
-                                <span class="tournament-status status-active">Đang diễn ra</span>
+                    <!-- Only Organize Card -->
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card filter-card shadow">
+                            <div class="filter-card-header">
+                                <i class="fas fa-user-tie mr-2"></i> Chỉ tổ chức
                             </div>
-                            <div class="tournament-card-body">
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Bắt đầu: 05/04/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-check"></i>
-                                    <span>Kết thúc: 25/04/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Người tổ chức: OthelloMaster</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-users"></i>
-                                    <span>Số người tham gia: 24/32</span>
-                                </div>
-                                <div class="tournament-actions">
-                                    <a href="/tournament/3/details" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                            <div class="filter-card-body">
+                                <p class="filter-description">Các giải đấu do bạn tổ chức nhưng không tham gia</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="filter-count">8 giải đấu</div>
+                                    <a href="/tournaments/organize-only" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
 
-                    <!-- Tournament Item 4 -->
-                    <div class="tournament-card" data-type="organizer-participant">
-                        <a href="/tournament/4" class="text-decoration-none">
-                            <div class="tournament-card-header">
-                                <h5 class="tournament-name">Giải đấu Othello Giao lưu</h5>
-                                <span class="tournament-status status-completed">Đã kết thúc</span>
+                    <!-- Only Participate Card -->
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card filter-card shadow">
+                            <div class="filter-card-header">
+                                <i class="fas fa-user-friends mr-2"></i> Chỉ tham gia
                             </div>
-                            <div class="tournament-card-body">
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>Bắt đầu: 01/03/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="far fa-calendar-check"></i>
-                                    <span>Kết thúc: 15/03/2025</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Người tổ chức: Admin</span>
-                                </div>
-                                <div class="tournament-info">
-                                    <i class="fas fa-users"></i>
-                                    <span>Số người tham gia: 8/8</span>
-                                </div>
-                                <div class="tournament-actions">
-                                    <a href="/tournament/4/details" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                            <div class="filter-card-body">
+                                <p class="filter-description">Các giải đấu bạn tham gia với tư cách người chơi</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="filter-count">10 giải đấu</div>
+                                    <a href="/tournaments/participate-only" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Pagination for tournament list -->
-                <nav aria-label="Phân trang giải đấu">
-                    <ul class="pagination justify-content-center mt-4">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
 
             <!-- Invitations Tab -->
@@ -687,8 +455,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-envelope-open-text mr-2"></i> Lời mời tham gia giải đấu của bạn</h5>
                             <span class="badge badge-light rounded-pill px-3 py-2">
-                                    <i class="fas fa-user-plus mr-1"></i> 4 lời mời
-                                </span>
+                                <i class="fas fa-user-plus mr-1"></i> 4 lời mời
+                            </span>
                         </div>
                     </div>
                     <div class="card-body">
@@ -707,96 +475,10 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- Invitation 1 -->
-                                <tr>
-                                    <td>Giải đấu Othello Mùa Xuân 2025</td>
-                                    <td>OthelloPlayer123</td>
-                                    <td>10/04/2025</td>
-                                    <td>20/04/2025</td>
-                                    <td>16/32</td>
-                                    <td>08/04/2025 09:15</td>
-                                    <td><span class="badge badge-warning">Chờ phê duyệt</span></td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-success invitation-action" data-action="accept" data-id="1">
-                                                <i class="fas fa-check mr-1"></i> Chấp nhận
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger invitation-action" data-action="reject" data-id="1">
-                                                <i class="fas fa-times mr-1"></i> Từ chối
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- Invitation 2 -->
-                                <tr>
-                                    <td>Giải đấu Othello Mùa Xuân 2025</td>
-                                    <td>ProPlayer456</td>
-                                    <td>10/04/2025</td>
-                                    <td>20/04/2025</td>
-                                    <td>16/32</td>
-                                    <td>07/04/2025 14:22</td>
-                                    <td><span class="badge badge-success">Đã chấp nhận</span></td>
-                                    <td>
-                                        <div class="text-muted">
-                                            <i class="fas fa-check-circle mr-1"></i> Đã xử lý
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- Invitation 3 -->
-                                <tr>
-                                    <td>Giải đấu Othello Cấp Cao 2025</td>
-                                    <td>Challenger789</td>
-                                    <td>01/05/2025</td>
-                                    <td>15/05/2025</td>
-                                    <td>8/16</td>
-                                    <td>05/04/2025 18:30</td>
-                                    <td><span class="badge badge-danger">Đã từ chối</span></td>
-                                    <td>
-                                        <div class="text-muted">
-                                            <i class="fas fa-check-circle mr-1"></i> Đã xử lý
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- Invitation 4 -->
-                                <tr>
-                                    <td>Giải đấu Othello Cấp Cao 2025</td>
-                                    <td>NewPlayer101</td>
-                                    <td>01/05/2025</td>
-                                    <td>15/05/2025</td>
-                                    <td>8/16</td>
-                                    <td>09/04/2025 10:45</td>
-                                    <td><span class="badge badge-warning">Chờ phê duyệt</span></td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-success invitation-action" data-action="accept" data-id="4">
-                                                <i class="fas fa-check mr-1"></i> Chấp nhận
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger invitation-action" data-action="reject" data-id="4">
-                                                <i class="fas fa-times mr-1"></i> Từ chối
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <!-- Invitation rows would go here -->
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Pagination -->
-                        <nav aria-label="Phân trang lời mời tham gia">
-                            <ul class="pagination justify-content-center mt-4">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
 
@@ -806,8 +488,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="fas fa-paper-plane mr-2"></i> Lời mời bạn gửi tới giải đấu khác</h5>
                             <span class="badge badge-light rounded-pill px-3 py-2">
-                                    <i class="fas fa-envelope mr-1"></i> 3 lời mời
-                                </span>
+                                <i class="fas fa-envelope mr-1"></i> 3 lời mời
+                            </span>
                         </div>
                     </div>
                     <div class="card-body">
@@ -826,70 +508,10 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- Invitation 1 -->
-                                <tr>
-                                    <td>Giải đấu Othello Cộng đồng</td>
-                                    <td>OthelloMaster</td>
-                                    <td>05/04/2025</td>
-                                    <td>25/04/2025</td>
-                                    <td>24/32</td>
-                                    <td>01/04/2025 15:20</td>
-                                    <td><span class="badge badge-success">Đã chấp nhận</span></td>
-                                    <td>
-                                        <div class="text-muted">
-                                            <i class="fas fa-check-circle mr-1"></i> Đã xử lý
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- Invitation 2 -->
-                                <tr>
-                                    <td>Giải đấu Othello Elite</td>
-                                    <td>GrandMaster42</td>
-                                    <td>15/05/2025</td>
-                                    <td>30/05/2025</td>
-                                    <td>12/16</td>
-                                    <td>10/04/2025 08:45</td>
-                                    <td><span class="badge badge-warning">Chờ phê duyệt</span></td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-danger invitation-action" data-action="cancel" data-id="2">
-                                            <i class="fas fa-times mr-1"></i> Hủy
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Invitation 3 -->
-                                <tr>
-                                    <td>Giải đấu Othello Pro League</td>
-                                    <td>LeagueOwner</td>
-                                    <td>01/06/2025</td>
-                                    <td>15/06/2025</td>
-                                    <td>6/8</td>
-                                    <td>05/04/2025 22:10</td>
-                                    <td><span class="badge badge-danger">Bị từ chối</span></td>
-                                    <td>
-                                        <div class="text-muted">
-                                            <i class="fas fa-check-circle mr-1"></i> Đã xử lý
-                                        </div>
-                                    </td>
-                                </tr>
+                                <!-- Invitation rows would go here -->
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Pagination -->
-                        <nav aria-label="Phân trang lời mời của bạn">
-                            <ul class="pagination justify-content-center mt-4">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
             </div>
@@ -929,68 +551,8 @@
 
 <script>
     $(document).ready(function() {
-        // Filter functionality
-        $('.filter-option').click(function() {
-            $('.filter-option').removeClass('active');
-            $(this).addClass('active');
-
-            const filterValue = $(this).data('filter');
-
-            if (filterValue === 'all') {
-                $('.tournament-card').fadeIn(300);
-            } else {
-                $('.tournament-card').hide();
-                $(`.tournament-card[data-type="${filterValue}"]`).fadeIn(300);
-            }
-        });
-
-        // Search functionality
-        $('#searchBtn').click(function() {
-            searchTournaments();
-        });
-
-        $('#searchTournament').keypress(function(e) {
-            if (e.which === 13) {
-                searchTournaments();
-            }
-        });
-
-        function searchTournaments() {
-            const searchValue = $('#searchTournament').val().toLowerCase();
-
-            if (searchValue === '') {
-                $('.tournament-card').fadeIn(300);
-                return;
-            }
-
-            $('.tournament-card').each(function() {
-                const tournamentName = $(this).find('.tournament-name').text().toLowerCase();
-                const organizer = $(this).find('.tournament-info:contains("Người tổ chức")').text().toLowerCase();
-
-                if (tournamentName.includes(searchValue) || organizer.includes(searchValue)) {
-                    $(this).fadeIn(300);
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-
-        // Add animation to tournament cards when they come into view
-        $(window).scroll(function() {
-            $('.tournament-card').each(function() {
-                const position = $(this).offset().top;
-                const scroll = $(window).scrollTop();
-                const windowHeight = $(window).height();
-
-                if (scroll > position - windowHeight + 100) {
-                    $(this).css('opacity', '1');
-                    $(this).css('transform', 'translateY(0)');
-                }
-            });
-        });
-
-        // Card hover effect
-        $('.tournament-card').hover(
+        // Card hover effect for filter cards
+        $('.filter-card').hover(
             function() {
                 $(this).addClass('animate__animated animate__pulse');
             },
@@ -999,33 +561,14 @@
             }
         );
 
-        // Handle invitation actions
-        $('.invitation-action').click(function() {
-            const action = $(this).data('action');
-            const id = $(this).data('id');
-            const row = $(this).closest('tr');
+        // Fetch tournament counts (example functionality)
+        function fetchTournamentCounts() {
+            // This would be replaced with actual API calls
+            console.log("Fetching tournament counts...");
+        }
 
-            // Simulate API call
-            setTimeout(function() {
-                if (action === 'accept') {
-                    row.find('td:nth-child(7)').html('<span class="badge badge-success">Đã chấp nhận</span>');
-                    row.find('td:last-child').html('<div class="text-muted"><i class="fas fa-check-circle mr-1"></i> Đã xử lý</div>');
-                } else if (action === 'reject' || action === 'cancel') {
-                    row.find('td:nth-child(7)').html('<span class="badge badge-danger">Đã từ chối</span>');
-                    row.find('td:last-child').html('<div class="text-muted"><i class="fas fa-check-circle mr-1"></i> Đã xử lý</div>');
-                }
-
-                // Update badge count
-                const section = action === 'cancel' ? 'second' : 'first';
-                const currentCount = parseInt($('.badge-count:' + section).text().match(/\d+/)[0]);
-                const newCount = currentCount - 1;
-                if (section === 'first') {
-                    $('.badge-count').first().html('<i class="fas fa-user-plus mr-1"></i> ' + newCount + ' lời mời');
-                } else {
-                    $('.badge-count').last().html('<i class="fas fa-envelope mr-1"></i> ' + newCount + ' lời mời');
-                }
-            }, 500);
-        });
+        // Call on page load
+        fetchTournamentCounts();
     });
 </script>
 </body>

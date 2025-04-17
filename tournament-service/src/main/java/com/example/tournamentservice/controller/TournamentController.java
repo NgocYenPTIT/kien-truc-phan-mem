@@ -22,15 +22,16 @@ public class TournamentController {
         return this.tournamentService.create(createTournamentDto, request);
     }
 
-    @GetMapping("/tournament/{id}")
-    public ResponseEntity<?> getDetail(@PathVariable("id") Long id , HttpServletRequest request) {
-        return this.tournamentService.getDetail(id, request);
-    }
+
 
     @GetMapping("/tournament")
     public ResponseEntity<?> getList(@RequestParam("username") String name,  HttpServletRequest request) {
         return this.tournamentService.getList(name, request);
     }
 
+    @GetMapping("/tournament/{id}")
+    public ResponseEntity<?> getDetail(@PathVariable("id") Long id , HttpServletRequest request) {
+        return this.tournamentService.getDetail(id, request);
+    }
 
 }
