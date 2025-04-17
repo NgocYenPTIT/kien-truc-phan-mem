@@ -14,7 +14,7 @@ public class TournamentDto {
     private String name;
     private String description;
     private boolean freeToJoin;
-    private boolean isJoin;
+    private boolean attend;
     private Long boardTypeId;
     private Long organizingMethodId; // ID tham chiếu đến OrganizingMethod
     private Integer maxPlayer;

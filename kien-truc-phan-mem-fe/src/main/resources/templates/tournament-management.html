@@ -382,7 +382,7 @@
                             <div class="filter-card-body">
                                 <p class="filter-description">Xem tất cả các giải đấu bạn đã tham gia hoặc tổ chức</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="filter-count">24 giải đấu</div>
+                                    <div class="filter-count" th:text="${flag_all} + ' giải đấu'">24 giải đấu</div>
                                     <a href="/tournaments/all" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
@@ -400,7 +400,7 @@
                             <div class="filter-card-body">
                                 <p class="filter-description">Các giải đấu do bạn tổ chức và tham gia</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="filter-count">6 giải đấu</div>
+                                    <div class="filter-count" th:text="${flag_create_and_join} + ' giải đấu'">6 giải đấu</div>
                                     <a href="/tournaments/organize-participate" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
@@ -418,7 +418,7 @@
                             <div class="filter-card-body">
                                 <p class="filter-description">Các giải đấu do bạn tổ chức nhưng không tham gia</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="filter-count">8 giải đấu</div>
+                                    <div class="filter-count" th:text="${flag_only_create} + ' giải đấu'">8 giải đấu</div>
                                     <a href="/tournaments/organize-only" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
@@ -436,7 +436,7 @@
                             <div class="filter-card-body">
                                 <p class="filter-description">Các giải đấu bạn tham gia với tư cách người chơi</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="filter-count">10 giải đấu</div>
+                                    <div class="filter-count" th:text="${flag_only_join} + ' giải đấu'">10 giải đấu</div>
                                     <a href="/tournaments/participate-only" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>

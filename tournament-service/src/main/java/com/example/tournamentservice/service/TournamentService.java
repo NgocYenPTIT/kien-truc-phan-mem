@@ -276,7 +276,7 @@ public class TournamentService {
         tournament.setStartDate(startDateStr);  // Đã được chuẩn hóa
         tournament.setEndDate(endDateStr);      // Đã được chuẩn hóa
         tournament.setFreeToJoin(createTournamentDto.isFreeToJoin());      // Đã được chuẩn hóa
-        tournament.setJoin(createTournamentDto.isJoin());
+        tournament.setAttend((createTournamentDto.isAttend()));
         tournament.setStatus(TournamentStatus.NOT_STARTED);  // Trạng thái mặc định là chưa bắt đầu
 
         Tournament savedTournament = tournamentRepository.save(tournament);
@@ -335,19 +335,19 @@ public class TournamentService {
 
             case "is_create_and_join":
                 if (hasName) {
-                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndAttendTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
                             playerId, name, pageable);
                 } else {
-                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinTrueAndDeletedAtIsNull(playerId, pageable);
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndAttendTrueAndDeletedAtIsNull(playerId, pageable);
                 }
                 break;
 
             case "is_only_create":
                 if (hasName) {
-                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndAttendFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
                             playerId, name, pageable);
                 } else {
-                    tournamentPage = tournamentRepository.findByOrganizerIdAndJoinFalseAndDeletedAtIsNull(playerId, pageable);
+                    tournamentPage = tournamentRepository.findByOrganizerIdAndAttendFalseAndDeletedAtIsNull(playerId, pageable);
                 }
                 break;
 

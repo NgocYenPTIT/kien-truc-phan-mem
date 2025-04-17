@@ -14,11 +14,12 @@ public class TournamentDto {
     private String name;
     private String description;
     private boolean freeToJoin;
-    private boolean join;
+    private boolean attend;
     private Long boardTypeId;
     private Long organizingMethodId; // ID tham chiếu đến OrganizingMethod
     private Integer maxPlayer;
     private String startDate;  // Kiểu String thay vì Date
     private String endDate;    // Kiểu String thay vì Date
+    private String status;    // Kiểu String thay vì Date
     private ArrayList<TournamentRoundDto> rounds;
 }

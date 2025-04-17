@@ -1,8 +1,6 @@
 package com.example.clientKTPM;
 
-import com.example.clientKTPM.model.Account;
-import com.example.clientKTPM.model.Token;
-import com.example.clientKTPM.model.TournamentDto;
+import com.example.clientKTPM.model.*;
 import com.example.clientKTPM.util.ServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.clientKTPM.model.User;
-
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Map;
@@ -104,7 +101,42 @@ public class ClientController {
     public String showTournamentPage(Model model) {
         // Kiểm tra nếu đã đăng nhập thì chuyển đến trang hello
         if (session.getAttribute("user") != null) {
-            System.out.println(session.getAttribute("user"));
+//            System.out.println(session.getAttribute("user"));
+            TournamentPageableDto flag_all = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+
+            TournamentPageableDto flag_create_and_join = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_create_and_join",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+
+            TournamentPageableDto flag_only_create = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_only_create",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+
+            TournamentPageableDto flag_only_join = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_only_join",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+            model.addAttribute("flag_all", flag_all.getTotalItems());
+            model.addAttribute("flag_create_and_join", flag_create_and_join.getTotalItems());
+            model.addAttribute("flag_only_create", flag_only_create.getTotalItems());
+            model.addAttribute("flag_only_join", flag_only_join.getTotalItems());
             return "tournament-management";
         }
         return "redirect:/";

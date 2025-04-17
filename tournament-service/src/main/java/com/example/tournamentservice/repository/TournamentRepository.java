@@ -21,13 +21,13 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Page<Tournament> findByNameContainingIgnoreCaseAndDeletedAtIsNull(String name, Pageable pageable);
 
     // 2. Lấy các tournament do người chơi tổ chức và tham gia (organizerId = playerId, join = true)
-    Page<Tournament> findByOrganizerIdAndJoinTrueAndDeletedAtIsNull(Long organizerId, Pageable pageable);
-    Page<Tournament> findByOrganizerIdAndJoinTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+    Page<Tournament> findByOrganizerIdAndAttendTrueAndDeletedAtIsNull(Long organizerId, Pageable pageable);
+    Page<Tournament> findByOrganizerIdAndAttendTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
             Long organizerId, String name, Pageable pageable);
 
     // 3. Lấy các tournament do người chơi chỉ tổ chức (organizerId = playerId, join = false)
-    Page<Tournament> findByOrganizerIdAndJoinFalseAndDeletedAtIsNull(Long organizerId, Pageable pageable);
-    Page<Tournament> findByOrganizerIdAndJoinFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
+    Page<Tournament> findByOrganizerIdAndAttendFalseAndDeletedAtIsNull(Long organizerId, Pageable pageable);
+    Page<Tournament> findByOrganizerIdAndAttendFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
             Long organizerId, String name, Pageable pageable);
 
     // 4. Lấy các tournament người chơi chỉ tham gia (organizerId != playerId)
