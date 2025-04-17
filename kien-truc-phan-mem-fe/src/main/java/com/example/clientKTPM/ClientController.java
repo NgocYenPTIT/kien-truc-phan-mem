@@ -219,4 +219,28 @@ public class ClientController {
                     .body(formattedError);
         }
     }
+
+    @GetMapping("/tournaments/all")
+    public String showAllTournaments(Model model) {
+        // Kiểm tra người dùng đã đăng nhập chưa
+        User user = (User) session.getAttribute("user");
+        System.out.println("ALLLLLLLLLLLLLL");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+            TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+            model.addAttribute("tournament_all_pagination", tournamentAllPagination);
+            System.out.println(model.getAttribute("tournament_all_pagination"));
+            return "all-tournament";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
 }
