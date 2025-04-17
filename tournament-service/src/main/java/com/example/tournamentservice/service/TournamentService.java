@@ -276,7 +276,7 @@ public class TournamentService {
         tournament.setStartDate(startDateStr);  // Đã được chuẩn hóa
         tournament.setEndDate(endDateStr);      // Đã được chuẩn hóa
         tournament.setFreeToJoin(createTournamentDto.isFreeToJoin());      // Đã được chuẩn hóa
-
+        tournament.setJoin(createTournamentDto.isJoin());
         tournament.setStatus(TournamentStatus.NOT_STARTED);  // Trạng thái mặc định là chưa bắt đầu
 
         Tournament savedTournament = tournamentRepository.save(tournament);

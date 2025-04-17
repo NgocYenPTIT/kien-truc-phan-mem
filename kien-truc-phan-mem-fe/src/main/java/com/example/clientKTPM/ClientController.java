@@ -135,7 +135,7 @@ public class ClientController {
         try {
             // Lấy token từ session
             String token = (String) session.getAttribute("token");
-
+            System.out.println(tournamentData);
             // Gọi API tạo giải đấu
             TournamentDto response = this.serviceAPI.call(
                     urlTournamentService + "tournament",

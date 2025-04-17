@@ -674,6 +674,14 @@
                   <label class="custom-control-label" for="autoApprove">Tự động chấp nhận người tham gia</label>
                 </div>
               </div>
+
+              <!-- Thêm toggle cho việc tham gia giải đấu sau khi tạo -->
+              <div class="form-group">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="isJoin" name="isJoin" checked>
+                  <label class="custom-control-label" for="isJoin">Vừa tổ chức vừa tham gia</label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -890,11 +898,13 @@
       $('.btn-submit').html('<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...');
       $('.btn-submit').attr('disabled', true);
 
+
       // Lấy dữ liệu từ form
       const formData = {
         name: $('#name').val(),
         description: $('#description').val() || "",
         freeToJoin: $('#autoApprove').is(':checked'),
+        join: $('#isJoin').is(':checked') ? true : false,
         boardTypeId: parseInt($('#boardTypeId').val()),
         organizingMethodId: parseInt($('#organizingMethodId').val()),
         maxPlayer: parseInt($('#maxPlayer').val()),
@@ -903,6 +913,7 @@
         organizerId: $('#organizerId').val(),
         rounds: []
       };
+      // alert("Form data: " + JSON.stringify(formData));
 
       // Thu thập dữ liệu các vòng đấu - tất cả vòng đều có status là "CHƯA BẮT ĐẦU"
       $('.round-container').each(function(index) {
