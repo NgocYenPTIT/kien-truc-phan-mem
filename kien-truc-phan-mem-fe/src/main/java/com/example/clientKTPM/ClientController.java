@@ -221,15 +221,20 @@ public class ClientController {
     }
 
     @GetMapping("/tournaments/all")
-    public String showAllTournaments(Model model) {
+    public String showAllTournaments(
+        @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+        @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+        @RequestParam(name = "name", defaultValue = "") String name,
+        Model model
+        ) {
         // Kiểm tra người dùng đã đăng nhập chưa
         User user = (User) session.getAttribute("user");
-        System.out.println("ALLLLLLLLLLLLLL");
         if (user != null) {
             // Người dùng đã đăng nhập
             model.addAttribute("username", user.getUsername());
             TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
-                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    // this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    this.urlTournamentService + "tournament?" + "name=" + name + "&currentPage=" + currentPage + "&pageSize=" + pageSize + "&flag=all",
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,

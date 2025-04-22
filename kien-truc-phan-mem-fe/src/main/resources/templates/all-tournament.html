@@ -450,23 +450,16 @@
         });
 
         function searchTournaments() {
-            const searchValue = $('#searchTournament').val().toLowerCase();
+            const searchValue = $('#searchTournament').val();
+            // Chuyển hướng đến URL với tham số tìm kiếm và các tham số khác
+            window.location.href = `/tournaments/all?name=${encodeURIComponent(searchValue)}&currentPage=1&pageSize=10&flag=all`;
+        }
 
-            if (searchValue === '') {
-                $('.tournament-card').fadeIn(300);
-                return;
-            }
-
-            $('.tournament-card').each(function() {
-                const tournamentName = $(this).find('.tournament-name').text().toLowerCase();
-                const organizer = $(this).find('.tournament-info:contains("Người tổ chức")').text().toLowerCase();
-
-                if (tournamentName.includes(searchValue) || organizer.includes(searchValue)) {
-                    $(this).fadeIn(300);
-                } else {
-                    $(this).hide();
-                }
-            });
+        // Điền giá trị tìm kiếm hiện tại vào ô tìm kiếm từ URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        if (nameParam) {
+            $('#searchTournament').val(decodeURIComponent(nameParam));
         }
 
         // Add animation to tournament cards when they come into view
@@ -492,6 +485,11 @@
                 $(this).removeClass('animate__animated animate__pulse');
             }
         );
+        
+        // Tự động trigger scroll event để hiển thị các card ngay khi trang tải xong
+        setTimeout(function() {
+            $(window).trigger('scroll');
+        }, 100);
     });
 </script>
 </body>
