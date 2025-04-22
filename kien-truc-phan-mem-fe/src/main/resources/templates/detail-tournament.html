@@ -198,9 +198,10 @@
         .info-label {
             font-weight: bold;
             color: var(--dark-color);
-            min-width: 180px;
+            min-width: 200px;
             display: flex;
             align-items: center;
+            margin-right: 20px; /* Added spacing between label and value */
         }
 
         .info-label i {
@@ -330,6 +331,39 @@
             border-color: #c0392b;
         }
 
+        .btn-kickoff {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-kickoff:hover {
+            background-color: #d35400;
+            border-color: #d35400;
+        }
+
+        .btn-join {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-join:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .btn-leave {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-leave:hover {
+            background-color: #d35400;
+            border-color: #d35400;
+        }
+
         .back-btn {
             margin-bottom: 20px;
             display: inline-flex;
@@ -362,6 +396,10 @@
             color: white;
             border-bottom: none;
             padding: 1.5rem;
+        }
+
+        .modal-header.kickoff-header {
+            background: linear-gradient(135deg, var(--warning-color), #d35400);
         }
 
         .modal-title {
@@ -477,6 +515,10 @@
             padding: 15px;
             border-left: 4px solid var(--secondary-color);
         }
+
+        .action-button {
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -495,7 +537,7 @@
                 <li class="nav-item dropdown mr-3">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle mr-1"></i> <span>Othello Player</span>
+                        <i class="fas fa-user-circle mr-1"></i> <span th:text="${username}">Othello Player</span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/profile"><i class="fas fa-id-card mr-2"></i> Hồ sơ</a>
@@ -518,15 +560,20 @@
     <div class="container">
         <div class="tournament-header">
             <div class="animate__animated animate__fadeIn">
-                <h1 class="tournament-title">aaaaaa</h1>
-                <span class="tournament-status status-upcoming">CHƯA BẮT ĐẦU</span>
+                <h1 class="tournament-title" th:text="${tournament.name}">aaaaaa</h1>
+                <span class="tournament-status"
+                      th:classappend="${tournament.status == 'ĐANG DIỄN RA' ? 'status-active' :
+                                   (tournament.status == 'CHƯA BẮT ĐẦU' ? 'status-upcoming' : 'status-completed')}"
+                      th:text="${tournament.status}">CHƯA BẮT ĐẦU</span>
                 <div class="text-white">
-                    <i class="far fa-calendar-alt mr-2"></i> 
-                    <span>Từ 17/04/2025 21:00 đến 24/04/2025 18:00</span>
+                    <i class="far fa-calendar-alt mr-2"></i>
+                    <span th:text="'Giải đấu diễn ra từ ' + ${tournament.startDate} + ' đến ' + ${tournament.endDate}">
+                        Từ 17/04/2025 21:00 đến 24/04/2025 18:00
+                    </span>
                 </div>
             </div>
             <div class="d-none d-md-block animate__animated animate__fadeIn animate__delay-1s">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHN0eWxlPmNpcmNsZXtmaWxsOndoaXRlO3N0cm9rZTpibGFjaztzdHJva2Utd2lkdGg6Mn08L3N0eWxlPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwLDEwKSI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iMTAiIC8+PC9nPjwvc3ZnPg==" 
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHN0eWxlPmNpcmNsZXtmaWxsOndoaXRlO3N0cm9rZTpibGFjaztzdHJva2Utd2lkdGg6Mn08L3N0eWxlPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwLDEwKSI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSIxMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSIzMCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSI1MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMTAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iMzAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI3MCIgcj0iMTAiIC8+PGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iMTAiIC8+PC9nPjwvc3ZnPg=="
                      alt="Othello Board" class="floating" style="width: 100px; height: 100px;">
             </div>
         </div>
@@ -554,37 +601,37 @@
                             <div class="info-label">
                                 <i class="fas fa-user-tie"></i> Người tổ chức
                             </div>
-                            <div class="info-value">Name of Organizer</div>
+                            <div class="info-value" th:text="${tournament.organizer}">Name of Organizer</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-chess-board"></i> Loại bàn cờ
                             </div>
-                            <div class="info-value">Bàn cờ 8x8</div>
+                            <div class="info-value" th:text="${tournament.boardType}">Bàn cờ 8x8</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-sitemap"></i> Phương thức tổ chức
                             </div>
-                            <div class="info-value">7 vòng đấu</div>
+                            <div class="info-value" th:text="${tournament.organizingMethod}">7 vòng đấu</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-users"></i> Số người tham gia tối đa
                             </div>
-                            <div class="info-value">8</div>
+                            <div class="info-value" th:text="${tournament.maxPlayer}">8</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-ticket-alt"></i> Tham gia miễn phí
                             </div>
-                            <div class="info-value">Không</div>
+                            <div class="info-value" th:text="${tournament.freeToJoin ? 'Có' : 'Không'}">Không</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-align-left"></i> Mô tả
                             </div>
-                            <div class="info-value description-box">akkkd</div>
+                            <div class="info-value description-box" th:text="${tournament.description}">akkkd</div>
                         </div>
                     </div>
                 </div>
@@ -595,66 +642,33 @@
                         <i class="fas fa-layer-group"></i> Các vòng đấu
                     </div>
                     <div class="info-card-body">
-                        <div class="rounds-container">
-                            <!-- Round 1 -->
-                            <div class="round-card">
+                        <div th:if="${tournament.rounds != null && !tournament.rounds.empty}" class="rounds-container">
+                            <div th:each="round : ${tournament.rounds}" class="round-card">
                                 <div class="round-header">
                                     <div class="round-title">
-                                        <i class="fas fa-trophy"></i> Vòng đấu 1
+                                        <i class="fas fa-trophy"></i> Vòng đấu
+                                        <span th:text="${round.roundNumber}">1</span>
                                     </div>
-                                    <span class="round-status status-upcoming">CHƯA BẮT ĐẦU</span>
+                                    <span class="round-status"
+                                          th:classappend="${round.status == 'ĐANG DIỄN RA' ? 'status-active' :
+                                                       (round.status == 'CHƯA BẮT ĐẦU' ? 'status-upcoming' : 'status-completed')}"
+                                          th:text="${round.status}">Status</span>
                                 </div>
                                 <div class="round-body">
                                     <div class="round-info">
                                         <i class="far fa-calendar-alt"></i>
-                                        <span>Bắt đầu: 17/04/2025 21:00</span>
+                                        <span th:text="'Bắt đầu: ' + ${round.startDate}">Bắt đầu: 17/04/2025 21:00</span>
                                     </div>
                                     <div class="round-info">
                                         <i class="far fa-calendar-check"></i>
-                                        <span>Kết thúc: 18/04/2025 19:00</span>
+                                        <span th:text="'Kết thúc: ' + ${round.endDate}">Kết thúc: 18/04/2025 19:00</span>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Round 2 -->
-                            <div class="round-card">
-                                <div class="round-header">
-                                    <div class="round-title">
-                                        <i class="fas fa-trophy"></i> Vòng đấu 2
-                                    </div>
-                                    <span class="round-status status-active">ĐANG DIỄN RA</span>
-                                </div>
-                                <div class="round-body">
-                                    <div class="round-info">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>Bắt đầu: 18/04/2025 20:00</span>
-                                    </div>
-                                    <div class="round-info">
-                                        <i class="far fa-calendar-check"></i>
-                                        <span>Kết thúc: 19/04/2025 18:00</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Round 3 -->
-                            <div class="round-card">
-                                <div class="round-header">
-                                    <div class="round-title">
-                                        <i class="fas fa-trophy"></i> Vòng đấu 3
-                                    </div>
-                                    <span class="round-status status-completed">ĐÃ KẾT THÚC</span>
-                                </div>
-                                <div class="round-body">
-                                    <div class="round-info">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>Bắt đầu: 18/04/2025 20:00</span>
-                                    </div>
-                                    <div class="round-info">
-                                        <i class="far fa-calendar-check"></i>
-                                        <span>Kết thúc: 19/04/2025 18:00</span>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div th:if="${tournament.rounds == null || tournament.rounds.empty}" class="text-center py-4">
+                            <i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i>
+                            <p>Chưa có vòng đấu nào được tạo.</p>
                         </div>
                     </div>
                 </div>
@@ -667,25 +681,55 @@
                     </div>
                     <div class="info-card-body">
                         <div class="d-grid gap-3">
-                            <a href="/tournament/3/rankings" class="btn btn-outline-primary btn-block">
+                            <!-- Các nút luôn hiển thị -->
+                            <a th:href="@{'/tournament/' + ${tournament.id} + '/rankings'}"
+                               class="btn btn-outline-primary btn-block action-button">
                                 <i class="fas fa-trophy mr-2"></i> Bảng xếp hạng
                             </a>
-                            <a href="/tournament/3/players" class="btn btn-outline-primary btn-block">
+
+                            <a th:href="@{'/tournament/' + ${tournament.id} + '/players'}"
+                               class="btn btn-outline-primary btn-block action-button">
                                 <i class="fas fa-users mr-2"></i> Danh sách cờ thủ
                             </a>
-                            <a href="/tournament/3/matches" class="btn btn-outline-primary btn-block">
-                                <i class="fas fa-gamepad mr-2"></i> Lịch thi đấu
-                            </a>
-                            <a href="/tournament/3/invite" class="btn btn-outline-primary btn-block">
+
+                            <!-- Nút Mời người chơi - chỉ dành cho người tổ chức -->
+                            <a th:if="${role == 'host'}"
+                               th:href="@{'/tournament/' + ${tournament.id} + '/invite'}"
+                               class="btn btn-outline-primary btn-block action-button">
                                 <i class="fas fa-user-plus mr-2"></i> Mời người chơi
                             </a>
-                            <div class="mt-4">
-                                <a href="/tournament/3/update" class="btn btn-update btn-block pulse">
+
+                            <!-- Nút Tham gia - dành cho người chưa tham gia -->
+                            <a th:if="${ !isMember}"
+                               th:href="@{'/tournament/' + ${tournament.id} + '/join'}"
+                               class="btn btn-join btn-block action-button">
+                                <i class="fas fa-sign-in-alt mr-2"></i> Tham gia
+                            </a>
+
+                            <!-- Nút Rời đi - dành cho người đã tham gia -->
+                            <a th:if="${ isMember}"
+                               th:href="@{'/tournament/' + ${tournament.id} + '/leave'}"
+                               class="btn btn-leave btn-block action-button">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Rời khỏi
+                            </a>
+
+                            <!-- Nút Kick Off - chỉ dành cho người tổ chức -->
+                            <div th:if="${isKickOff}" class="mt-4">
+                                <button type="button" class="btn btn-kickoff btn-block pulse action-button" data-toggle="modal" data-target="#kickoffModal">
+                                    <i class="fas fa-flag-checkered mr-2"></i> Kick Off giải đấu
+                                </button>
+                            </div>
+
+                            <!-- Nút cập nhật - chỉ dành cho người tổ chức -->
+                            <div th:if="${showButtonUpdate}" class="mt-2">
+                                <a th:href="@{'/tournament/' + ${tournament.id} + '/update'}" class="btn btn-update btn-block action-button">
                                     <i class="fas fa-edit mr-2"></i> Cập nhật giải đấu
                                 </a>
                             </div>
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-delete btn-block" data-toggle="modal" data-target="#deleteModal">
+
+                            <!-- Nút xóa - chỉ dành cho người tổ chức -->
+                            <div th:if="${showButtonDelete}" class="mt-2">
+                                <button type="button" class="btn btn-delete btn-block action-button" data-toggle="modal" data-target="#deleteModal">
                                     <i class="fas fa-trash-alt mr-2"></i> Xóa giải đấu
                                 </button>
                             </div>
@@ -701,17 +745,31 @@
                     <div class="info-card-body p-4">
                         <div class="text-center">
                             <div class="mb-4">
-                                <span class="fa-stack fa-3x text-primary">
+                                <span th:if="${tournament.status == 'ĐANG DIỄN RA'}" class="fa-stack fa-3x text-success">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fas fa-play fa-stack-1x fa-inverse"></i>
+                                </span>
+                                <span th:if="${tournament.status == 'CHƯA BẮT ĐẦU'}" class="fa-stack fa-3x text-primary">
                                     <i class="fas fa-circle fa-stack-2x"></i>
                                     <i class="fas fa-hourglass-start fa-stack-1x fa-inverse"></i>
                                 </span>
+                                <span th:if="${tournament.status == 'ĐÃ KẾT THÚC'}" class="fa-stack fa-3x text-secondary">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fas fa-flag-checkered fa-stack-1x fa-inverse"></i>
+                                </span>
                             </div>
-                            <h4 class="mb-3">CHƯA BẮT ĐẦU</h4>
+                            <h4 class="mb-3" th:text="${tournament.status}">CHƯA BẮT ĐẦU</h4>
                             <div class="progress mb-3">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     th:style="${tournament.status == 'ĐANG DIỄN RA' ? 'width: 50%' :
+                                                (tournament.status == 'ĐÃ KẾT THÚC' ? 'width: 100%' : 'width: 0%')}">
+                                </div>
                             </div>
                             <small class="text-muted">
-                                <i class="far fa-clock mr-1"></i> Sắp bắt đầu
+                                <i class="far fa-clock mr-1"></i>
+                                <span th:if="${tournament.status == 'ĐANG DIỄN RA'}">Đang diễn ra</span>
+                                <span th:if="${tournament.status == 'CHƯA BẮT ĐẦU'}">Sắp bắt đầu</span>
+                                <span th:if="${tournament.status == 'ĐÃ KẾT THÚC'}">Đã kết thúc</span>
                             </small>
                         </div>
                     </div>
@@ -748,9 +806,44 @@
                 <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">
                     <i class="fas fa-times mr-1"></i> Hủy
                 </button>
-                <form action="/tournament/3/delete" method="post">
+                <form th:action="@{'/tournament/' + ${tournament.id} + '/delete'}" method="post">
                     <button type="submit" class="btn btn-danger modal-btn">
                         <i class="fas fa-trash-alt mr-1"></i> Xác nhận xóa
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kickoff Confirmation Modal -->
+<div class="modal fade" id="kickoffModal" tabindex="-1" role="dialog" aria-labelledby="kickoffModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content animate__animated animate__fadeIn">
+            <div class="modal-header kickoff-header">
+                <h5 class="modal-title" id="kickoffModalLabel">
+                    <i class="fas fa-flag-checkered"></i> Xác nhận Kick Off
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn Kick Off giải đấu này không?</p>
+                <p><strong>Lưu ý:</strong> Sau khi Kick Off:</p>
+                <ul>
+                    <li>Giải đấu sẽ chuyển sang trạng thái <strong>ĐANG DIỄN RA</strong></li>
+                    <li>Vòng đấu đầu tiên sẽ được bắt đầu</li>
+                    <li>Bạn sẽ không thể thay đổi các thông tin cơ bản của giải đấu</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">
+                    <i class="fas fa-times mr-1"></i> Hủy
+                </button>
+                <form th:action="@{'/tournament/' + ${tournament.id} + '/kickoff'}" method="post">
+                    <button type="submit" class="btn btn-warning modal-btn">
+                        <i class="fas fa-flag-checkered mr-1"></i> Xác nhận Kick Off
                     </button>
                 </form>
             </div>
@@ -785,7 +878,7 @@
                 }
             });
         });
-        
+
         // Trigger scroll to start animations
         setTimeout(function() {
             $(window).trigger('scroll');
@@ -794,6 +887,11 @@
         // Confirm delete action
         $('.btn-delete').click(function() {
             $('#deleteModal').modal('show');
+        });
+
+        // Confirm kickoff action
+        $('.btn-kickoff').click(function() {
+            $('#kickoffModal').modal('show');
         });
     });
 </script>

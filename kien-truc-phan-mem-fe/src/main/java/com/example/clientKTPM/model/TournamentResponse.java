@@ -1,14 +1,17 @@
 package com.example.clientKTPM.model ;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TournamentResponse extends TournamentDto {
-    private ArrayList<TournamentRoundDto> round;
+    private String organizer;
+    private String boardType;
+    private String organizingMethod;
+    private Boolean showButtonDelete;
+    private Boolean showButtonUpdate;
+    private Boolean showKickOff;
+    private Boolean showJoinButton;
 }

@@ -311,12 +311,12 @@ public class TournamentService {
         map.put("description", tournament.getDescription());
         map.put("organizer", organizer.getUsername());
         map.put("boardType", tournament.getBoardType().getName());
-        map.put("organizerMethod", tournament.getOrganizingMethod().getName());
+        map.put("organizingMethod", tournament.getOrganizingMethod().getName());
         map.put("maxPlayer", tournament.getMaxPlayer());
         map.put("startDate", tournament.getStartDate());
         map.put("endDate", tournament.getEndDate());
         map.put("status", tournament.getStatus());
-        map.put("round", round);
+        map.put("rounds", round);
 
         // TODO call Player List;
 

@@ -348,7 +348,16 @@ public class ClientController {
                     (String) session.getAttribute("token")
             );
             model.addAttribute("tournament", tournament);
-            System.out.println(model.getAttribute("tournament"));
+            model.addAttribute("role", "host");
+            model.addAttribute("isMember", false);
+            model.addAttribute("isKickOff", true);
+            model.addAttribute("showButtonUpdate", true);
+            model.addAttribute("showButtonDelete", true);
+
+
+
+//            System.out.println(model.getAttribute("tournament"));
+            System.out.println(tournament.getOrganizingMethod());
             return "detail-tournament";
         } else {
             // Chưa đăng nhập, quay lại trang login.html
