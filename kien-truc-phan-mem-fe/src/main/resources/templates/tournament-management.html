@@ -401,7 +401,7 @@
                                 <p class="filter-description">Các giải đấu do bạn tổ chức và tham gia</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="filter-count" th:text="${flag_create_and_join} + ' giải đấu'">6 giải đấu</div>
-                                    <a href="/tournaments/all" class="btn btn-sm btn-primary">
+                                    <a href="/tournaments/create-and-join?name=&currentPage=1&pageSize=10&flag=create-and-join" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
@@ -419,7 +419,7 @@
                                 <p class="filter-description">Các giải đấu do bạn tổ chức nhưng không tham gia</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="filter-count" th:text="${flag_only_create} + ' giải đấu'">8 giải đấu</div>
-                                    <a href="/tournaments/all" class="btn btn-sm btn-primary">
+                                    <a href="/tournaments/only-create?name=&currentPage=1&pageSize=10&flag=only-create" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>
@@ -437,7 +437,7 @@
                                 <p class="filter-description">Các giải đấu bạn tham gia với tư cách người chơi</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="filter-count" th:text="${flag_only_join} + ' giải đấu'">10 giải đấu</div>
-                                    <a href="/tournaments/all" class="btn btn-sm btn-primary">
+                                    <a href="/tournaments/only-join?name=&currentPage=1&pageSize=10&flag=only-join" class="btn btn-sm btn-primary">
                                         <i class="fas fa-arrow-right mr-1"></i> Xem
                                     </a>
                                 </div>

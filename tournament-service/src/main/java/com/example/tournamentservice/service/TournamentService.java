@@ -333,7 +333,7 @@ public class TournamentService {
                 }
                 break;
 
-            case "is_create_and_join":
+            case "create-and-join":
                 if (hasName) {
                     tournamentPage = tournamentRepository.findByOrganizerIdAndAttendTrueAndNameContainingIgnoreCaseAndDeletedAtIsNull(
                             playerId, name, pageable);
@@ -342,7 +342,7 @@ public class TournamentService {
                 }
                 break;
 
-            case "is_only_create":
+            case "only-create":
                 if (hasName) {
                     tournamentPage = tournamentRepository.findByOrganizerIdAndAttendFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
                             playerId, name, pageable);
@@ -351,7 +351,7 @@ public class TournamentService {
                 }
                 break;
 
-            case "is_only_join":
+            case "only-join":
                 if (hasName) {
                     tournamentPage = tournamentRepository.findByOrganizerIdNotAndNameContainingIgnoreCaseAndDeletedAtIsNull(
                             playerId, name, pageable);

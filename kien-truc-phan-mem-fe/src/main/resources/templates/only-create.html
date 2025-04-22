@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Othello Tournament - Chỉ tổ chức</title>
+    <title>Othello Tournament - Tất Cả Giải Đấu</title>
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
     <!-- Font Awesome -->
@@ -90,7 +90,6 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             cursor: pointer;
-            border-left: 4px solid #3498db;
         }
 
         .tournament-card:hover {
@@ -291,62 +290,13 @@
             margin-right: 8px;
         }
 
-        .organizer-badge {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background-color: #3498db;
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-        }
-
-        .quick-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-right: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        /* No tournaments message */
+        .no-tournaments {
             text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:last-child {
-            margin-right: 0;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            color: #3498db;
-            margin-bottom: 1rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
@@ -357,21 +307,25 @@
         <a class="navbar-brand animate__animated animate__fadeIn" href="/home">
             <span class="othello-piece"></span> Othello Tournament
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown mr-3">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle mr-1"></i> <span th:text="${user?.username}">Username</span>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle mr-1"></i> <span th:text="${username}">Username</span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/profile"><i class="fas fa-id-card mr-2"></i> Hồ sơ</a>
                         <a class="dropdown-item" href="/settings"><i class="fas fa-cog mr-2"></i> Cài đặt</a>
                         <div class="dropdown-divider"></div>
                         <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</button>
+                            <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i> Đăng
+                                xuất
+                            </button>
                         </form>
                     </div>
                 </li>
@@ -383,7 +337,7 @@
 <!-- Page Header -->
 <header class="page-header">
     <div class="container">
-        <h2 class="animate__animated animate__fadeIn"><i class="fas fa-user-tie mr-2"></i> Giải đấu Chỉ tổ chức</h2>
+        <h2 class="animate__animated animate__fadeIn"><i class="fas fa-th-list mr-2"></i> Giải Đấu Bạn Chỉ Tổ Chức</h2>
     </div>
 </header>
 
@@ -395,38 +349,6 @@
             <i class="fas fa-arrow-left"></i> Quay lại Quản lý Giải đấu
         </a>
 
-        <!-- Quick Stats -->
-        <div class="quick-stats">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-trophy"></i>
-                </div>
-                <div class="stat-value">8</div>
-                <div class="stat-label">Tổng số giải đấu đã tổ chức</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="stat-value">5</div>
-                <div class="stat-label">Giải đấu đã hoàn thành</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-                <div class="stat-value">2</div>
-                <div class="stat-label">Giải đấu đang diễn ra</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div class="stat-value">1</div>
-                <div class="stat-label">Giải đấu sắp diễn ra</div>
-            </div>
-        </div>
-
         <!-- Search Bar -->
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Tìm kiếm giải đấu..." id="searchTournament">
@@ -435,138 +357,80 @@
             </button>
         </div>
 
-        <!-- Page Description -->
-        <div class="alert alert-info mb-4">
-            <i class="fas fa-info-circle mr-2"></i> Đây là những giải đấu do bạn tổ chức nhưng không tham gia với tư cách người chơi
-        </div>
-
         <!-- Tournament List -->
         <div class="tournament-list">
-            <!-- Tournament Item 2 -->
-            <div class="tournament-card" data-type="organizer-only">
-                <a href="/tournament/2" class="text-decoration-none">
+            <!-- Tournament cards will be generated dynamically with Thymeleaf -->
+            <div th:if="${tournament_only_create_pagination != null && !tournament_only_create_pagination.tournaments.empty}"
+                 th:each="tournament : ${tournament_only_create_pagination.tournaments}" class="tournament-card">
+                <a th:href="@{'/tournament/' + ${tournament.id}}" class="text-decoration-none">
                     <div class="tournament-card-header">
-                        <h5 class="tournament-name">Giải đấu Othello Cấp Cao 2025</h5>
-                        <span class="tournament-status status-upcoming">Sắp diễn ra</span>
-                        <span class="organizer-badge"><i class="fas fa-user-tie mr-1"></i> Tổ chức</span>
+                        <h5 class="tournament-name" th:text="${tournament.name}">Tournament Name</h5>
+                        <span class="tournament-status"
+                              th:classappend="${tournament.status == 'ĐANG DIỄN RA' ? 'status-active' :
+                                           (tournament.status == 'CHƯA BẮT ĐẦU' ? 'status-upcoming' : 'status-completed')}"
+                              th:text="${tournament.status}">Status</span>
                     </div>
                     <div class="tournament-card-body">
                         <div class="tournament-info">
                             <i class="far fa-calendar-alt"></i>
-                            <span>Bắt đầu: 01/05/2025</span>
+                            <span th:text="'Bắt đầu: ' + ${tournament.startDate}">Bắt đầu: Date</span>
                         </div>
                         <div class="tournament-info">
                             <i class="far fa-calendar-check"></i>
-                            <span>Kết thúc: 15/05/2025</span>
+                            <span th:text="'Kết thúc: ' + ${tournament.endDate}">Kết thúc: Date</span>
                         </div>
                         <div class="tournament-info">
                             <i class="fas fa-user-tie"></i>
-                            <span>Người tổ chức: Admin</span>
+                            <span th:text="'Người tổ chức: ' + ${tournament.organizer}">Người tổ chức: Name</span>
                         </div>
                         <div class="tournament-info">
                             <i class="fas fa-users"></i>
-                            <span>Số người tham gia: 8/16</span>
+                            <span th:text="'Số người tham gia: ' + ${tournament.participantNum}">Số người tham gia: X/Y</span>
                         </div>
                         <div class="tournament-actions">
-                            <a href="/tournament/2/details" class="btn btn-sm btn-outline-secondary">
+                            <a th:href="@{'/tournament/' + ${tournament.id} + '/details'}"
+                               class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-info-circle mr-1"></i> Chi tiết
-                            </a>
-                            <a href="/tournament/2/manage" class="btn btn-sm btn-outline-primary ml-2">
-                                <i class="fas fa-cog mr-1"></i> Quản lý
                             </a>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <!-- Tournament Item 6 (additional) -->
-            <div class="tournament-card" data-type="organizer-only">
-                <a href="/tournament/6" class="text-decoration-none">
-                    <div class="tournament-card-header">
-                        <h5 class="tournament-name">Giải đấu Othello Mùa Thu 2025</h5>
-                        <span class="tournament-status status-active">Đang diễn ra</span>
-                        <span class="organizer-badge"><i class="fas fa-user-tie mr-1"></i> Tổ chức</span>
-                    </div>
-                    <div class="tournament-card-body">
-                        <div class="tournament-info">
-                            <i class="far fa-calendar-alt"></i>
-                            <span>Bắt đầu: 10/03/2025</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="far fa-calendar-check"></i>
-                            <span>Kết thúc: 25/03/2025</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="fas fa-user-tie"></i>
-                            <span>Người tổ chức: Admin</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="fas fa-users"></i>
-                            <span>Số người tham gia: 12/16</span>
-                        </div>
-                        <div class="tournament-actions">
-                            <a href="/tournament/6/details" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-info-circle mr-1"></i> Chi tiết
-                            </a>
-                            <a href="/tournament/6/manage" class="btn btn-sm btn-outline-primary ml-2">
-                                <i class="fas fa-cog mr-1"></i> Quản lý
-                            </a>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Tournament Item 7 (additional) -->
-            <div class="tournament-card" data-type="organizer-only">
-                <a href="/tournament/7" class="text-decoration-none">
-                    <div class="tournament-card-header">
-                        <h5 class="tournament-name">Giải đấu Othello Quốc tế 2025</h5>
-                        <span class="tournament-status status-active">Đang diễn ra</span>
-                        <span class="organizer-badge"><i class="fas fa-user-tie mr-1"></i> Tổ chức</span>
-                    </div>
-                    <div class="tournament-card-body">
-                        <div class="tournament-info">
-                            <i class="far fa-calendar-alt"></i>
-                            <span>Bắt đầu: 05/04/2025</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="far fa-calendar-check"></i>
-                            <span>Kết thúc: 30/04/2025</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="fas fa-user-tie"></i>
-                            <span>Người tổ chức: Admin</span>
-                        </div>
-                        <div class="tournament-info">
-                            <i class="fas fa-users"></i>
-                            <span>Số người tham gia: 28/32</span>
-                        </div>
-                        <div class="tournament-actions">
-                            <a href="/tournament/7/details" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-info-circle mr-1"></i> Chi tiết
-                            </a>
-                            <a href="/tournament/7/manage" class="btn btn-sm btn-outline-primary ml-2">
-                                <i class="fas fa-cog mr-1"></i> Quản lý
-                            </a>
-                        </div>
-                    </div>
+            <!-- Message when no tournaments -->
+            <div th:if="${tournament_only_create_pagination == null || tournament_only_create_pagination.tournaments.empty}"
+                 class="no-tournaments">
+                <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                <h5>Chưa có giải đấu nào</h5>
+                <p class="text-muted">Hãy tạo giải đấu mới hoặc tham gia các giải đấu khác!</p>
+                <a href="/tournament/create" class="btn btn-primary">
+                    <i class="fas fa-plus-circle mr-2"></i> Tạo Giải đấu Mới
                 </a>
             </div>
         </div>
 
         <!-- Pagination for tournament list -->
-        <nav aria-label="Phân trang giải đấu">
+        <nav th:if="${tournament_only_create_pagination != null && tournament_only_create_pagination.totalPages > 1}"
+             aria-label="Phân trang giải đấu">
             <ul class="pagination justify-content-center mt-4">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                <li class="page-item" th:classappend="${tournament_only_create_pagination.currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${tournament_only_create_pagination.currentPage - 1}, pageSize=10, flag='all')}"
+                       tabindex="-1" th:aria-disabled="${tournament_only_create_pagination.currentPage == 1}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">
+                <li th:each="pageNum : ${#numbers.sequence(1, tournament_only_create_pagination.totalPages)}"
+                    th:class="${'page-item' + (pageNum == tournament_only_create_pagination.currentPage ? ' active' : '')}">
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${pageNum}, pageSize=10, flag='all')}"
+                       th:text="${pageNum}">1</a>
+                </li>
+                <li class="page-item"
+                    th:classappend="${tournament_only_create_pagination.currentPage == tournament_only_create_pagination.totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${tournament_only_create_pagination.currentPage + 1}, pageSize=10, flag='all')}"
+                       th:aria-disabled="${tournament_only_create_pagination.currentPage == tournament_only_create_pagination.totalPages}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
@@ -588,41 +452,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Search functionality
-        $('#searchBtn').click(function() {
+        $('#searchBtn').click(function () {
             searchTournaments();
         });
 
-        $('#searchTournament').keypress(function(e) {
+        $('#searchTournament').keypress(function (e) {
             if (e.which === 13) {
                 searchTournaments();
             }
         });
 
         function searchTournaments() {
-            const searchValue = $('#searchTournament').val().toLowerCase();
+            const searchValue = $('#searchTournament').val();
+            // Chuyển hướng đến URL với tham số tìm kiếm và các tham số khác
+            window.location.href = `/tournaments/all?name=${encodeURIComponent(searchValue)}&currentPage=1&pageSize=10&flag=all`;
+        }
 
-            if (searchValue === '') {
-                $('.tournament-card').fadeIn(300);
-                return;
-            }
-
-            $('.tournament-card').each(function() {
-                const tournamentName = $(this).find('.tournament-name').text().toLowerCase();
-                const organizer = $(this).find('.tournament-info:contains("Người tổ chức")').text().toLowerCase();
-
-                if (tournamentName.includes(searchValue) || organizer.includes(searchValue)) {
-                    $(this).fadeIn(300);
-                } else {
-                    $(this).hide();
-                }
-            });
+        // Điền giá trị tìm kiếm hiện tại vào ô tìm kiếm từ URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        if (nameParam) {
+            $('#searchTournament').val(decodeURIComponent(nameParam));
         }
 
         // Add animation to tournament cards when they come into view
-        $(window).scroll(function() {
-            $('.tournament-card').each(function() {
+        $(window).scroll(function () {
+            $('.tournament-card').each(function () {
                 const position = $(this).offset().top;
                 const scroll = $(window).scrollTop();
                 const windowHeight = $(window).height();
@@ -636,23 +493,18 @@
 
         // Card hover effect
         $('.tournament-card').hover(
-            function() {
+            function () {
                 $(this).addClass('animate__animated animate__pulse');
             },
-            function() {
+            function () {
                 $(this).removeClass('animate__animated animate__pulse');
             }
         );
 
-        // Stats card hover effect
-        $('.stat-card').hover(
-            function() {
-                $(this).addClass('animate__animated animate__pulse');
-            },
-            function() {
-                $(this).removeClass('animate__animated animate__pulse');
-            }
-        );
+        // Tự động trigger scroll event để hiển thị các card ngay khi trang tải xong
+        setTimeout(function () {
+            $(window).trigger('scroll');
+        }, 100);
     });
 </script>
 </body>

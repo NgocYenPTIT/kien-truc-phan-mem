@@ -111,7 +111,7 @@ public class ClientController {
             );
 
             TournamentPageableDto flag_create_and_join = this.serviceAPI.call(
-                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_create_and_join",
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=create-and-join",
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
@@ -119,7 +119,7 @@ public class ClientController {
             );
 
             TournamentPageableDto flag_only_create = this.serviceAPI.call(
-                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_only_create",
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=only-create",
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
@@ -127,7 +127,7 @@ public class ClientController {
             );
 
             TournamentPageableDto flag_only_join = this.serviceAPI.call(
-                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=is_only_join",
+                    this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=only-join",
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
@@ -243,6 +243,93 @@ public class ClientController {
             model.addAttribute("tournament_all_pagination", tournamentAllPagination);
             System.out.println(model.getAttribute("tournament_all_pagination"));
             return "all-tournament";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournaments/create-and-join")
+    public String showCreateAndJoinTournaments(
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Model model
+    ) {
+        // Kiểm tra người dùng đã đăng nhập chưa
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+            TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
+                    // this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    this.urlTournamentService + "tournament?" + "name=" + name + "&currentPage=" + currentPage + "&pageSize=" + pageSize + "&flag=create-and-join",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+            model.addAttribute("tournament_create_and_join_pagination", tournamentAllPagination);
+            System.out.println(model.getAttribute("tournament_create_and_join_pagination"));
+            return "create-and-join";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournaments/only-create")
+    public String showOnlyCreateTournaments(
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Model model
+    ) {
+        // Kiểm tra người dùng đã đăng nhập chưa
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+            TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
+                    // this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    this.urlTournamentService + "tournament?" + "name=" + name + "&currentPage=" + currentPage + "&pageSize=" + pageSize + "&flag=only-create",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+            model.addAttribute("tournament_only_create_pagination", tournamentAllPagination);
+            System.out.println(model.getAttribute("tournament_only_create_pagination"));
+            return "only-create";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournaments/only-join")
+    public String showOnlyJoinTournaments(
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Model model
+    ) {
+        // Kiểm tra người dùng đã đăng nhập chưa
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+            TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
+                    // this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+                    this.urlTournamentService + "tournament?" + "name=" + name + "&currentPage=" + currentPage + "&pageSize=" + pageSize + "&flag=only-join",
+                    HttpMethod.GET,
+                    null,
+                    TournamentPageableDto.class,
+                    (String)session.getAttribute("token")
+            );
+            model.addAttribute("tournament_only_join_pagination", tournamentAllPagination);
+            System.out.println(model.getAttribute("tournament_only_join_pagination"));
+            return "only-join";
         } else {
             // Chưa đăng nhập, quay lại trang login.html
             return "redirect:/";
