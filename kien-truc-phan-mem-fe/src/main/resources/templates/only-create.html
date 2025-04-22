@@ -388,13 +388,8 @@
                             <span th:text="'Số người tham gia: ' + ${tournament.participantNum}">Số người tham gia: X/Y</span>
                         </div>
                         <div class="tournament-actions">
-                            <a th:href="@{'/tournament/' + ${tournament.id} + '/rankings'}" class="btn btn-sm btn-outline-secondary mr-2">
-                                <i class="fas fa-trophy mr-1"></i> Bảng xếp hạng
-                            </a>
-                            <a th:href="@{'/tournament/' + ${tournament.id} + '/players'}" class="btn btn-sm btn-outline-secondary mr-2">
-                                <i class="fas fa-users mr-1"></i> Danh sách cờ thủ
-                            </a>
-                            <a th:href="@{'/tournament/' + ${tournament.id} + '/details'}" class="btn btn-sm btn-outline-secondary">
+                            <a th:href="@{'/tournament/' + ${tournament.id} + '/details'}"
+                               class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-info-circle mr-1"></i> Chi tiết
                             </a>
                         </div>
