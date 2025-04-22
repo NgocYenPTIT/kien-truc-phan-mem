@@ -307,13 +307,15 @@
         <a class="navbar-brand animate__animated animate__fadeIn" href="/home">
             <span class="othello-piece"></span> Othello Tournament
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown mr-3">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user-circle mr-1"></i> <span th:text="${username}">Username</span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -321,7 +323,9 @@
                         <a class="dropdown-item" href="/settings"><i class="fas fa-cog mr-2"></i> Cài đặt</a>
                         <div class="dropdown-divider"></div>
                         <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</button>
+                            <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt mr-2"></i> Đăng
+                                xuất
+                            </button>
                         </form>
                     </div>
                 </li>
@@ -356,11 +360,12 @@
         <!-- Tournament List -->
         <div class="tournament-list">
             <!-- Tournament cards will be generated dynamically with Thymeleaf -->
-            <div th:if="${tournament_all_pagination != null && !tournament_all_pagination.tournaments.empty}" th:each="tournament : ${tournament_all_pagination.tournaments}" class="tournament-card">
+            <div th:if="${tournament_all_pagination != null && !tournament_all_pagination.tournaments.empty}"
+                 th:each="tournament : ${tournament_all_pagination.tournaments}" class="tournament-card">
                 <a th:href="@{'/tournament/' + ${tournament.id}}" class="text-decoration-none">
                     <div class="tournament-card-header">
                         <h5 class="tournament-name" th:text="${tournament.name}">Tournament Name</h5>
-                        <span class="tournament-status" 
+                        <span class="tournament-status"
                               th:classappend="${tournament.status == 'ĐANG DIỄN RA' ? 'status-active' : 
                                            (tournament.status == 'CHƯA BẮT ĐẦU' ? 'status-upcoming' : 'status-completed')}"
                               th:text="${tournament.status}">Status</span>
@@ -383,16 +388,18 @@
                             <span th:text="'Số người tham gia: ' + ${tournament.participantNum}">Số người tham gia: X/Y</span>
                         </div>
                         <div class="tournament-actions">
-                            <a th:href="@{'/tournament/' + ${tournament.id} + '/details'}" class="btn btn-sm btn-outline-secondary">
+                            <a th:href="@{'/tournament/' + ${tournament.id} + '/details'}"
+                               class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-info-circle mr-1"></i> Chi tiết
                             </a>
                         </div>
                     </div>
                 </a>
             </div>
-            
+
             <!-- Message when no tournaments -->
-            <div th:if="${tournament_all_pagination == null || tournament_all_pagination.tournaments.empty}" class="no-tournaments">
+            <div th:if="${tournament_all_pagination == null || tournament_all_pagination.tournaments.empty}"
+                 class="no-tournaments">
                 <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
                 <h5>Chưa có giải đấu nào</h5>
                 <p class="text-muted">Hãy tạo giải đấu mới hoặc tham gia các giải đấu khác!</p>
@@ -403,19 +410,27 @@
         </div>
 
         <!-- Pagination for tournament list -->
-        <nav th:if="${tournament_all_pagination != null && tournament_all_pagination.totalPages > 1}" aria-label="Phân trang giải đấu">
+        <nav th:if="${tournament_all_pagination != null && tournament_all_pagination.totalPages > 1}"
+             aria-label="Phân trang giải đấu">
             <ul class="pagination justify-content-center mt-4">
                 <li class="page-item" th:classappend="${tournament_all_pagination.currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" th:href="@{/tournaments/all(page=${tournament_all_pagination.currentPage - 1})}" tabindex="-1" th:aria-disabled="${tournament_all_pagination.currentPage == 1}">
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${tournament_all_pagination.currentPage - 1}, pageSize=10, flag='all')}"
+                       tabindex="-1" th:aria-disabled="${tournament_all_pagination.currentPage == 1}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
-                <li th:each="pageNum : ${#numbers.sequence(1, tournament_all_pagination.totalPages)}" 
+                <li th:each="pageNum : ${#numbers.sequence(1, tournament_all_pagination.totalPages)}"
                     th:class="${'page-item' + (pageNum == tournament_all_pagination.currentPage ? ' active' : '')}">
-                    <a class="page-link" th:href="@{/tournaments/all(page=${pageNum})}" th:text="${pageNum}">1</a>
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${pageNum}, pageSize=10, flag='all')}"
+                       th:text="${pageNum}">1</a>
                 </li>
-                <li class="page-item" th:classappend="${tournament_all_pagination.currentPage == tournament_all_pagination.totalPages ? 'disabled' : ''}">
-                    <a class="page-link" th:href="@{/tournaments/all(page=${tournament_all_pagination.currentPage + 1})}" th:aria-disabled="${tournament_all_pagination.currentPage == tournament_all_pagination.totalPages}">
+                <li class="page-item"
+                    th:classappend="${tournament_all_pagination.currentPage == tournament_all_pagination.totalPages ? 'disabled' : ''}">
+                    <a class="page-link"
+                       th:href="@{/tournaments/all(name=${param.name != null ? param.name[0] : ''}, currentPage=${tournament_all_pagination.currentPage + 1}, pageSize=10, flag='all')}"
+                       th:aria-disabled="${tournament_all_pagination.currentPage == tournament_all_pagination.totalPages}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
@@ -437,13 +452,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Search functionality
-        $('#searchBtn').click(function() {
+        $('#searchBtn').click(function () {
             searchTournaments();
         });
 
-        $('#searchTournament').keypress(function(e) {
+        $('#searchTournament').keypress(function (e) {
             if (e.which === 13) {
                 searchTournaments();
             }
@@ -463,8 +478,8 @@
         }
 
         // Add animation to tournament cards when they come into view
-        $(window).scroll(function() {
-            $('.tournament-card').each(function() {
+        $(window).scroll(function () {
+            $('.tournament-card').each(function () {
                 const position = $(this).offset().top;
                 const scroll = $(window).scrollTop();
                 const windowHeight = $(window).height();
@@ -478,16 +493,16 @@
 
         // Card hover effect
         $('.tournament-card').hover(
-            function() {
+            function () {
                 $(this).addClass('animate__animated animate__pulse');
             },
-            function() {
+            function () {
                 $(this).removeClass('animate__animated animate__pulse');
             }
         );
-        
+
         // Tự động trigger scroll event để hiển thị các card ngay khi trang tải xong
-        setTimeout(function() {
+        setTimeout(function () {
             $(window).trigger('scroll');
         }, 100);
     });
