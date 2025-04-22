@@ -293,11 +293,34 @@ public class TournamentService {
 
     public ResponseEntity<?> getDetail(Long id, HttpServletRequest request) {
         Tournament tournament = this.tournamentRepository.findById(id).get();
-        Map<String, Object> map = new ObjectMapper().convertValue(tournament, Map.class);
-        // TODO call round;
+        Map<String, Object> map = new HashMap<>();
+
         List<TournamentRoundDto> round = this.serviceAPI.callForList(this.urlTournamentRoundService + "tournament/" + id, HttpMethod.GET, null, TournamentRoundDto.class, (String) request.getAttribute("token"));
 
+        UserDto organizer = this.serviceAPI.call(
+                this.urlUserService + "user/" + tournament.getOrganizerId(),
+                HttpMethod.GET,
+                null,
+                UserDto.class,
+                (String) request.getAttribute("token")
+        );
+
+        map.put("id", tournament.getId());
+        map.put("name", tournament.getName());
+        map.put("freeToJoin", tournament.isFreeToJoin());
+        map.put("description", tournament.getDescription());
+        map.put("organizer", organizer.getUsername());
+        map.put("boardType", tournament.getBoardType().getName());
+        map.put("organizerMethod", tournament.getOrganizingMethod().getName());
+        map.put("maxPlayer", tournament.getMaxPlayer());
+        map.put("startDate", tournament.getStartDate());
+        map.put("endDate", tournament.getEndDate());
+        map.put("status", tournament.getStatus());
         map.put("round", round);
+
+        // TODO call Player List;
+
+
         return ResponseEntity.ok(map);
     }
 
