@@ -353,12 +353,45 @@ public class ClientController {
             model.addAttribute("isKickOff", true);
             model.addAttribute("showButtonUpdate", true);
             model.addAttribute("showButtonDelete", true);
-
+            //TODO ẩn các button khi status = Kết Thúc
 
 
 //            System.out.println(model.getAttribute("tournament"));
             System.out.println(tournament.getOrganizingMethod());
             return "detail-tournament";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournament/{id}/update")
+    public String showUpdateTournament(
+            @PathVariable(name = "id") int id,
+            Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+            TournamentResponse tournament = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament/" + id,
+                    HttpMethod.GET,
+                    null,
+                    TournamentResponse.class,
+                    (String) session.getAttribute("token")
+            );
+            model.addAttribute("tournament", tournament);
+//            model.addAttribute("role", "host");
+//            model.addAttribute("isMember", false);
+//            model.addAttribute("isKickOff", true);
+//            model.addAttribute("showButtonUpdate", true);
+//            model.addAttribute("showButtonDelete", true);
+
+
+
+//            System.out.println(model.getAttribute("tournament"));
+            System.out.println(tournament.getOrganizingMethod());
+            return "update-tournament";
         } else {
             // Chưa đăng nhập, quay lại trang login.html
             return "redirect:/";
