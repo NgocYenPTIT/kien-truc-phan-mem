@@ -10,11 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -56,8 +52,8 @@ public class ClientController {
                         @RequestParam String password,
                         Model model) {
         // Kiểm tra đăng nhập đơn giản (username: admin, password: password)
-        try{
-            Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username,password), Token.class,"") ;
+        try {
+            Token token = this.serviceAPI.call(authServiceUrl + "login", HttpMethod.POST, new Account(username, password), Token.class, "");
 
             session.setAttribute("token", token.getToken());
             session.setAttribute("user", token.getUser());
@@ -107,7 +103,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
 
             TournamentPageableDto flag_create_and_join = this.serviceAPI.call(
@@ -115,7 +111,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
 
             TournamentPageableDto flag_only_create = this.serviceAPI.call(
@@ -123,7 +119,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
 
             TournamentPageableDto flag_only_join = this.serviceAPI.call(
@@ -131,7 +127,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
             model.addAttribute("flag_all", flag_all.getTotalItems());
             model.addAttribute("flag_create_and_join", flag_create_and_join.getTotalItems());
@@ -222,11 +218,11 @@ public class ClientController {
 
     @GetMapping("/tournaments/all")
     public String showAllTournaments(
-        @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
-        @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-        @RequestParam(name = "name", defaultValue = "") String name,
-        Model model
-        ) {
+            @RequestParam(name = "currentPage", defaultValue = "1") int currentPage,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Model model
+    ) {
         // Kiểm tra người dùng đã đăng nhập chưa
         User user = (User) session.getAttribute("user");
         if (user != null) {
@@ -238,7 +234,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
             model.addAttribute("tournament_all_pagination", tournamentAllPagination);
             System.out.println(model.getAttribute("tournament_all_pagination"));
@@ -267,7 +263,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
             model.addAttribute("tournament_create_and_join_pagination", tournamentAllPagination);
             System.out.println(model.getAttribute("tournament_create_and_join_pagination"));
@@ -296,7 +292,7 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
             model.addAttribute("tournament_only_create_pagination", tournamentAllPagination);
             System.out.println(model.getAttribute("tournament_only_create_pagination"));
@@ -325,11 +321,36 @@ public class ClientController {
                     HttpMethod.GET,
                     null,
                     TournamentPageableDto.class,
-                    (String)session.getAttribute("token")
+                    (String) session.getAttribute("token")
             );
             model.addAttribute("tournament_only_join_pagination", tournamentAllPagination);
             System.out.println(model.getAttribute("tournament_only_join_pagination"));
             return "only-join";
+        } else {
+            // Chưa đăng nhập, quay lại trang login.html
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournament/{id}/details")
+    public String showDetailTournament(
+            @PathVariable(name = "id") int id,
+            Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Người dùng đã đăng nhập
+            model.addAttribute("username", user.getUsername());
+//            TournamentPageableDto tournamentAllPagination = this.serviceAPI.call(
+                    // this.urlTournamentService + "tournament?name=&currentPage=1&pageSize=10&flag=all",
+//                    this.urlTournamentService + "tournament?" + "name=" + name + "&currentPage=" + currentPage + "&pageSize=" + pageSize + "&flag=only-join",
+//                    HttpMethod.GET,
+//                    null,
+//                    TournamentPageableDto.class,
+//                    (String) session.getAttribute("token")
+//            );
+//            model.addAttribute("tournament_only_join_pagination", tournamentAllPagination);
+//            System.out.println(model.getAttribute("tournament_only_join_pagination"));
+            return "detail-tournament";
         } else {
             // Chưa đăng nhập, quay lại trang login.html
             return "redirect:/";
