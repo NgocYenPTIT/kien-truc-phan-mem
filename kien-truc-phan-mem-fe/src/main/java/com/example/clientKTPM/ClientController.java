@@ -397,4 +397,10 @@ public class ClientController {
             return "redirect:/";
         }
     }
+
+    @GetMapping("/rank")
+    public String rank(
+                        Model model) {
+      return  "rank" ; 
+    }
 }
