@@ -34,5 +34,4 @@ public class TournamentController {
     public ResponseEntity<?> getDetail(@PathVariable("id") Long id , HttpServletRequest request) {
         return this.tournamentService.getDetail(id, request);
     }
-
 }

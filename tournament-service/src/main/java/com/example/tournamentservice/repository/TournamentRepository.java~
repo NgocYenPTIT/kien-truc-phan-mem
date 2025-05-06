@@ -35,4 +35,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Page<Tournament> findByOrganizerIdNotAndDeletedAtIsNull(Long organizerId, Pageable pageable);
     Page<Tournament> findByOrganizerIdNotAndNameContainingIgnoreCaseAndDeletedAtIsNull(
             Long organizerId, String name, Pageable pageable);
+
+    List<Tournament> findByOrganizerId(Long userId);
 }

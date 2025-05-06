@@ -1,0 +1,42 @@
+package com.example.tournamentInvitationService.service;
+
+import com.example.tournamentInvitationService.DTOs.TournamentPlayerDto;
+import com.example.tournamentInvitationService.model.TournamentInvitation;
+import com.example.tournamentInvitationService.repository.TournamentInvitationRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Service
+public class TournamentPlayerService {
+    @Autowired
+    private TournamentInvitationRepository tournamentInvitationRepository;
+
+    public TournamentInvitation create(TournamentInvitation tournamentInvitation) {
+        return tournamentInvitationRepository.save(tournamentInvitation);
+    }
+
+    public ArrayList<TournamentInvitation> getListInvitationByFlag() {
+        return new ArrayList<>();
+    }
+
+    public  TournamentInvitation update(TournamentInvitation tournamentInvitation) {
+    return tournamentInvitationRepository.save(tournamentInvitation);
+    }
+}
