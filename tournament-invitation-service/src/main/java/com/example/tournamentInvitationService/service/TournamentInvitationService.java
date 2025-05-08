@@ -182,6 +182,24 @@ public class TournamentInvitationService {
     @Transactional
     public TournamentInvitation update(HttpServletRequest request, CreateInvitation invitation) {
 
+        // OUT
+        if (invitation.getType().equals("OUT")) {
+            System.out.println("OUT");
+            System.out.println(invitation.getTournamentId());
+            System.out.println(invitation.getUserId());
+            this.tournamentInvitationRepository.deleteByTournamentIdAndUserId(invitation.getTournamentId(), invitation.getUserId());
+
+            this.serviceAPI.call(
+                    this.urlTournamentPlayerService + "tournament-player",
+                    HttpMethod.DELETE,
+                    TournamentPlayerRequest.builder().tournamentId(invitation.getTournamentId()).playerId(invitation.getUserId()).build(),
+                    TournamentPlayerRequest.class,
+                    (String) request.getAttribute("token")
+            );
+
+            return TournamentInvitation.builder().build();
+        }
+
         // UNREQUEST
         if (invitation.getType().equals("UNREQUEST")) {
             System.out.println("UNREQUEST");
@@ -207,10 +225,8 @@ public class TournamentInvitationService {
         if (invitation.getStatus().equals("ACCEPT") && numParticipants >= tournament.getMaxPlayer()) {
             return null;
         }
-        inv.setStatus(invitation.getStatus());
         //TODO: add user to list player of tournament if accept
         if (invitation.getStatus().equals("ACCEPT")) {
-            // call api
             this.serviceAPI.call(
                     this.urlTournamentPlayerService + "tournament-player",
                     HttpMethod.POST,
@@ -218,10 +234,13 @@ public class TournamentInvitationService {
                     TournamentPlayerRequest.class,
                     (String) request.getAttribute("token")
             );
-
-            // TODO: call update tour
+            inv.setStatus(invitation.getStatus());
+            return tournamentInvitationRepository.save(inv);
         }
-        return tournamentInvitationRepository.save(inv);
+        else {
+            tournamentInvitationRepository.deleteByTournamentIdAndUserId(inv.getTournamentId(), inv.getUserId());
+            return new TournamentInvitation();
+        }
     }
 
     private List<InvitationOverview> convert(List<TournamentInvitation> list, String token) {

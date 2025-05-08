@@ -524,7 +524,7 @@ public class ClientController {
                 TournamentInvitation inv = this.serviceAPI.call(
                         this.urlTournamentInvitationService + "invitation",
                         HttpMethod.PUT,
-                        CreateInvitation.builder().id(.)tournamentId(tournamentId).userId(user.getId()).type("UNREQUEST").status("None").build(),
+                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("UNREQUEST").status("None").build(),
                         TournamentInvitation.class,
                         (String) session.getAttribute("token")
                 );
@@ -534,10 +534,7 @@ public class ClientController {
             catch (Exception e) {
                 e.printStackTrace();
                 return "redirect:/tournament/" + id + "/invite-full?playerName=";
-
             }
-
-            // Mời thành công
         } else {
             return "redirect:/";
         }

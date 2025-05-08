@@ -17,4 +17,6 @@ public interface TournamentPlayerRepository extends JpaRepository<TournamentPlay
 
     // Tìm theo tournamentId và deletedAt là null với phân trang
     Page<TournamentPlayer> findByTournamentIdAndDeletedAtIsNull(Long tournamentId, Pageable pageable);
+
+    void deleteByTournamentIdAndPlayerId(Long tournamentId, Long playerId);
 }

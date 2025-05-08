@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,4 +104,14 @@ public class TournamentPlayerService {
 
         return ResponseEntity.ok(TournamentPlayerDto.builder().playerId(playerId).tournamentId(tournamentId).playerName(user.getUsername()).build());
     }
+
+    @Transactional
+    public ResponseEntity<?> delete(HttpServletRequest request, TournamentPlayerRequest player) {
+        Long playerId = (Long) player.getPlayerId();
+        Long tournamentId = (Long) player.getTournamentId();
+        this.tournamentPlayerRepository.deleteByTournamentIdAndPlayerId(tournamentId, playerId);
+
+        return ResponseEntity.ok(TournamentPlayerDto.builder().playerId(playerId).tournamentId(tournamentId).build());
+    }
+
 }

@@ -534,10 +534,33 @@ public class ClientController {
             catch (Exception e) {
                 e.printStackTrace();
                 return "redirect:/tournament/" + id + "/invite-full?playerName=";
-
             }
+        } else {
+            return "redirect:/";
+        }
+    }
+    @PostMapping("/tournament/{id}/out")
+    public String outJoin(@PathVariable(name = "id") int id,
+                                @RequestParam(name = "userId") Long userId,
+                                @RequestParam(name = "tournamentId") Long tournamentId) {
 
-            // Mời thành công
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                TournamentInvitation inv = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation",
+                        HttpMethod.PUT,
+                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("UNREQUEST").status("None").build(),
+                        TournamentInvitation.class,
+                        (String) session.getAttribute("token")
+                );
+
+                return "redirect:/tournament/" + id  + "/details";
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/tournament/" + id + "/invite-full?playerName=";
+            }
         } else {
             return "redirect:/";
         }
