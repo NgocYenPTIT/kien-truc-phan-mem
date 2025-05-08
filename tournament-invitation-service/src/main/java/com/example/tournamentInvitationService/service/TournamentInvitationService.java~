@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,7 @@ public class TournamentInvitationService {
     }
 
     public List<InvitationOverview> getList(HttpServletRequest request) {
-        String token = (String)request.getAttribute("token");
+        String token = (String) request.getAttribute("token");
         String flag = (String) request.getParameter("flag");
         System.out.println(flag);
         TournamentPageable createAndJoin = this.serviceAPI.call(
@@ -110,7 +111,7 @@ public class TournamentInvitationService {
             return convert(tournamentInvitationRepository.findByUserIdAndStatusAndType(
                     (Long) request.getAttribute("id"),
                     "PENDING",
-                    "INVITED"),token);
+                    "INVITED"), token);
         }
 
         // TODO :2 Lấy ra danh sách các giải đấu người khác mời mình tham gia
@@ -118,7 +119,7 @@ public class TournamentInvitationService {
             return convert(tournamentInvitationRepository.findByUserIdAndStatusAndType(
                     (Long) request.getAttribute("id"),
                     "PENDING",
-                    "INVITING"),token);
+                    "INVITING"), token);
         }
 //
 //        // TODO :3.lấy ra các giải đấu mình tổ chức & người khác muốn tham gia để xét duyệt cho họ
@@ -132,7 +133,7 @@ public class TournamentInvitationService {
                 peopleWhoWantJoinMyTournament.addAll(temp);
             });
 
-            return convert(peopleWhoWantJoinMyTournament,token);
+            return convert(peopleWhoWantJoinMyTournament, token);
         }
 //
 //        // TODO :4.lấy ra các giải đấu do mình tổ chức và mình mời người khác tham gia
@@ -146,7 +147,7 @@ public class TournamentInvitationService {
                 peopleWhoIInviteToJoinMyTournament.addAll(temp);
             });
 
-            return convert(peopleWhoIInviteToJoinMyTournament,token);
+            return convert(peopleWhoIInviteToJoinMyTournament, token);
         }
         return null;
     }
@@ -165,25 +166,25 @@ public class TournamentInvitationService {
         Integer numParticipants = tournament.getParticipants();
 
         // Nếu số participant của tournament đã đầy, từ chối.
-        if ( invitation.getStatus().equals("ACCCEPT") && numParticipants >= tournament.getMaxPlayer()) {
+        if (invitation.getStatus().equals("ACCCEPT") && numParticipants >= tournament.getMaxPlayer()) {
             return null;
         }
         inv.setStatus(invitation.getStatus());
         //TODO: add user to list player of tournament if accept
-        if(invitation.getStatus().equals("ACCCEPT")){
+        if (invitation.getStatus().equals("ACCCEPT")) {
             // call api
             this.serviceAPI.call(
                     this.urlTournamentPlayerService + "tournament-player",
                     HttpMethod.POST,
                     TournamentPlayerRequest.builder().tournamentId(inv.getTournamentId()).playerId(inv.getUserId()).build(),
-                    Tournament.class,
+                    TournamentPlayerRequest.class,
                     (String) request.getAttribute("token")
             );
         }
         return tournamentInvitationRepository.save(inv);
     }
 
-    private  List<InvitationOverview>  convert(List<TournamentInvitation> list,String token) {
+    private List<InvitationOverview> convert(List<TournamentInvitation> list, String token) {
         return list.stream().map(ele -> {
             User participant = this.serviceAPI.call(
                     this.urlUserService + "user/" + ele.getUserId(),
@@ -211,4 +212,11 @@ public class TournamentInvitationService {
         }).collect(Collectors.toList());
     }
 
+    public TournamentJoin findJoinTournament(Long userId) {
+        List<TournamentInvitation> list = this.tournamentInvitationRepository.findByUserIdAndStatus(userId, "ACCCEPT");
+        System.out.println(list);
+        List<Long> tournamentIds = list.stream().map(TournamentInvitation::getTournamentId).collect(Collectors.toList());
+        HashSet<Long> hashSet = new HashSet<>(tournamentIds);
+        return  TournamentJoin.builder().tournamentIds(new ArrayList<>(hashSet)).build();
+    }
 }

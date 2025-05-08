@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -31,10 +33,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     Page<Tournament> findByOrganizerIdAndAttendFalseAndNameContainingIgnoreCaseAndDeletedAtIsNull(
             Long organizerId, String name, Pageable pageable);
 
-    // 4. Lấy các tournament người chơi chỉ tham gia (organizerId != playerId)
-    Page<Tournament> findByOrganizerIdNotAndDeletedAtIsNull(Long organizerId, Pageable pageable);
-    Page<Tournament> findByOrganizerIdNotAndNameContainingIgnoreCaseAndDeletedAtIsNull(
-            Long organizerId, String name, Pageable pageable);
+    Page<Tournament> findByIdInAndNameContainingIgnoreCaseAndDeletedAtIsNull(List<Long> ids, String name, Pageable pageable);
 
-    List<Tournament> findByOrganizerId(Long userId);
+    Page<Tournament> findByIdInAndDeletedAtIsNull(List<Long> ids, Date deletedAt);
 }

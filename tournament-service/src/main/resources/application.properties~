@@ -22,4 +22,4 @@ app.global.url.tournament-round-service=http://localhost:8891/
 #URL of tournament-player-service
 app.global.url.tournament-player-service=http://localhost:8892/
 
-app.global.url.tournament-invitation-service=http://localhost:8866/
+app.global.url.tournament-invitation-service=http://localhost:8889/

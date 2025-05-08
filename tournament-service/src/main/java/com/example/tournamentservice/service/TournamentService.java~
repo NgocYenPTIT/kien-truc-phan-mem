@@ -6,6 +6,7 @@ import com.example.tournamentservice.constants.TournamentStatus;
 import com.example.tournamentservice.model.BoardType;
 import com.example.tournamentservice.model.OrganizingMethod;
 import com.example.tournamentservice.model.Tournament;
+import com.example.tournamentservice.model.TournamentJoin;
 import com.example.tournamentservice.repository.BoardTypeRepository;
 import com.example.tournamentservice.repository.OrganizingMethodRepository;
 import com.example.tournamentservice.repository.TournamentRepository;
@@ -46,6 +47,9 @@ public class TournamentService {
 
     @Value("${app.global.url.tournament-player-service}")
     private String urlTournamentPlayerService;
+
+    @Value("${app.global.url.tournament-invitation-service}")
+    private String urlTournamentInvitationService;
 
     private final Pattern datePattern = Pattern.compile(
             "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})\\s([0-9]{1,2}):([0-9]{1,2})$");
@@ -382,11 +386,17 @@ public class TournamentService {
                 break;
 
             case "only-join":
+                TournamentJoin tournamentJoin = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation-join?userId=" + playerId,
+                        HttpMethod.GET,
+                        null,
+                        TournamentJoin.class,
+                        (String) request.getAttribute("token")
+                );
                 if (hasName) {
-                    tournamentPage = tournamentRepository.findByOrganizerIdNotAndNameContainingIgnoreCaseAndDeletedAtIsNull(
-                            playerId, name, pageable);
+                    tournamentPage = tournamentRepository.findByIdInAndNameContainingIgnoreCaseAndDeletedAtIsNull(tournamentJoin.getTournamentIds(),name, pageable);
                 } else {
-                    tournamentPage = tournamentRepository.findByOrganizerIdNotAndDeletedAtIsNull(playerId, pageable);
+                    tournamentPage = tournamentRepository.findByIdInAndDeletedAtIsNull(tournamentJoin.getTournamentIds(), pageable);
                 }
                 break;
 
@@ -441,5 +451,5 @@ public class TournamentService {
 
         return ResponseEntity.ok(response);
     }
-    
+
 }

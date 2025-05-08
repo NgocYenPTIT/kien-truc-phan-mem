@@ -34,6 +34,11 @@ public class TournamentInvitationController {
 
     @PutMapping("/invitation")
     public ResponseEntity<?> update(HttpServletRequest request, CreateInvitation invitation) {
-        return ResponseEntity.ok(tournamentInvitationService.update( request, invitation)0;
+        return ResponseEntity.ok(tournamentInvitationService.update( request, invitation));
+    }
+
+    @GetMapping("/invitation-join")
+    public ResponseEntity<?> findJoin( @RequestParam() Long userId) {
+        return ResponseEntity.ok(tournamentInvitationService.findJoinTournament(userId));
     }
 }
