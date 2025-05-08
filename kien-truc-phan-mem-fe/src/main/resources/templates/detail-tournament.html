@@ -364,6 +364,28 @@
             border-color: #d35400;
         }
 
+        .btn-invite {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .btn-invite:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-cancel {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #7f8c8d;
+            border-color: #7f8c8d;
+        }
+
         .back-btn {
             margin-bottom: 20px;
             display: inline-flex;
@@ -392,14 +414,14 @@
         }
 
         .modal-header {
-            background: linear-gradient(135deg, var(--accent-color), #c0392b);
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
             color: white;
             border-bottom: none;
             padding: 1.5rem;
         }
 
-        .modal-header.kickoff-header {
-            background: linear-gradient(135deg, var(--warning-color), #d35400);
+        .modal-header.invite-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
         }
 
         .modal-title {
@@ -681,58 +703,44 @@
                     </div>
                     <div class="info-card-body">
                         <div class="d-grid gap-3">
-                            <!-- Các nút luôn hiển thị -->
+                            <!-- Nút Bảng xếp hạng - luôn hiển thị -->
                             <a th:href="@{'/tournament/' + ${tournament.id} + '/rankings'}"
                                class="btn btn-outline-primary btn-block action-button">
                                 <i class="fas fa-trophy mr-2"></i> Bảng xếp hạng
                             </a>
-
-                            <a th:href="@{'/tournament/' + ${tournament.id} + '/players'}"
-                               class="btn btn-outline-primary btn-block action-button">
-                                <i class="fas fa-users mr-2"></i> Danh sách cờ thủ
-                            </a>
-
-                            <!-- Nút Mời người chơi - chỉ dành cho người tổ chức -->
-                            <a th:if="${role == 'host'}"
-                               th:href="@{'/tournament/' + ${tournament.id} + '/invite'}"
-                               class="btn btn-outline-primary btn-block action-button">
+                            
+                            <!-- Các nút dựa vào flag_join -->
+                            <!-- Nút "Tham gia" khi flag_join = "request" -->
+                            <form th:if="${flag_join == 'request'}" th:action="@{'/tournament/' + ${tournament.id} + '/can-request'}" method="post" class="action-button">
+                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                <input type="hidden" name="userId" th:value="${userId}">
+                                <button type="submit" class="btn btn-join btn-block">
+                                    <i class="fas fa-sign-in-alt mr-2"></i> Tham gia
+                                </button>
+                            </form>
+                            
+                            <!-- Nút "Hủy yêu cầu tham gia" khi flag_join = "requested" -->
+                            <form th:if="${flag_join == 'requested'}" th:action="@{'/tournament/' + ${tournament.id} + '/requested'}" method="post" class="action-button">
+                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                <input type="hidden" name="userId" th:value="${userId}">
+                                <button type="submit" class="btn btn-cancel btn-block">
+                                    <i class="fas fa-times-circle mr-2"></i> Hủy yêu cầu tham gia
+                                </button>
+                            </form>
+                            
+                            <!-- Nút "Mời" khi flag_join = "invite" -->
+                            <button th:if="${flag_join == 'invite'}" type="button" class="btn btn-invite btn-block action-button" data-toggle="modal" data-target="#inviteModal">
                                 <i class="fas fa-user-plus mr-2"></i> Mời người chơi
-                            </a>
-
-                            <!-- Nút Tham gia - dành cho người chưa tham gia -->
-                            <a th:if="${ !isMember}"
-                               th:href="@{'/tournament/' + ${tournament.id} + '/join'}"
-                               class="btn btn-join btn-block action-button">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Tham gia
-                            </a>
-
-                            <!-- Nút Rời đi - dành cho người đã tham gia -->
-                            <a th:if="${ isMember}"
-                               th:href="@{'/tournament/' + ${tournament.id} + '/leave'}"
-                               class="btn btn-leave btn-block action-button">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Rời khỏi
-                            </a>
-
-                            <!-- Nút Kick Off - chỉ dành cho người tổ chức -->
-                            <div th:if="${isKickOff}" class="mt-4">
-                                <button type="button" class="btn btn-kickoff btn-block pulse action-button" data-toggle="modal" data-target="#kickoffModal">
-                                    <i class="fas fa-flag-checkered mr-2"></i> Kick Off giải đấu
+                            </button>
+                            
+                            <!-- Nút "Rời khỏi" khi flag_join = "out" -->
+                            <form th:if="${flag_join == 'out'}" th:action="@{'/tournament/' + ${tournament.id} + '/out'}" method="post" class="action-button">
+                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                <input type="hidden" name="userId" th:value="${userId}">
+                                <button type="submit" class="btn btn-leave btn-block">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Rời khỏi
                                 </button>
-                            </div>
-
-                            <!-- Nút cập nhật - chỉ dành cho người tổ chức -->
-                            <div th:if="${showButtonUpdate}" class="mt-2">
-                                <a th:href="@{'/tournament/' + ${tournament.id} + '/update'}" class="btn btn-update btn-block action-button">
-                                    <i class="fas fa-edit mr-2"></i> Cập nhật giải đấu
-                                </a>
-                            </div>
-
-                            <!-- Nút xóa - chỉ dành cho người tổ chức -->
-                            <div th:if="${showButtonDelete}" class="mt-2">
-                                <button type="button" class="btn btn-delete btn-block action-button" data-toggle="modal" data-target="#deleteModal">
-                                    <i class="fas fa-trash-alt mr-2"></i> Xóa giải đấu
-                                </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -779,74 +787,37 @@
     </div>
 </main>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Invite Player Modal -->
+<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content animate__animated animate__fadeIn">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> Xác nhận xóa
+            <div class="modal-header invite-header">
+                <h5 class="modal-title" id="inviteModalLabel">
+                    <i class="fas fa-user-plus"></i> Mời người chơi
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn xóa giải đấu này không?</p>
-                <p><strong>Lưu ý:</strong> Tất cả dữ liệu liên quan đến giải đấu này bao gồm:</p>
-                <ul>
-                    <li>Người chơi tham gia</li>
-                    <li>Các vòng đấu</li>
-                    <li>Kết quả thi đấu</li>
-                    <li>Bảng xếp hạng</li>
-                </ul>
-                <p>đều sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">
-                    <i class="fas fa-times mr-1"></i> Hủy
-                </button>
-                <form th:action="@{'/tournament/' + ${tournament.id} + '/delete'}" method="post">
-                    <button type="submit" class="btn btn-danger modal-btn">
-                        <i class="fas fa-trash-alt mr-1"></i> Xác nhận xóa
+            <form th:action="@{'/tournament/' + ${tournament.id} + '/add-player'}" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="playerName">Tên người chơi:</label>
+                        <input type="text" class="form-control" id="playerName" name="playerName" required>
+                        <small class="form-text text-muted">Nhập tên đăng nhập của người chơi bạn muốn mời.</small>
+                    </div>
+                    <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                    <input type="hidden" name="userId" th:value="${userId}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Hủy
                     </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Kickoff Confirmation Modal -->
-<div class="modal fade" id="kickoffModal" tabindex="-1" role="dialog" aria-labelledby="kickoffModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content animate__animated animate__fadeIn">
-            <div class="modal-header kickoff-header">
-                <h5 class="modal-title" id="kickoffModalLabel">
-                    <i class="fas fa-flag-checkered"></i> Xác nhận Kick Off
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn Kick Off giải đấu này không?</p>
-                <p><strong>Lưu ý:</strong> Sau khi Kick Off:</p>
-                <ul>
-                    <li>Giải đấu sẽ chuyển sang trạng thái <strong>ĐANG DIỄN RA</strong></li>
-                    <li>Vòng đấu đầu tiên sẽ được bắt đầu</li>
-                    <li>Bạn sẽ không thể thay đổi các thông tin cơ bản của giải đấu</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">
-                    <i class="fas fa-times mr-1"></i> Hủy
-                </button>
-                <form th:action="@{'/tournament/' + ${tournament.id} + '/kickoff'}" method="post">
-                    <button type="submit" class="btn btn-warning modal-btn">
-                        <i class="fas fa-flag-checkered mr-1"></i> Xác nhận Kick Off
+                    <button type="submit" class="btn btn-primary modal-btn">
+                        <i class="fas fa-paper-plane mr-1"></i> Gửi lời mời
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -883,16 +854,6 @@
         setTimeout(function() {
             $(window).trigger('scroll');
         }, 100);
-
-        // Confirm delete action
-        $('.btn-delete').click(function() {
-            $('#deleteModal').modal('show');
-        });
-
-        // Confirm kickoff action
-        $('.btn-kickoff').click(function() {
-            $('#kickoffModal').modal('show');
-        });
     });
 </script>
 </body>

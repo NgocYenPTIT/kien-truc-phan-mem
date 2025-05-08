@@ -36,6 +36,9 @@ public class ClientController {
     @Value("${app.global.url.tournament-service}")
     private String urlTournamentService;
 
+    @Value("${app.global.url.tournament-invitation-service}")
+    private String urlTournamentInvitationService;
+
     // Hiển thị trang đăng nhập
     @GetMapping("/")
     public String showLoginPage() {
@@ -348,11 +351,23 @@ public class ClientController {
                     (String) session.getAttribute("token")
             );
             model.addAttribute("tournament", tournament);
-            model.addAttribute("role", "host");
-            model.addAttribute("isMember", false);
-            model.addAttribute("isKickOff", true);
-            model.addAttribute("showButtonUpdate", true);
-            model.addAttribute("showButtonDelete", true);
+            System.out.println(tournament.getId());
+            if (tournament.getOrganizer().trim().equals(user.getUsername().trim())) {// chủ giải đấu
+                model.addAttribute("flag_join", "invite");
+            } else {// không phải chủ giải đấu
+                InvitationFlag flag = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "check-flag?tournamentId=" + id + "&userId=" + user.getId(),
+                        HttpMethod.GET,
+                        null,
+                        InvitationFlag.class,
+                        (String) session.getAttribute("token")
+                );
+                  model.addAttribute("flag_join", flag);
+//                model.addAttribute("flag_join", "request");
+//                model.addAttribute("flag_join", "requested");
+//                model.addAttribute("flag_join", "out");
+            }
+
             //TODO ẩn các button khi status = Kết Thúc
 
 
@@ -365,11 +380,10 @@ public class ClientController {
         }
     }
 
-   
 
     @GetMapping("/rank")
     public String rank(
-                        Model model) {
-      return  "rank" ; 
+            Model model) {
+        return "rank";
     }
 }

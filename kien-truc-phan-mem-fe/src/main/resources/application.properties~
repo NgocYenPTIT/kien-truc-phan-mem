@@ -15,4 +15,4 @@ app.global.url.auth-service=http://localhost:8888/
 #URL of tournament-service
 app.global.url.tournament-service=http://localhost:8890/
 
-app.global.url.tournament-invitation-service=http://localhost:8866/
+app.global.url.tournament-invitation-service=http://localhost:8890/

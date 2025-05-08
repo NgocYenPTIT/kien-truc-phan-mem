@@ -41,4 +41,9 @@ public class TournamentInvitationController {
     public ResponseEntity<?> findJoin( @RequestParam(value = "userId") Long userId) {
         return ResponseEntity.ok(tournamentInvitationService.findJoinTournament(userId));
     }
+
+    @GetMapping("/check-flag")
+    public ResponseEntity<?> checkFlag( @RequestParam(value = "userId") Long userId, @RequestParam(value = "tournamentId") Long tournamentId) {
+        return ResponseEntity.ok(tournamentInvitationService.checkStatusInvitation(userId, tournamentId));
+    }
 }

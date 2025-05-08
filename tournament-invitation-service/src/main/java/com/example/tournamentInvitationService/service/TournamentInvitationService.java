@@ -219,4 +219,19 @@ public class TournamentInvitationService {
         HashSet<Long> hashSet = new HashSet<>(tournamentIds);
         return  TournamentJoin.builder().tournamentIds(new ArrayList<>(hashSet)).build();
     }
+
+    public  InvitationFlag  checkStatusInvitation(Long userId, Long tournamentId) {
+
+        List<TournamentInvitation> request = this.tournamentInvitationRepository.findByUserIdAndTournamentId(userId, tournamentId);
+        List<TournamentInvitation> requested = this.tournamentInvitationRepository.findByUserIdAndTournamentIdAndStatusAndType(userId, tournamentId,"PENDING","INVITED");
+
+        if (request.isEmpty()) {
+            return InvitationFlag.builder().value("request").build();
+        }
+        else if(!requested.isEmpty()) {
+            return InvitationFlag.builder().value("requested").build();
+        }
+
+        return InvitationFlag.builder().value("out").build();
+    }
 }
