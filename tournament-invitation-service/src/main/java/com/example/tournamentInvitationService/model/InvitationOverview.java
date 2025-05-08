@@ -1,18 +1,19 @@
 package com.example.tournamentInvitationService.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class TournamentPlayer {
-    private Integer pageSize ;
-    private Integer totalItems;
-    private Integer totalPages;
-    private Integer currentPage;
+@Builder
+public class InvitationOverview {
+    private  Tournament tournament;
+    private User participant;
+    private Date createdAt;
+//    private String status;
 }

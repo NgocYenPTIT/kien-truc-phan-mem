@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +28,13 @@ public class TournamentInvitationService {
 
     @Value(value = "${app.global.url.tournament-service}")
     private String urlTournamentService;
+
+    @Value(value = "${app.global.url.user-service}")
+    private String urlUserService;
+
+    @Value(value = "${app.global.url.tournament-player-service}")
+    private String urlTournamentPlayerService;
+
 
     public TournamentInvitation create(HttpServletRequest request, CreateInvitation invitation) {
         // Todo: call getDetail Tournament
@@ -53,10 +61,15 @@ public class TournamentInvitationService {
             for (TournamentInvitation random : randoms) {
                 random.setStatus("ACCCEPT");
                 tournamentInvitationRepository.save(random);
+                this.serviceAPI.call(
+                        this.urlTournamentPlayerService + "tournament-player",
+                        HttpMethod.POST,
+                        TournamentPlayerRequest.builder().tournamentId(random.getTournamentId()).playerId(random.getUserId()).build(),
+                        TournamentPlayerRequest.class,
+                        (String) request.getAttribute("token")
+                );
             }
-            if (numParticipants == tournament.getMaxPlayer() - 1) {
-                tournamentInvitationRepository.deleteByTournamentIdAndStatusEquals(invitation.getTournamentId(), "PENDING");
-            }
+            return new TournamentInvitation();
         }
         // Save
         TournamentInvitation savedInvitation = TournamentInvitation.builder()
@@ -66,29 +79,13 @@ public class TournamentInvitationService {
                 .status("PENDING")
                 .build();
 
-        if (numParticipants == tournament.getMaxPlayer() - 1) {
-            tournamentInvitationRepository.deleteByTournamentIdAndStatusEquals(invitation.getTournamentId(), "PENDING");
-        }
         return tournamentInvitationRepository.save(savedInvitation);
     }
 
-    public ArrayList<TournamentInvitation> getList(HttpServletRequest request) {
-//        // Lấy ra tournament ứng với currentUser
-//        Tournament tournament = this.serviceAPI.call(
-//                this.urlTournamentService + "tournament/" + invitation.getTournamentId(),
-//                HttpMethod.GET,
-//                null,
-//                Tournament.class,
-//                (String) request.getAttribute("token")
-//        );
-        // TODO :1.lấy ra danh sách các giải đấu mình muốn tham gia
-        List<TournamentInvitation> wannaJoin = tournamentInvitationRepository.findByUserIdAndStatusAndType(
-                (Long) request.getAttribute("id"),
-                "PENDING",
-                "INVITED");
-        // TODO :2.lấy ra các giải đấu mình tổ chức & người khác muốn tham gia để xét duyệt cho họ
-        // TODO: B1 lấy ra danh sách các giải đấu do mình tổ chức
-        // Lấy ra tournament ứng với currentUser
+    public List<InvitationOverview> getList(HttpServletRequest request) {
+        String token = (String)request.getAttribute("token");
+        String flag = (String) request.getParameter("flag");
+        System.out.println(flag);
         TournamentPageable createAndJoin = this.serviceAPI.call(
                 this.urlTournamentService + "tournament?" + "name=" + "" + "&currentPage=" + 1 + "&pageSize=" + 10 + "&flag=create-and-join",
                 HttpMethod.GET,
@@ -96,19 +93,122 @@ public class TournamentInvitationService {
                 TournamentPageable.class,
                 (String) request.getAttribute("token")
         );
-
-        TournamentPageable createAndJoin = this.serviceAPI.call(
-                this.urlTournamentService + "tournament?" + "name=" + "" + "&currentPage=" + 1 + "&pageSize=" + 10 + "&flag=create-and-join",
+        TournamentPageable onlyCreate = this.serviceAPI.call(
+                this.urlTournamentService + "tournament?" + "name=" + "" + "&currentPage=" + 1 + "&pageSize=" + 10 + "&flag=only-create",
                 HttpMethod.GET,
                 null,
                 TournamentPageable.class,
                 (String) request.getAttribute("token")
         );
-        // TODO :3.lấy ra các giải đấu do mình tổ chức và mình mời người khác tham gia
-        return new ArrayList<>();
+
+        List<TournamentOverview> tournaments = new ArrayList<>(createAndJoin.getTournaments());
+        tournaments.addAll(onlyCreate.getTournaments());
+
+        // TODO :1.Lấy ra danh sách các giải đấu mình muốn tham gia
+        if (flag.equals("i-want-join")) {
+            System.out.println("I WANT JOIN");
+            return convert(tournamentInvitationRepository.findByUserIdAndStatusAndType(
+                    (Long) request.getAttribute("id"),
+                    "PENDING",
+                    "INVITED"),token);
+        }
+
+        // TODO :2 Lấy ra danh sách các giải đấu người khác mời mình tham gia
+        else if (flag.equals("other-invite-me")) {
+            return convert(tournamentInvitationRepository.findByUserIdAndStatusAndType(
+                    (Long) request.getAttribute("id"),
+                    "PENDING",
+                    "INVITING"),token);
+        }
+//
+//        // TODO :3.lấy ra các giải đấu mình tổ chức & người khác muốn tham gia để xét duyệt cho họ
+        else if (flag.equals("other-want-join")) {
+            List<TournamentInvitation> peopleWhoWantJoinMyTournament = new ArrayList<>();
+            tournaments.forEach(tournament -> {
+                List<TournamentInvitation> temp = tournamentInvitationRepository.findByTournamentIdAndStatusAndType(
+                        tournament.getId(),
+                        "PENDING",
+                        "INVITED");
+                peopleWhoWantJoinMyTournament.addAll(temp);
+            });
+
+            return convert(peopleWhoWantJoinMyTournament,token);
+        }
+//
+//        // TODO :4.lấy ra các giải đấu do mình tổ chức và mình mời người khác tham gia
+        else if (flag.equals("i-want-invite")) {
+            List<TournamentInvitation> peopleWhoIInviteToJoinMyTournament = new ArrayList<>();
+            tournaments.forEach(tournament -> {
+                List<TournamentInvitation> temp = tournamentInvitationRepository.findByTournamentIdAndStatusAndType(
+                        tournament.getId(),
+                        "PENDING",
+                        "INVITING");
+                peopleWhoIInviteToJoinMyTournament.addAll(temp);
+            });
+
+            return convert(peopleWhoIInviteToJoinMyTournament,token);
+        }
+        return null;
     }
 
-    public TournamentInvitation update(TournamentInvitation tournamentInvitation) {
-        return tournamentInvitationRepository.save(tournamentInvitation);
+    public TournamentInvitation update(HttpServletRequest request, CreateInvitation invitation) {
+
+        TournamentInvitation inv = this.tournamentInvitationRepository.findById(invitation.getId()).get();
+
+        Tournament tournament = this.serviceAPI.call(
+                this.urlTournamentService + "tournament/" + inv.getTournamentId(),
+                HttpMethod.GET,
+                null,
+                Tournament.class,
+                (String) request.getAttribute("token")
+        );
+        Integer numParticipants = tournament.getParticipants();
+
+        // Nếu số participant của tournament đã đầy, từ chối.
+        if ( invitation.getStatus().equals("ACCCEPT") && numParticipants >= tournament.getMaxPlayer()) {
+            return null;
+        }
+        inv.setStatus(invitation.getStatus());
+        //TODO: add user to list player of tournament if accept
+        if(invitation.getStatus().equals("ACCCEPT")){
+            // call api
+            this.serviceAPI.call(
+                    this.urlTournamentPlayerService + "tournament-player",
+                    HttpMethod.POST,
+                    TournamentPlayerRequest.builder().tournamentId(inv.getTournamentId()).playerId(inv.getUserId()).build(),
+                    Tournament.class,
+                    (String) request.getAttribute("token")
+            );
+        }
+        return tournamentInvitationRepository.save(inv);
     }
+
+    private  List<InvitationOverview>  convert(List<TournamentInvitation> list,String token) {
+        return list.stream().map(ele -> {
+            User participant = this.serviceAPI.call(
+                    this.urlUserService + "user/" + ele.getUserId(),
+
+                    HttpMethod.GET,
+                    null,
+                    User.class,
+                    token
+            );
+            Tournament tournament = this.serviceAPI.call(
+                    this.urlTournamentService + "tournament/" + ele.getTournamentId(),
+                    HttpMethod.GET,
+                    null,
+                    Tournament.class,
+                    token
+            );
+            System.out.println(participant);
+            System.out.println(tournament);
+            return InvitationOverview.builder()
+                    .tournament(tournament)
+                    .participant(participant)
+                    .createdAt(ele.getCreatedAt())
+                    .build();
+
+        }).collect(Collectors.toList());
+    }
+
 }

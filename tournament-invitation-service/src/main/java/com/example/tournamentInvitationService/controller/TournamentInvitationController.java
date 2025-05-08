@@ -33,7 +33,7 @@ public class TournamentInvitationController {
     }
 
     @PutMapping("/invitation")
-    public ResponseEntity<?> update() {
-        return ResponseEntity.ok(tournamentInvitationService.update(new TournamentInvitation()));
+    public ResponseEntity<?> update(HttpServletRequest request, CreateInvitation invitation) {
+        return ResponseEntity.ok(tournamentInvitationService.update( request, invitation));
     }
 }

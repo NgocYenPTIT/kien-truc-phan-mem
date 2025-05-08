@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateInvitation {
-    private Long id;
+public class TournamentPlayerRequest {
     private Long tournamentId;
-    private Long userId;
-    private String type;
-    private String status;
+    private Long playerId;
 }

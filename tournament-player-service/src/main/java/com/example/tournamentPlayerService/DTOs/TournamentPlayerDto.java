@@ -1,6 +1,7 @@
 package com.example.tournamentPlayerService.DTOs;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class TournamentPlayerDto {
     private Long id;
     private Long tournamentId;

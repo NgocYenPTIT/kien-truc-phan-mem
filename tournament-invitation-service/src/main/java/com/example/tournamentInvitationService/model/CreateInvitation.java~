@@ -13,5 +13,5 @@ public class CreateInvitation {
     private Long tournamentId;
     private Long userId;
     private String type;
-    private String flag;
+    private String status;
 }

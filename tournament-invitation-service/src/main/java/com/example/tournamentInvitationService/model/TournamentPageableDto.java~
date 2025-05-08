@@ -1,18 +1,18 @@
 package com.example.tournamentInvitationService.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class CreateInvitation {
+@AllArgsConstructor
+public class TournamentOverviewDto {
     private Long id;
-    private Long tournamentId;
-    private Long userId;
-    private String type;
+    private String name;
+    private String participantNum;
+    private String startDate;
+    private String endDate;
+    private String organizer;
     private String status;
 }

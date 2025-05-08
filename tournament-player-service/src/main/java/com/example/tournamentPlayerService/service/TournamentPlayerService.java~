@@ -35,7 +35,7 @@ public class TournamentPlayerService {
     @Autowired
     private ServiceAPI serviceAPI;
 
-    @Value("${app.global.url.user-service}")
+    @Value("${app.global.url.user-service}" + "app.global.url.user-service")
     private String urlUserService;
 
     public ResponseEntity<?> getListPlayers(Long id, String username, Long currentPage, Long pageSize) {

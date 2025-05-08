@@ -1,0 +1,4 @@
+package com.example.tournamentPlayerService.model;
+
+public class TournamentPlayerResponse {
+}

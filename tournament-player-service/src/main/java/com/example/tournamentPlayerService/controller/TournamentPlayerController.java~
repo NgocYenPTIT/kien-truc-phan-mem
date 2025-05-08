@@ -2,7 +2,6 @@ package com.example.tournamentPlayerService.controller;
 
 import com.example.tournamentPlayerService.DTOs.CreateTournamentRoundRequestDto;
 import com.example.tournamentPlayerService.DTOs.TournamentPlayerDto;
-import com.example.tournamentPlayerService.model.TournamentPlayerRequest;
 import com.example.tournamentPlayerService.service.TournamentPlayerService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +22,7 @@ public class TournamentPlayerController {
     }
 
     @PostMapping("/tournament-player")
-    public ResponseEntity<?> create(HttpServletRequest request, TournamentPlayerRequest player) {
+    public ResponseEntity<?> create(HttpServletRequest request, TournamentPlayerDto player) {
         return this.tournamentPlayerService.addPlayer(request,player);
     }
 

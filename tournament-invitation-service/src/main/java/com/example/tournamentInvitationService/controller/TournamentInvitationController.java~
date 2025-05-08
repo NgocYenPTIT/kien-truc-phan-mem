@@ -29,11 +29,11 @@ public class TournamentInvitationController {
 
     @GetMapping("/invitation")
     public ResponseEntity<?> getList(HttpServletRequest request) {
-        return ResponseEntity.ok(tournamentInvitationService.getList());
+        return ResponseEntity.ok(tournamentInvitationService.getList(request));
     }
 
     @PutMapping("/invitation")
-    public ResponseEntity<?> update() {
-        return ResponseEntity.ok(tournamentInvitationService.update(new TournamentInvitation()));
+    public ResponseEntity<?> update(HttpServletRequest request, CreateInvitation invitation) {
+        return ResponseEntity.ok(tournamentInvitationService.update( request, invitation)0;
     }
 }

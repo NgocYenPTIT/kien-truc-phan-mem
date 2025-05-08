@@ -1,0 +1,18 @@
+package com.example.tournamentInvitationService.model;
+
+import java.util.Date;
+
+public class User {
+    private Long id;
+    private String username;
+    private String password;
+    private Date dateOfBirth;
+    private boolean gender;
+    private String email;
+    private String phoneNumber;
+    private boolean isActive ;
+    private Date lastAccess;
+    private Date createdAt;
+    private Date updatedAt;
+    private Date deletedAt;
+}

@@ -28,7 +28,6 @@ public class TournamentInvitation {
 
     private String type;
 
-
     private String status;
 
     // Thêm các trường audit
