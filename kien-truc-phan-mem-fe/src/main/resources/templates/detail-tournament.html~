@@ -713,7 +713,7 @@
                             <!-- Hiển thị nút dựa vào giá trị flag_join -->
                             <div th:if="${flag_join != null && flag_join != 'none' && flag_join != ''}">
                                 <!-- Nút "Tham gia" khi flag_join = "request" -->
-                                <form th:if="${flag_join == 'request'}" th:action="@{'/tournament/' + ${tournament.id} + '/can-request'}" method="post" class="action-button">
+                                <form th:if="${flag_join == 'request'}" th:action="@{'/tournament/' + ${tournament.id} + '/srequest'}" method="post" class="action-button">
                                     <input type="hidden" name="tournamentId" th:value="${tournament.id}">
                                     <input type="hidden" name="userId" th:value="${userId}">
                                     <button type="submit" class="btn btn-join btn-block">

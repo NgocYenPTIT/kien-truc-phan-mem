@@ -31,4 +31,6 @@ public interface TournamentInvitationRepository extends JpaRepository<Tournament
     List<TournamentInvitation> findByUserIdAndTournamentIdAndStatusAndType(Long userId, Long tournamentId, String status, String type);
 
     List<TournamentInvitation> findByTournamentIdAndUserIdAndStatusAndType(Long tournamentId, Long userId, String status, String type);
+
+    void deleteByTournamentIdAndUserId(Long tournamentId, Long userId);
 }

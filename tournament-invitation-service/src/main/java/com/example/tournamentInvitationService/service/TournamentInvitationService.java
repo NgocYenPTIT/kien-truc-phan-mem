@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +59,7 @@ public class TournamentInvitationService {
             return null;
         }
         // Tự động đồng ý khi cả 2 bên gửi lời mời cho nhau
-        if(invitation.getType().equals("INVITING")) {
+        if (invitation.getType().equals("INVITING")) {
             List<TournamentInvitation> randoms = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITED");
             if (!randoms.isEmpty()) {
                 for (TournamentInvitation random : randoms) {
@@ -74,8 +75,7 @@ public class TournamentInvitationService {
                 }
                 return new TournamentInvitation();
             }
-        }
-        else {
+        } else {
             List<TournamentInvitation> randoms = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITING");
             if (!randoms.isEmpty()) {
                 for (TournamentInvitation random : randoms) {
@@ -93,7 +93,7 @@ public class TournamentInvitationService {
             }
         }
         // check duplicate invitation
-        if(invitation.getType().equals("INVITING")) {
+        if (invitation.getType().equals("INVITING")) {
             List<TournamentInvitation> list = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITING");
             if (!list.isEmpty()) {
                 return new TournamentInvitation();
@@ -179,7 +179,17 @@ public class TournamentInvitationService {
         return null;
     }
 
+    @Transactional
     public TournamentInvitation update(HttpServletRequest request, CreateInvitation invitation) {
+
+        // UNREQUEST
+        if (invitation.getType().equals("UNREQUEST")) {
+            System.out.println("UNREQUEST");
+            System.out.println(invitation.getTournamentId());
+            System.out.println(invitation.getUserId());
+            this.tournamentInvitationRepository.deleteByTournamentIdAndUserId(invitation.getTournamentId(), invitation.getUserId());
+            return TournamentInvitation.builder().build();
+        }
 
         TournamentInvitation inv = this.tournamentInvitationRepository.findById(invitation.getId()).get();
 
@@ -191,6 +201,7 @@ public class TournamentInvitationService {
                 (String) request.getAttribute("token")
         );
         Integer numParticipants = tournament.getParticipants();
+
 
         // Nếu số participant của tournament đã đầy, từ chối.
         if (invitation.getStatus().equals("ACCEPT") && numParticipants >= tournament.getMaxPlayer()) {
@@ -207,6 +218,8 @@ public class TournamentInvitationService {
                     TournamentPlayerRequest.class,
                     (String) request.getAttribute("token")
             );
+
+            // TODO: call update tour
         }
         return tournamentInvitationRepository.save(inv);
     }
@@ -244,18 +257,17 @@ public class TournamentInvitationService {
         System.out.println(list);
         List<Long> tournamentIds = list.stream().map(TournamentInvitation::getTournamentId).collect(Collectors.toList());
         HashSet<Long> hashSet = new HashSet<>(tournamentIds);
-        return  TournamentJoin.builder().tournamentIds(new ArrayList<>(hashSet)).build();
+        return TournamentJoin.builder().tournamentIds(new ArrayList<>(hashSet)).build();
     }
 
-    public  InvitationFlag  checkStatusInvitation(Long userId, Long tournamentId) {
+    public InvitationFlag checkStatusInvitation(Long userId, Long tournamentId) {
 
         List<TournamentInvitation> request = this.tournamentInvitationRepository.findByUserIdAndTournamentId(userId, tournamentId);
-        List<TournamentInvitation> requested = this.tournamentInvitationRepository.findByUserIdAndTournamentIdAndStatusAndType(userId, tournamentId,"PENDING","INVITED");
+        List<TournamentInvitation> requested = this.tournamentInvitationRepository.findByUserIdAndTournamentIdAndStatusAndType(userId, tournamentId, "PENDING", "INVITED");
 
         if (request.isEmpty()) {
             return InvitationFlag.builder().value("request").build();
-        }
-        else if(!requested.isEmpty()) {
+        } else if (!requested.isEmpty()) {
             return InvitationFlag.builder().value("requested").build();
         }
 

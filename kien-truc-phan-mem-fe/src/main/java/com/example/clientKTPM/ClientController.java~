@@ -343,6 +343,8 @@ public class ClientController {
         if (user != null) {
             // Người dùng đã đăng nhập
             model.addAttribute("username", user.getUsername());
+            model.addAttribute("userId", user.getId());
+
             TournamentResponse tournament = this.serviceAPI.call(
                     this.urlTournamentService + "tournament/" + id,
                     HttpMethod.GET,
@@ -415,46 +417,11 @@ public class ClientController {
                 return "redirect:/tournament/" + id + "/invite-full?playerName=" + username;
 
             }
-            // Mời thành công
         } else {
             // Không tìm thấy người dùng
             return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
         }
     }
-
-//    @PostMapping("/tournament/{id}/request")
-//    public String requestJoin(@PathVariable(name = "id") int id,
-//                            @RequestParam(name = "userId") Long userId,
-//                            @RequestParam(name = "tournamentId") Long tournamentId) {
-//
-//        // Xử lý logic kiểm tra username
-//        User user = this.serviceAPI.call(
-//                this.userServiceUrl + "user?username=" + username,
-//                HttpMethod.GET,
-//                null,
-//                User.class,
-//                (String) session.getAttribute("token")
-//        );
-//        boolean userExists = user != null;
-//        if (userExists) {
-//            //process mời
-//            TournamentInvitation inv = this.serviceAPI.call(
-//                    this.urlTournamentInvitationService + "invitation",
-//                    HttpMethod.POST,
-//                    CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITING").status("PENDING").build(),
-//                    TournamentInvitation.class,
-//                    (String) session.getAttribute("token")
-//            );
-//            if(inv == null) {
-//                return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
-//            }
-//            // Mời thành công
-//            return "redirect:/tournament/" + id + "/invite-success?playerName=" + username;
-//        } else {
-//            // Không tìm thấy người dùng
-//            return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
-//        }
-//    }
 
     @GetMapping("/tournament/{id}/invite-success")
     public String inviteSuccess(
@@ -513,5 +480,67 @@ public class ClientController {
     public String rank(
             Model model) {
         return "rank";
+    }
+
+    @PostMapping("/tournament/{id}/request")
+    public String requestJoin(@PathVariable(name = "id") int id,
+                              @RequestParam(name = "userId") Long userId,
+                              @RequestParam(name = "tournamentId") Long tournamentId) {
+
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                TournamentInvitation inv = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation",
+                        HttpMethod.POST,
+                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITED").status("PENDING").build(),
+                        TournamentInvitation.class,
+                        (String) session.getAttribute("token")
+                );
+
+                return "redirect:/tournament/" + id  + "/details";
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/tournament/" + id + "/invite-full?playerName=";
+
+            }
+
+            // Mời thành công
+        } else {
+            return "redirect:/";
+        }
+
+    }
+
+    @PostMapping("/tournament/{id}/requested")
+    public String requestedJoin(@PathVariable(name = "id") int id,
+                              @RequestParam(name = "userId") Long userId,
+                              @RequestParam(name = "tournamentId") Long tournamentId) {
+
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                TournamentInvitation inv = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation",
+                        HttpMethod.PUT,
+                        CreateInvitation.builder().id(.)tournamentId(tournamentId).userId(user.getId()).type("UNREQUEST").status("None").build(),
+                        TournamentInvitation.class,
+                        (String) session.getAttribute("token")
+                );
+
+                return "redirect:/tournament/" + id  + "/details";
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/tournament/" + id + "/invite-full?playerName=";
+
+            }
+
+            // Mời thành công
+        } else {
+            return "redirect:/";
+        }
+
     }
 }
