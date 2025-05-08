@@ -550,7 +550,7 @@ public class ClientController {
                 TournamentInvitation inv = this.serviceAPI.call(
                         this.urlTournamentInvitationService + "invitation",
                         HttpMethod.PUT,
-                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("UNREQUEST").status("None").build(),
+                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("OUT").status("None").build(),
                         TournamentInvitation.class,
                         (String) session.getAttribute("token")
                 );
