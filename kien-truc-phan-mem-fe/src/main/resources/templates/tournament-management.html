@@ -341,32 +341,23 @@
 <!-- Main Content -->
 <main class="main-content">
     <div class="container">
-        <!-- Tabs Navigation -->
-        <ul class="nav nav-tabs mb-4" id="tournamentTabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="tournaments-tab" data-toggle="tab" href="#tournaments" role="tab" aria-controls="tournaments" aria-selected="true">
-                    <i class="fas fa-list mr-2"></i> Giải đấu
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="invitations-tab" data-toggle="tab" href="#invitations" role="tab" aria-controls="invitations" aria-selected="false">
-                    <div class="notification-badge">
-                        <i class="fas fa-envelope mr-2"></i> Lời mời
-                        <span class="badge-count">3</span>
-                    </div>
-                </a>
-            </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" id="rankings-tab" data-toggle="tab" href="#rankings" role="tab" aria-controls="rankings" aria-selected="false">
-                    <i class="fas fa-medal mr-2"></i> Bảng xếp hạng
-                </a>
-            </li> -->
-            <!-- <li class="nav-item">
-                <a class="nav-link" id="stats-tab" data-toggle="tab" href="#stats" role="tab" aria-controls="stats" aria-selected="false">
-                    <i class="fas fa-chart-bar mr-2"></i> Thống kê
-                </a>
-            </li> -->
-        </ul>
+        <!-- Tabs Navigation với numInvite -->
+<ul class="nav nav-tabs mb-4" id="tournamentTabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="tournaments-tab" data-toggle="tab" href="#tournaments" role="tab" aria-controls="tournaments" aria-selected="true">
+            <i class="fas fa-list mr-2"></i> Giải đấu
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="invitations-tab" data-toggle="tab" href="#invitations" role="tab" aria-controls="invitations" aria-selected="false">
+            <div class="notification-badge">
+                <i class="fas fa-envelope mr-2"></i> Lời mời
+                <!-- Sử dụng numInvite từ controller -->
+                <span th:if="${numInvite > 0}" class="badge-count" th:text="${numInvite}">0</span>
+            </div>
+        </a>
+    </li>
+</ul>
 
         <!-- Tab Content -->
         <div class="tab-content" id="tournamentTabsContent">
@@ -447,74 +438,480 @@
                 </div>
             </div>
 
-            <!-- Invitations Tab -->
-            <div class="tab-pane fade" id="invitations" role="tabpanel" aria-labelledby="invitations-tab">
-                <!-- Invitations to Your Tournaments -->
-                <div class="card mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-envelope-open-text mr-2"></i> Lời mời tham gia giải đấu của bạn</h5>
-                            <span class="badge badge-light rounded-pill px-3 py-2">
-                                <i class="fas fa-user-plus mr-1"></i> 4 lời mời
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Tên giải đấu</th>
-                                    <th>Người tham gia</th>
-                                    <th>Thời gian bắt đầu</th>
-                                    <th>Thời gian kết thúc</th>
-                                    <th>Số lượng</th>
-                                    <th>Thời gian yêu cầu</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <!-- Invitation rows would go here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Your Invitations to Other Tournaments -->
-                <div class="card">
-                    <div class="card-header bg-secondary text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-paper-plane mr-2"></i> Lời mời bạn gửi tới giải đấu khác</h5>
-                            <span class="badge badge-light rounded-pill px-3 py-2">
-                                <i class="fas fa-envelope mr-1"></i> 3 lời mời
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="thead-light">
-                                <tr>
-                                    <th>Tên giải đấu</th>
-                                    <th>Người tổ chức</th>
-                                    <th>Thời gian bắt đầu</th>
-                                    <th>Thời gian kết thúc</th>
-                                    <th>Số lượng</th>
-                                    <th>Thời gian gửi</th>
-                                    <th>Trạng thái</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <!-- Invitation rows would go here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+           <!-- Invitations Tab - Updated to match backend data structure -->
+<div class="tab-pane fade" id="invitations" role="tabpanel" aria-labelledby="invitations-tab">
+    <!-- 1. Danh sách cờ thủ muốn tham gia giải đấu của bạn (otherWantJoin) -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user-plus mr-2"></i> Danh sách cờ thủ muốn tham gia giải đấu của bạn</h5>
+                <span class="badge badge-light rounded-pill px-3 py-2">
+                    <i class="fas fa-users mr-1"></i> <span th:text="${otherWantJoin.size()}">0</span> lời mời
+                </span>
             </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên người chơi</th>
+                            <th>Tên giải đấu</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th>
+                            <th>Số người tham gia</th>
+                            <th>Thời gian gửi</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${otherWantJoin.empty}">
+                            <td colspan="8" class="text-center">Không có yêu cầu tham gia nào</td>
+                        </tr>
+                        <tr th:each="request, iterStat : ${otherWantJoin}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${request.participant.username}">Người chơi A</td>
+                            <td th:text="${request.tournament.name}">Giải đấu XYZ</td>
+                            <td th:text="${request.tournament.startDate}">20/05/2025</td>
+                            <td th:text="${request.tournament.endDate}">25/05/2025</td>
+                            <td th:text="${request.tournament.participants} + '/' + ${request.tournament.maxPlayer}">5/8</td>
+                            <td th:text="${request.createdAt}">15/05/2025</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-success" 
+                                            th:onclick="'updateInvitation(' + ${request.tournament.id} + ', \'' + ${request.participant.id} + '\', \'ACCEPT\')'">
+                                        <i class="fas fa-check mr-1"></i> Đồng ý
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            th:onclick="'updateInvitation(' + ${request.tournament.id} + ', \'' + ${request.participant.id} + '\', \'REJECT\')'">
+                                        <i class="fas fa-times mr-1"></i> Từ chối
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Danh sách cờ thủ bạn mời tham gia giải đấu của bạn (iWantInvite) -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-paper-plane mr-2"></i> Danh sách cờ thủ bạn mời tham gia giải đấu của bạn</h5>
+                <span class="badge badge-light rounded-pill px-3 py-2">
+                    <i class="fas fa-envelope mr-1"></i> <span th:text="${iWantInvite.size()}">0</span> lời mời
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên người chơi</th>
+                            <th>Tên giải đấu</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th>
+                            <th>Số người tham gia</th>
+                            <th>Thời gian gửi</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${iWantInvite.empty}">
+                            <td colspan="8" class="text-center">Không có lời mời nào</td>
+                        </tr>
+                        <tr th:each="invitation, iterStat : ${iWantInvite}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${invitation.participant.username}">Người chơi B</td>
+                            <td th:text="${invitation.tournament.name}">Giải đấu ABC</td>
+                            <td th:text="${invitation.tournament.startDate}">21/05/2025</td>
+                            <td th:text="${invitation.tournament.endDate}">26/05/2025</td>
+                            <td th:text="${invitation.tournament.participants} + '/' + ${invitation.tournament.maxPlayer}">4/8</td>
+                            <td th:text="${invitation.createdAt}">15/05/2025</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning" 
+                                        th:onclick="'cancelInvitation(' + ${invitation.tournament.id} + ', \'' + ${invitation.participant.id} + '\')'">
+                                    <i class="fas fa-undo mr-1"></i> Thu hồi lời mời
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Danh sách các giải đấu bạn muốn tham gia (iWantJoin) -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-trophy mr-2"></i> Danh sách các giải đấu bạn muốn tham gia</h5>
+                <span class="badge badge-light rounded-pill px-3 py-2">
+                    <i class="fas fa-sign-in-alt mr-1"></i> <span th:text="${iWantJoin.size()}">0</span> yêu cầu
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên giải đấu</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th>
+                            <th>Số người tham gia</th>
+                            <th>Thời gian gửi</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${iWantJoin.empty}">
+                            <td colspan="7" class="text-center">Không có giải đấu nào</td>
+                        </tr>
+                        <tr th:each="request, iterStat : ${iWantJoin}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${request.tournament.name}">Giải đấu XYZ</td>
+                            <td th:text="${request.tournament.startDate}">22/05/2025</td>
+                            <td th:text="${request.tournament.endDate}">27/05/2025</td>
+                            <td th:text="${request.tournament.participants} + '/' + ${request.tournament.maxPlayer}">6/8</td>
+                            <td th:text="${request.createdAt}">16/05/2025</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                        th:onclick="'cancelJoinRequest(' + ${request.tournament.id} + ')'">
+                                    <i class="fas fa-ban mr-1"></i> Hủy yêu cầu
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Danh sách các giải đấu bạn đã được mời tham gia (otherInviteMe) -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-envelope-open-text mr-2"></i> Danh sách các giải đấu bạn đã được mời tham gia</h5>
+                <span class="badge badge-light rounded-pill px-3 py-2">
+                    <i class="fas fa-envelope-open mr-1"></i> <span th:text="${otherInviteMe.size()}">0</span> lời mời
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên giải đấu</th>
+                            <th>Thời gian bắt đầu</th>
+                            <th>Thời gian kết thúc</th>
+                            <th>Số người tham gia</th>
+                            <th>Thời gian gửi</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${otherInviteMe.empty}">
+                            <td colspan="7" class="text-center">Không có lời mời nào</td>
+                        </tr>
+                        <tr th:each="invitation, iterStat : ${otherInviteMe}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${invitation.tournament.name}">Giải đấu DEF</td>
+                            <td th:text="${invitation.tournament.startDate}">23/05/2025</td>
+                            <td th:text="${invitation.tournament.endDate}">28/05/2025</td>
+                            <td th:text="${invitation.tournament.participants} + '/' + ${invitation.tournament.maxPlayer}">3/8</td>
+                            <td th:text="${invitation.createdAt}">17/05/2025</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-success" 
+                                            th:onclick="'acceptInvitation(' + ${invitation.tournament.id} + ')'">
+                                        <i class="fas fa-check mr-1"></i> Chấp nhận
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            th:onclick="'rejectInvitation(' + ${invitation.tournament.id} + ')'">
+                                        <i class="fas fa-times mr-1"></i> Từ chối
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript cho các chức năng xử lý lời mời -->
+<script>
+    // Cập nhật lời mời (đồng ý hoặc từ chối)
+    function updateInvitation(tournamentId, participantId, status) {
+        fetch('/update-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tournamentId: tournamentId,
+                participantId: participantId,
+                status: status
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Làm mới trang sau khi cập nhật thành công
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi cập nhật lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật lời mời.');
+        });
+    }
+
+    // Thu hồi lời mời
+    function cancelInvitation(tournamentId, participantId) {
+        if (confirm('Bạn có chắc chắn muốn thu hồi lời mời này?')) {
+            fetch('/cancel-invitation', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tournamentId: tournamentId,
+                    participantId: participantId
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Có lỗi xảy ra khi thu hồi lời mời.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi thu hồi lời mời.');
+            });
+        }
+    }
+
+    // Hủy yêu cầu tham gia
+    function cancelJoinRequest(tournamentId) {
+        if (confirm('Bạn có chắc chắn muốn hủy yêu cầu tham gia này?')) {
+            fetch('/cancel-join-request', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tournamentId: tournamentId
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Có lỗi xảy ra khi hủy yêu cầu tham gia.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi hủy yêu cầu tham gia.');
+            });
+        }
+    }
+
+    // Chấp nhận lời mời
+    function acceptInvitation(tournamentId) {
+        fetch('/accept-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tournamentId: tournamentId,
+                status: 'ACCEPT'
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi chấp nhận lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi chấp nhận lời mời.');
+        });
+    }
+
+    // Từ chối lời mời
+    function rejectInvitation(tournamentId) {
+        fetch('/reject-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tournamentId: tournamentId,
+                status: 'REJECT'
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi từ chối lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi từ chối lời mời.');
+        });
+    }
+</script>
+
+<!-- JavaScript cho các chức năng xử lý lời mời -->
+<script>
+    // Cập nhật lời mời (đồng ý hoặc từ chối)
+    function updateInvitation(id, status) {
+        fetch('/update-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: id,
+                status: status
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Làm mới trang sau khi cập nhật thành công
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi cập nhật lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật lời mời.');
+        });
+    }
+
+    // Thu hồi lời mời
+    function cancelInvitation(id) {
+        if (confirm('Bạn có chắc chắn muốn thu hồi lời mời này?')) {
+            fetch('/cancel-invitation', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Có lỗi xảy ra khi thu hồi lời mời.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi thu hồi lời mời.');
+            });
+        }
+    }
+
+    // Hủy yêu cầu tham gia
+    function cancelJoinRequest(id) {
+        if (confirm('Bạn có chắc chắn muốn hủy yêu cầu tham gia này?')) {
+            fetch('/cancel-join-request', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Có lỗi xảy ra khi hủy yêu cầu tham gia.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi hủy yêu cầu tham gia.');
+            });
+        }
+    }
+
+    // Chấp nhận lời mời
+    function acceptInvitation(id) {
+        fetch('/accept-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: id,
+                status: 'ACCEPT'
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi chấp nhận lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi chấp nhận lời mời.');
+        });
+    }
+
+    // Từ chối lời mời
+    function rejectInvitation(id) {
+        fetch('/reject-invitation', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: id,
+                status: 'REJECT'
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi từ chối lời mời.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi từ chối lời mời.');
+        });
+    }
+</script>
 
             <!-- Rankings Tab -->
             <div class="tab-pane fade" id="rankings" role="tabpanel" aria-labelledby="rankings-tab">

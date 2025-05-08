@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,6 +137,47 @@ public class ClientController {
             model.addAttribute("flag_create_and_join", flag_create_and_join.getTotalItems());
             model.addAttribute("flag_only_create", flag_only_create.getTotalItems());
             model.addAttribute("flag_only_join", flag_only_join.getTotalItems());
+
+            // 4 loại table
+            List<InvitationOverview> iWantInvite = this.serviceAPI.callForList(
+                    this.urlTournamentInvitationService + "/invitation?flag=i-want-invite",
+                    HttpMethod.GET,
+                    null,
+                    InvitationOverview.class,
+                    (String) session.getAttribute("token")
+            );
+            List<InvitationOverview> otherWantJoin = this.serviceAPI.callForList(
+                    this.urlTournamentInvitationService + "/invitation?flag=other-want-join",
+                    HttpMethod.GET,
+                    null,
+                    InvitationOverview.class,
+                    (String) session.getAttribute("token")
+            );
+            List<InvitationOverview> otherInviteMe = this.serviceAPI.callForList(
+                    this.urlTournamentInvitationService + "/invitation?flag=other-invite-me",
+                    HttpMethod.GET,
+                    null,
+                    InvitationOverview.class,
+                    (String) session.getAttribute("token")
+            );
+            List<InvitationOverview> iWantJoin = this.serviceAPI.callForList(
+                    this.urlTournamentInvitationService + "/invitation?flag=i-want-join",
+                    HttpMethod.GET,
+                    null,
+                    InvitationOverview.class,
+                    (String) session.getAttribute("token")
+            );
+            System.out.println(iWantInvite);
+            System.out.println(otherWantJoin);
+            System.out.println(otherInviteMe);
+            System.out.println(iWantJoin);
+          model.addAttribute("iWantInvite", iWantInvite);
+          model.addAttribute("otherWantJoin", otherWantJoin);
+          model.addAttribute("otherInviteMe", otherInviteMe);
+          model.addAttribute("iWantJoin", iWantJoin);
+          model.addAttribute("numInvite", iWantInvite.size() + otherWantJoin.size() + otherInviteMe.size() + iWantJoin.size());
+
+
             return "tournament-management";
         }
         return "redirect:/";

@@ -18,7 +18,6 @@ public class User {
     private String phoneNumber;
     private boolean isActive ;
     private Date lastAccess;
-    private int elo;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
