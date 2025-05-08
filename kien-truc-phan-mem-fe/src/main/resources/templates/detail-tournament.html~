@@ -643,12 +643,12 @@
                             </div>
                             <div class="info-value" th:text="${tournament.maxPlayer}">8</div>
                         </div>
-<!--                        <div class="info-item">-->
-<!--                            <div class="info-label">-->
-<!--                                <i class="fas fa-ticket-alt"></i> Tham gia miễn phí-->
-<!--                            </div>-->
-<!--                            <div class="info-value" th:text="${tournament.freeToJoin ? 'Có' : 'Không'}">Không</div>-->
-<!--                        </div>-->
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-ticket-alt"></i> Tham gia miễn phí
+                            </div>
+                            <div class="info-value" th:text="${tournament.freeToJoin ? 'Có' : 'Không'}">Không</div>
+                        </div>
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="fas fa-align-left"></i> Mô tả
@@ -708,39 +708,43 @@
                                class="btn btn-outline-primary btn-block action-button">
                                 <i class="fas fa-trophy mr-2"></i> Bảng xếp hạng
                             </a>
-                            
+
                             <!-- Các nút dựa vào flag_join -->
-                            <!-- Nút "Tham gia" khi flag_join = "request" -->
-                            <form th:if="${flag_join == 'request'}" th:action="@{'/tournament/' + ${tournament.id} + '/can-request'}" method="post" class="action-button">
-                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
-                                <input type="hidden" name="userId" th:value="${userId}">
-                                <button type="submit" class="btn btn-join btn-block">
-                                    <i class="fas fa-sign-in-alt mr-2"></i> Tham gia
+                            <!-- Hiển thị nút dựa vào giá trị flag_join -->
+                            <div th:if="${flag_join != null && flag_join != 'none' && flag_join != ''}">
+                                <!-- Nút "Tham gia" khi flag_join = "request" -->
+                                <form th:if="${flag_join == 'request'}" th:action="@{'/tournament/' + ${tournament.id} + '/can-request'}" method="post" class="action-button">
+                                    <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                    <input type="hidden" name="userId" th:value="${userId}">
+                                    <button type="submit" class="btn btn-join btn-block">
+                                        <i class="fas fa-sign-in-alt mr-2"></i> Tham gia
+                                    </button>
+                                </form>
+
+                                <!-- Nút "Hủy yêu cầu tham gia" khi flag_join = "requested" -->
+                                <form th:if="${flag_join == 'requested'}" th:action="@{'/tournament/' + ${tournament.id} + '/requested'}" method="post" class="action-button">
+                                    <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                    <input type="hidden" name="userId" th:value="${userId}">
+                                    <button type="submit" class="btn btn-cancel btn-block">
+                                        <i class="fas fa-times-circle mr-2"></i> Hủy yêu cầu tham gia
+                                    </button>
+                                </form>
+
+                                <!-- Nút "Mời" khi flag_join = "invite" -->
+                                <button th:if="${flag_join == 'invite'}" type="button" class="btn btn-invite btn-block action-button" data-toggle="modal" data-target="#inviteModal">
+                                    <i class="fas fa-user-plus mr-2"></i> Mời người chơi
                                 </button>
-                            </form>
-                            
-                            <!-- Nút "Hủy yêu cầu tham gia" khi flag_join = "requested" -->
-                            <form th:if="${flag_join == 'requested'}" th:action="@{'/tournament/' + ${tournament.id} + '/requested'}" method="post" class="action-button">
-                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
-                                <input type="hidden" name="userId" th:value="${userId}">
-                                <button type="submit" class="btn btn-cancel btn-block">
-                                    <i class="fas fa-times-circle mr-2"></i> Hủy yêu cầu tham gia
-                                </button>
-                            </form>
-                            
-                            <!-- Nút "Mời" khi flag_join = "invite" -->
-                            <button th:if="${flag_join == 'invite'}" type="button" class="btn btn-invite btn-block action-button" data-toggle="modal" data-target="#inviteModal">
-                                <i class="fas fa-user-plus mr-2"></i> Mời người chơi
-                            </button>
-                            
-                            <!-- Nút "Rời khỏi" khi flag_join = "out" -->
-                            <form th:if="${flag_join == 'out'}" th:action="@{'/tournament/' + ${tournament.id} + '/out'}" method="post" class="action-button">
-                                <input type="hidden" name="tournamentId" th:value="${tournament.id}">
-                                <input type="hidden" name="userId" th:value="${userId}">
-                                <button type="submit" class="btn btn-leave btn-block">
-                                    <i class="fas fa-sign-out-alt mr-2"></i> Rời khỏi
-                                </button>
-                            </form>
+
+                                <!-- Nút "Rời khỏi" khi flag_join = "out" -->
+                                <form th:if="${flag_join == 'out'}" th:action="@{'/tournament/' + ${tournament.id} + '/out'}" method="post" class="action-button">
+                                    <input type="hidden" name="tournamentId" th:value="${tournament.id}">
+                                    <input type="hidden" name="userId" th:value="${userId}">
+                                    <button type="submit" class="btn btn-leave btn-block">
+                                        <i class="fas fa-sign-out-alt mr-2"></i> Rời khỏi
+                                    </button>
+                                </form>
+                            </div>
+                            <!-- Không hiển thị nút nếu flag_join = 'none' hoặc null hoặc rỗng -->
                         </div>
                     </div>
                 </div>
@@ -802,12 +806,11 @@
             <form th:action="@{'/tournament/' + ${tournament.id} + '/add-player'}" method="post">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="playerName">Tên người chơi:</label>
-                        <input type="text" class="form-control" id="playerName" name="playerName" required>
+                        <label for="username">Tên người chơi:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
                         <small class="form-text text-muted">Nhập tên đăng nhập của người chơi bạn muốn mời.</small>
                     </div>
                     <input type="hidden" name="tournamentId" th:value="${tournament.id}">
-                    <input type="hidden" name="userId" th:value="${userId}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">

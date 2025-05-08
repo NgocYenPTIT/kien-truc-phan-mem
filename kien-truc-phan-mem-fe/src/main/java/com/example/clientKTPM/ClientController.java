@@ -399,23 +399,61 @@ public class ClientController {
         boolean userExists = user != null;
         if (userExists) {
             //process mời
-            TournamentInvitation inv = this.serviceAPI.call(
-                    this.urlTournamentInvitationService + "invitation",
-                    HttpMethod.POST,
-                    CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITING").status("PENDING").build(),
-                    TournamentInvitation.class,
-                    (String) session.getAttribute("token")
-            );
-            if(inv == null) {
-                return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
+            try {
+                TournamentInvitation inv = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation",
+                        HttpMethod.POST,
+                        CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITING").status("PENDING").build(),
+                        TournamentInvitation.class,
+                        (String) session.getAttribute("token")
+                );
+                return "redirect:/tournament/" + id + "/invite-success?playerName=" + username;
+
             }
-            // Mời thành công
-            return "redirect:/tournament/" + id + "/invite-success?playerName=" + username;
+            catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/tournament/" + id + "/invite-full?playerName=" + username;
+
+            }
         } else {
             // Không tìm thấy người dùng
             return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
         }
     }
+
+//    @PostMapping("/tournament/{id}/request")
+//    public String requestJoin(@PathVariable(name = "id") int id,
+//                            @RequestParam(name = "userId") Long userId,
+//                            @RequestParam(name = "tournamentId") Long tournamentId) {
+//
+//        // Xử lý logic kiểm tra username
+//        User user = this.serviceAPI.call(
+//                this.userServiceUrl + "user?username=" + username,
+//                HttpMethod.GET,
+//                null,
+//                User.class,
+//                (String) session.getAttribute("token")
+//        );
+//        boolean userExists = user != null;
+//        if (userExists) {
+//            //process mời
+//            TournamentInvitation inv = this.serviceAPI.call(
+//                    this.urlTournamentInvitationService + "invitation",
+//                    HttpMethod.POST,
+//                    CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITING").status("PENDING").build(),
+//                    TournamentInvitation.class,
+//                    (String) session.getAttribute("token")
+//            );
+//            if(inv == null) {
+//                return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
+//            }
+//            // Mời thành công
+//            return "redirect:/tournament/" + id + "/invite-success?playerName=" + username;
+//        } else {
+//            // Không tìm thấy người dùng
+//            return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
+//        }
+//    }
 
     @GetMapping("/tournament/{id}/invite-success")
     public String inviteSuccess(
@@ -449,6 +487,22 @@ public class ClientController {
             model.addAttribute("playerName", playerName);
 
             return "invite-fail";
+        } else {
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournament/{id}/invite-full")
+    public String inviteFull(
+            @PathVariable(name = "id") int id,
+            @RequestParam(name = "playerName") String playerName,
+            Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("tournamentId", id);
+            model.addAttribute("playerName", playerName);
+
+            return "tournament-full";
         } else {
             return "redirect:/";
         }
