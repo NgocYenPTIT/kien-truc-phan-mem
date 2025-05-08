@@ -351,7 +351,12 @@ public class ClientController {
                     (String) session.getAttribute("token")
             );
             model.addAttribute("tournament", tournament);
-            System.out.println(tournament.getId());
+
+            if (tournament.getStatus().equals("KẾT THÚC")) {
+                model.addAttribute("flag_join", "end");
+                return "detail-tournament";
+            }
+
             if (tournament.getOrganizer().trim().equals(user.getUsername().trim())) {// chủ giải đấu
                 model.addAttribute("flag_join", "invite");
             } else {// không phải chủ giải đấu
@@ -362,13 +367,11 @@ public class ClientController {
                         InvitationFlag.class,
                         (String) session.getAttribute("token")
                 );
-                  model.addAttribute("flag_join", flag);
+                model.addAttribute("flag_join", flag.getValue());
 //                model.addAttribute("flag_join", "request");
 //                model.addAttribute("flag_join", "requested");
 //                model.addAttribute("flag_join", "out");
             }
-
-            //TODO ẩn các button khi status = Kết Thúc
 
 
 //            System.out.println(model.getAttribute("tournament"));
@@ -380,6 +383,77 @@ public class ClientController {
         }
     }
 
+    @PostMapping("/tournament/{id}/add-player")
+    public String addPlayer(@PathVariable(name = "id") int id,
+                            @RequestParam(name = "username") String username,
+                            @RequestParam(name = "tournamentId") Long tournamentId) {
+
+        // Xử lý logic kiểm tra username
+        User user = this.serviceAPI.call(
+                this.userServiceUrl + "user?username=" + username,
+                HttpMethod.GET,
+                null,
+                User.class,
+                (String) session.getAttribute("token")
+        );
+        System.out.println(user);
+        boolean userExists = user != null;
+        if (userExists) {
+            //process mời
+            TournamentInvitation inv = this.serviceAPI.call(
+                    this.urlTournamentInvitationService + "invitation",
+                    HttpMethod.POST,
+                    CreateInvitation.builder().tournamentId(tournamentId).userId(user.getId()).type("INVITING").status("PENDING").build(),
+                    TournamentInvitation.class,
+                    (String) session.getAttribute("token")
+            );
+            if(inv == null) {
+                return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
+            }
+            // Mời thành công
+            return "redirect:/tournament/" + id + "/invite-success?playerName=" + username;
+        } else {
+            // Không tìm thấy người dùng
+            return "redirect:/tournament/" + id + "/invite-fail?playerName=" + username;
+        }
+    }
+
+    @GetMapping("/tournament/{id}/invite-success")
+    public String inviteSuccess(
+            @PathVariable(name = "id") int id,
+            @RequestParam(name = "playerName") String playerName,
+            Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Lấy thông tin giải đấu để hiển thị tên
+            // TODO: Gọi API lấy tên giải đấu
+            String tournamentName = "Tên giải đấu"; // Thay bằng tên thực tế từ API
+
+            model.addAttribute("tournamentId", id);
+            model.addAttribute("playerName", playerName);
+            model.addAttribute("tournamentName", tournamentName);
+
+            return "invite-success";
+        } else {
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/tournament/{id}/invite-fail")
+    public String inviteFailure(
+            @PathVariable(name = "id") int id,
+            @RequestParam(name = "playerName") String playerName,
+            Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("tournamentId", id);
+            model.addAttribute("playerName", playerName);
+
+            return "invite-fail";
+        } else {
+            return "redirect:/";
+        }
+    }
 
     @GetMapping("/rank")
     public String rank(

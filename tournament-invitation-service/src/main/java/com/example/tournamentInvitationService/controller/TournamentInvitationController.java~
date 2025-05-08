@@ -33,7 +33,7 @@ public class TournamentInvitationController {
     }
 
     @PutMapping("/invitation")
-    public ResponseEntity<?> update(HttpServletRequest request, CreateInvitation invitation) {
+    public ResponseEntity<?> update(HttpServletRequest request,@RequestBody CreateInvitation invitation) {
         return ResponseEntity.ok(tournamentInvitationService.update( request, invitation));
     }
 
@@ -44,6 +44,6 @@ public class TournamentInvitationController {
 
     @GetMapping("/check-flag")
     public ResponseEntity<?> checkFlag( @RequestParam(value = "userId") Long userId, @RequestParam(value = "tournamentId") Long tournamentId) {
-        return ResponseEntity.ok(tournamentInvitationService.checkStatusInvitation(userId, tournamentId).getValue(userId));
+        return ResponseEntity.ok(tournamentInvitationService.checkStatusInvitation(userId, tournamentId));
     }
 }

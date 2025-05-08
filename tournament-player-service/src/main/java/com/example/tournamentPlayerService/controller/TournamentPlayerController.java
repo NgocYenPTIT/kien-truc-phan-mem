@@ -23,7 +23,7 @@ public class TournamentPlayerController {
     }
 
     @PostMapping("/tournament-player")
-    public ResponseEntity<?> create(HttpServletRequest request, TournamentPlayerRequest player) {
+    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody TournamentPlayerRequest player) {
         return this.tournamentPlayerService.addPlayer(request,player);
     }
 

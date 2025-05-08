@@ -19,7 +19,7 @@ public class TournamentInvitationController {
     }
 
     @PostMapping("/invitation")
-    public ResponseEntity<?> create(HttpServletRequest request, CreateInvitation invitation) {
+    public ResponseEntity<?> create(HttpServletRequest request,  @RequestBody CreateInvitation invitation) {
         TournamentInvitation tournamentInvitation = tournamentInvitationService.create(request, invitation);
 
         if(tournamentInvitation == null) return ResponseEntity.badRequest().build();
@@ -33,7 +33,7 @@ public class TournamentInvitationController {
     }
 
     @PutMapping("/invitation")
-    public ResponseEntity<?> update(HttpServletRequest request, CreateInvitation invitation) {
+    public ResponseEntity<?> update(HttpServletRequest request,@RequestBody CreateInvitation invitation) {
         return ResponseEntity.ok(tournamentInvitationService.update( request, invitation));
     }
 

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mời thất bại - Othello Tournament</title>
+  <!-- Bootstrap 4 CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #1abc9c;
+      --danger-color: #e74c3c;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+    }
+
+    body {
+      background-color: var(--light-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .notification-card {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeInDown 0.5s forwards;
+      margin: 0 auto;
+    }
+
+    .notification-header {
+      background: linear-gradient(135deg, var(--danger-color), #c0392b);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .notification-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .notification-title {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .notification-body {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .notification-text {
+      font-size: 1.1rem;
+      color: #505050;
+      margin-bottom: 2rem;
+    }
+
+    .redirect-info {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      margin-top: 1rem;
+    }
+
+    .timer-container {
+      height: 6px;
+      background-color: #ecf0f1;
+      border-radius: 3px;
+      margin-top: 1.5rem;
+      overflow: hidden;
+    }
+
+    .timer-bar {
+      height: 100%;
+      background-color: var(--danger-color);
+      width: 100%;
+      border-radius: 3px;
+      animation: countdown 5s linear forwards;
+    }
+
+    @keyframes countdown {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .player-name {
+      font-weight: bold;
+      color: var(--danger-color);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="notification-card animate__animated animate__fadeIn">
+    <div class="notification-header">
+      <i class="fas fa-times-circle notification-icon"></i>
+      <h1 class="notification-title">Mời thất bại!</h1>
+      <p>Không thể gửi lời mời.</p>
+    </div>
+    <div class="notification-body">
+      <p class="notification-text">
+        Người chơi <span class="player-name" th:text="${playerName}">Tên người chơi</span> không tồn tại trong hệ thống.
+        Vui lòng kiểm tra lại tên người chơi và thử lại.
+      </p>
+      <div class="redirect-info">
+        <i class="fas fa-info-circle mr-1"></i> Tự động chuyển hướng sau <span id="countdown">5</span> giây
+      </div>
+      <div class="timer-container">
+        <div class="timer-bar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // Get tournament ID from Thymeleaf
+  const tournamentId = /*[[${tournamentId}]]*/;
+
+  // Set countdown
+  let timeLeft = 5;
+  const countdownElement = document.getElementById('countdown');
+
+  // Update countdown every second
+  const countdownInterval = setInterval(function() {
+    timeLeft -= 1;
+    countdownElement.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      // Redirect to tournament detail page
+      window.location.href = `/tournament/${tournamentId}/detail`;
+    }
+  }, 1000);
+
+  // Redirect after 5 seconds
+  setTimeout(function() {
+    window.location.href = `/tournament/${tournamentId}/details`;
+  }, 5000);
+  /*]]>*/
+</script>
+</body>
+</html>

@@ -38,8 +38,9 @@ public class TournamentInvitationService {
 
 
     public TournamentInvitation create(HttpServletRequest request, CreateInvitation invitation) {
-        // Todo: call getDetail Tournament
         System.out.println("creatinggggg");
+        System.out.println(invitation);
+
         System.out.println(this.urlTournamentService + "tournament/" + invitation.getTournamentId());
 
         Tournament tournament = this.serviceAPI.call(
@@ -57,20 +58,46 @@ public class TournamentInvitationService {
             return null;
         }
         // Tự động đồng ý khi cả 2 bên gửi lời mời cho nhau
-        List<TournamentInvitation> randoms = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatus(invitation.getTournamentId(), invitation.getUserId(), "PENDING");
-        if (!randoms.isEmpty()) {
-            for (TournamentInvitation random : randoms) {
-                random.setStatus("ACCCEPT");
-                tournamentInvitationRepository.save(random);
-                this.serviceAPI.call(
-                        this.urlTournamentPlayerService + "tournament-player",
-                        HttpMethod.POST,
-                        TournamentPlayerRequest.builder().tournamentId(random.getTournamentId()).playerId(random.getUserId()).build(),
-                        TournamentPlayerRequest.class,
-                        (String) request.getAttribute("token")
-                );
+        if(invitation.getType().equals("INVITING")) {
+            List<TournamentInvitation> randoms = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITED");
+            if (!randoms.isEmpty()) {
+                for (TournamentInvitation random : randoms) {
+                    random.setStatus("ACCEPT");
+                    tournamentInvitationRepository.save(random);
+                    this.serviceAPI.call(
+                            this.urlTournamentPlayerService + "tournament-player",
+                            HttpMethod.POST,
+                            TournamentPlayerRequest.builder().tournamentId(random.getTournamentId()).playerId(random.getUserId()).build(),
+                            TournamentPlayerRequest.class,
+                            (String) request.getAttribute("token")
+                    );
+                }
+                return new TournamentInvitation();
             }
-            return new TournamentInvitation();
+        }
+        else {
+            List<TournamentInvitation> randoms = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITING");
+            if (!randoms.isEmpty()) {
+                for (TournamentInvitation random : randoms) {
+                    random.setStatus("ACCEPT");
+                    tournamentInvitationRepository.save(random);
+                    this.serviceAPI.call(
+                            this.urlTournamentPlayerService + "tournament-player",
+                            HttpMethod.POST,
+                            TournamentPlayerRequest.builder().tournamentId(random.getTournamentId()).playerId(random.getUserId()).build(),
+                            TournamentPlayerRequest.class,
+                            (String) request.getAttribute("token")
+                    );
+                }
+                return new TournamentInvitation();
+            }
+        }
+        // check dupicate invitation
+        if(invitation.getType().equals("INVITING")) {
+            List<TournamentInvitation> list = tournamentInvitationRepository.findByTournamentIdAndUserIdAndStatusAndType(invitation.getTournamentId(), invitation.getUserId(), "PENDING", "INVITING");
+            if (!list.isEmpty()) {
+                return new TournamentInvitation();
+            }
         }
         // Save
         TournamentInvitation savedInvitation = TournamentInvitation.builder()
@@ -166,12 +193,12 @@ public class TournamentInvitationService {
         Integer numParticipants = tournament.getParticipants();
 
         // Nếu số participant của tournament đã đầy, từ chối.
-        if (invitation.getStatus().equals("ACCCEPT") && numParticipants >= tournament.getMaxPlayer()) {
+        if (invitation.getStatus().equals("ACCEPT") && numParticipants >= tournament.getMaxPlayer()) {
             return null;
         }
         inv.setStatus(invitation.getStatus());
         //TODO: add user to list player of tournament if accept
-        if (invitation.getStatus().equals("ACCCEPT")) {
+        if (invitation.getStatus().equals("ACCEPT")) {
             // call api
             this.serviceAPI.call(
                     this.urlTournamentPlayerService + "tournament-player",
@@ -223,7 +250,7 @@ public class TournamentInvitationService {
     public  InvitationFlag  checkStatusInvitation(Long userId, Long tournamentId) {
 
         List<TournamentInvitation> request = this.tournamentInvitationRepository.findByUserIdAndTournamentId(userId, tournamentId);
-        List<TournamentInvitation> requested = this.tournamentInvitationRepository.findByUserIdAndTournamentIdAndStatusAndType((userId, tournamentId,"PENDING","INVITED");
+        List<TournamentInvitation> requested = this.tournamentInvitationRepository.findByUserIdAndTournamentIdAndStatusAndType(userId, tournamentId,"PENDING","INVITED");
 
         if (request.isEmpty()) {
             return InvitationFlag.builder().value("request").build();
@@ -234,4 +261,5 @@ public class TournamentInvitationService {
 
         return InvitationFlag.builder().value("out").build();
     }
+
 }
