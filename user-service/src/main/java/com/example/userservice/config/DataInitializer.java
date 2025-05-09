@@ -23,7 +23,7 @@ public class DataInitializer {
                 // User 1 - Admin
                 User admin = new User();
                 admin.setUsername("admin");
-                admin.setPassword("password");
+                admin.setPassword("1");
                 admin.setDateOfBirth(dateFormat.parse("1990-01-15"));
                 admin.setGender(true);
                 admin.setEmail("admin@example.com");
@@ -35,7 +35,7 @@ public class DataInitializer {
                 // User 2 - Người chơi cờ tích cực
                 User activePlayer = new User();
                 activePlayer.setUsername("player1");
-                activePlayer.setPassword("chess123");
+                activePlayer.setPassword("1");
                 activePlayer.setDateOfBirth(dateFormat.parse("1995-06-21"));
                 activePlayer.setGender(true);
                 activePlayer.setEmail("player1@example.com");
@@ -47,7 +47,7 @@ public class DataInitializer {
                 // User 3 - Người chơi nữ
                 User femalePlayer = new User();
                 femalePlayer.setUsername("player2");
-                femalePlayer.setPassword("chess456");
+                femalePlayer.setPassword("1");
                 femalePlayer.setDateOfBirth(dateFormat.parse("1998-03-08"));
                 femalePlayer.setGender(false);
                 femalePlayer.setEmail("player2@example.com");
