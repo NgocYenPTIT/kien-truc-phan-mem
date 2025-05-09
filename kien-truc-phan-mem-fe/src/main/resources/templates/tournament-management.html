@@ -505,6 +505,27 @@
             background-color: #d35400;
             border-color: #d35400;
         }
+
+        /* Căn giữa tiêu đề cột Thao tác */
+table thead th:last-child {
+    text-align: center;
+}
+
+/* Điều chỉnh kích thước các nút */
+.btn-action {
+    min-width: 90px; /* Giảm từ 110px xuống 90px */
+    padding: 5px 12px; /* Giảm từ 8px 16px xuống 5px 12px */
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 0 3px;
+    font-size: 0.875rem; /* Giảm kích thước chữ */
+}
+
+.btn-action i {
+    margin-right: 6px; /* Giảm từ 8px xuống 6px */
+    font-size: 0.875rem; /* Giảm kích thước biểu tượng */
+}
     </style>
 
     <!-- 1. Danh sách cờ thủ muốn tham gia giải đấu của bạn -->
@@ -525,8 +546,8 @@
                             <th>STT</th>
                             <th>Tên người chơi</th>
                             <th>Tên giải đấu</th>
-                            <th>Thời gian bắt đầu</th>
-                            <th>Thời gian kết thúc</th>
+                            <th>Bắt đầu</th>
+                            <th>Kết thúc</th>
                             <th>Số người tham gia</th>
                             <th>Thời gian gửi</th>
                             <th>Thao tác</th>
@@ -587,8 +608,8 @@
                             <th>STT</th>
                             <th>Tên người chơi</th>
                             <th>Tên giải đấu</th>
-                            <th>Thời gian bắt đầu</th>
-                            <th>Thời gian kết thúc</th>
+                            <th>Bắt đầu</th>
+                            <th>Kết thúc</th>
                             <th>Số người tham gia</th>
                             <th>Thời gian gửi</th>
                             <th>Thao tác</th>
@@ -642,8 +663,8 @@
                         <tr>
                             <th>STT</th>
                             <th>Tên giải đấu</th>
-                            <th>Thời gian bắt đầu</th>
-                            <th>Thời gian kết thúc</th>
+                            <th>Bắt đầu</th>
+                            <th>Kết thúc</th>
                             <th>Số người tham gia</th>
                             <th>Thời gian gửi</th>
                             <th>Thao tác</th>
@@ -695,8 +716,8 @@
                         <tr>
                             <th>STT</th>
                             <th>Tên giải đấu</th>
-                            <th>Thời gian bắt đầu</th>
-                            <th>Thời gian kết thúc</th>
+                            <th>Bắt đầu</th>
+                            <th>Kết thúc</th>
                             <th>Số người tham gia</th>
                             <th>Thời gian gửi</th>
                             <th>Thao tác</th>
