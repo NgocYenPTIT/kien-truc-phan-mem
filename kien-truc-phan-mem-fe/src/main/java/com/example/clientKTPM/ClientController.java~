@@ -609,26 +609,26 @@ public class ClientController {
     }
 
     @PostMapping("/update-invitation")
-    public String updateInvatation(@RequestParam(name = "tournamentId") Long tournamentId,
-                          @RequestParam(name = "participantId") Long participantId,
+    public String updateInvatation(@RequestParam(name = "id") Long id,
                           @RequestParam(name = "status") String status) {
-
+        System.out.println(id);
+        System.out.println(status);
         User user = (User) session.getAttribute("user");
         if (user != null) {
             try {
                 CreateInvitation inv = this.serviceAPI.call(
                         this.urlTournamentInvitationService + "invitation",
                         HttpMethod.PUT,
-                        CreateInvitation.builder().id(id).tournamentId(tournamentId).userId(participantId).type("").status(status).build(),
+                        CreateInvitation.builder().id(id).type("").status(status).build(),
                         CreateInvitation.class,
                         (String) session.getAttribute("token")
                 );
 
-                return "redirect:/tournament/" + id  + "/details";
+                return "redirect:/tournaments/";
             }
             catch (Exception e) {
                 e.printStackTrace();
-                return "redirect:/tournament/" + id + "/invite-full?playerName=";
+                return "redirect:/tournaments/";
             }
         } else {
             return "redirect:/";

@@ -27,7 +27,7 @@ public class TournamentPlayerController {
         return this.tournamentPlayerService.addPlayer(request,player);
     }
 
-    @DeleteMapping("/tournament-player/")
+    @DeleteMapping("/tournament-player")
     public ResponseEntity<?> delete(HttpServletRequest request, TournamentPlayerRequest player) {
         return this.tournamentPlayerService.delete(request,player);
     }

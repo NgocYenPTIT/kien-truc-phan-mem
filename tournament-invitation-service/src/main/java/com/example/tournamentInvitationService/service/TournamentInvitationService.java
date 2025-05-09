@@ -185,8 +185,7 @@ public class TournamentInvitationService {
         // OUT
         if (invitation.getType().equals("OUT")) {
             System.out.println("OUT");
-            System.out.println(invitation.getTournamentId());
-            System.out.println(invitation.getUserId());
+            System.out.println(invitation);
             this.tournamentInvitationRepository.deleteByTournamentIdAndUserId(invitation.getTournamentId(), invitation.getUserId());
 
             this.serviceAPI.call(

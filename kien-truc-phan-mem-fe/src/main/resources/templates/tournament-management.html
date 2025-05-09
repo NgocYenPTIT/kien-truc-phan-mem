@@ -629,8 +629,9 @@ table thead th:last-child {
                             <td data-date="${invitation.createdAt}" th:data-date="${invitation.createdAt}" th:text="${invitation.createdAt != null ? invitation.createdAt : 'N/A'}">15/05/2025 18:00</td>
                             <td>
                                 <div class="text-center">
-                                    <form th:if="${invitation.participant != null}" th:action="@{/cancel-invitation}" method="post" class="action-form">
+                                    <form th:if="${invitation.participant != null}" th:action="@{/update-invitation}" method="post" class="action-form">
                                         <input type="hidden" name="id" th:value="${invitation.id}">
+                                        <input type="hidden" name="status" value="REJECT">
                                         <button type="submit" class="btn btn-action btn-cancel" 
                                                 onclick="return confirm('Bạn có chắc chắn muốn thu hồi lời mời này?')">
                                             <i class="fas fa-undo"></i> Thu hồi
@@ -683,8 +684,9 @@ table thead th:last-child {
                             <td data-date="${request.createdAt}" th:data-date="${request.createdAt}" th:text="${request.createdAt != null ? request.createdAt : 'N/A'}">16/05/2025 18:00</td>
                             <td>
                                 <div class="text-center">
-                                    <form th:action="@{/cancel-join-request}" method="post" class="action-form">
+                                    <form th:action="@{/update-invitation}" method="post" class="action-form">
                                         <input type="hidden" name="id" th:value="${request.id}">
+                                        <input type="hidden" name="status" value="REJECT">
                                         <button type="submit" class="btn btn-action btn-cancel" 
                                                 onclick="return confirm('Bạn có chắc chắn muốn hủy yêu cầu tham gia này?')">
                                             <i class="fas fa-ban"></i> Hủy yêu cầu

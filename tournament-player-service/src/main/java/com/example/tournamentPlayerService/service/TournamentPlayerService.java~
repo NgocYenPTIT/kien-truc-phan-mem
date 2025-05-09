@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -106,12 +107,13 @@ public class TournamentPlayerService {
     }
 
     @Transactional
-    public ResponseEntity<?> delete(HttpServletRequest request, TournamentPlayerRequest player) {
+    public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody  TournamentPlayerRequest player) {
         Long playerId = (Long) player.getPlayerId();
         Long tournamentId = (Long) player.getTournamentId();
+        System.out.println(playerId);
         this.tournamentPlayerRepository.deleteByTournamentIdAndPlayerId(tournamentId, playerId);
 
-        return ResponseEntity.ok(TournamentPlayerDto.builder().playerId(playerId).tournamentId(tournamentId)..build());
+        return ResponseEntity.ok(TournamentPlayerDto.builder().playerId(playerId).tournamentId(tournamentId).build());
     }
 
 }

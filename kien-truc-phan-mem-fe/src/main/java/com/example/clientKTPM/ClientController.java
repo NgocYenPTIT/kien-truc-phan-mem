@@ -474,7 +474,7 @@ public class ClientController {
         if (user != null) {
             // Lấy thông tin giải đấu để hiển thị tên
             // TODO: Gọi API lấy tên giải đấu
-            String tournamentName = "Tên giải đấu"; // Thay bằng tên thực tế từ API
+            String tournamentName = ""; // Thay bằng tên thực tế từ API
 
             model.addAttribute("tournamentId", id);
             model.addAttribute("playerName", playerName);
@@ -608,31 +608,31 @@ public class ClientController {
         }
     }
 
-//    @PostMapping("/update-invitation")
-//    public String updateInvatation(@RequestParam(name = "tournamentId") Long tournamentId,
-//                          @RequestParam(name = "participantId") Long participantId,
-//                          @RequestParam(name = "status") String status) {
-//
-//        User user = (User) session.getAttribute("user");
-//        if (user != null) {
-//            try {
-//                CreateInvitation inv = this.serviceAPI.call(
-//                        this.urlTournamentInvitationService + "invitation",
-//                        HttpMethod.PUT,
-//                        CreateInvitation.builder().id(id).tournamentId(tournamentId).userId(participantId).type("").status(status).build(),
-//                        CreateInvitation.class,
-//                        (String) session.getAttribute("token")
-//                );
-//
-//                return "redirect:/tournament/" + id  + "/details";
-//            }
-//            catch (Exception e) {
-//                e.printStackTrace();
-//                return "redirect:/tournament/" + id + "/invite-full?playerName=";
-//            }
-//        } else {
-//            return "redirect:/";
-//        }
-//    }
+    @PostMapping("/update-invitation")
+    public String updateInvatation(@RequestParam(name = "id") Long id,
+                          @RequestParam(name = "status") String status) {
+        System.out.println(id);
+        System.out.println(status);
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                CreateInvitation inv = this.serviceAPI.call(
+                        this.urlTournamentInvitationService + "invitation",
+                        HttpMethod.PUT,
+                        CreateInvitation.builder().id(id).type("").status(status).build(),
+                        CreateInvitation.class,
+                        (String) session.getAttribute("token")
+                );
+
+                return "redirect:/tournaments/";
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return "redirect:/";
+            }
+        } else {
+            return "redirect:/";
+        }
+    }
 
 }
