@@ -191,7 +191,7 @@ public class TournamentInvitationService {
 
             this.serviceAPI.call(
                     this.urlTournamentPlayerService + "tournament-player",
-                    HttpMethod.POST,
+                    HttpMethod.DELETE,
                     TournamentPlayerRequest.builder().tournamentId(invitation.getTournamentId()).playerId(invitation.getUserId()).build(),
                     TournamentPlayerRequest.class,
                     (String) request.getAttribute("token")
@@ -263,6 +263,7 @@ public class TournamentInvitationService {
             System.out.println(participant);
             System.out.println(tournament);
             return InvitationOverview.builder()
+                    
                     .tournament(tournament)
                     .participant(participant)
                     .createdAt(ele.getCreatedAt())

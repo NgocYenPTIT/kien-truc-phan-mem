@@ -12,8 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class InvitationOverview {
+    
     private  Tournament tournament;
     private User participant;
     private Date createdAt;
-//    private String status;
 }

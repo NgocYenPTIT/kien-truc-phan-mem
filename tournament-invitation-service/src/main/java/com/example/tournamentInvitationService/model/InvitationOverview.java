@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class InvitationOverview {
+    private Long id;
     private  Tournament tournament;
     private User participant;
     private Date createdAt;

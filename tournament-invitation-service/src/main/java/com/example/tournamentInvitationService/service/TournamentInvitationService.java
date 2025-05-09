@@ -263,6 +263,7 @@ public class TournamentInvitationService {
             System.out.println(participant);
             System.out.println(tournament);
             return InvitationOverview.builder()
+                    .id(ele.getId())
                     .tournament(tournament)
                     .participant(participant)
                     .createdAt(ele.getCreatedAt())
